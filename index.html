@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>iFix Solutions - Computer Sales, Repairs & Upgrades</title>
+  <style>
+    /* iFix Solutions - Modern Tech Theme */
+    :root {
+      --primary: #0284c7;
+      --primary-dark: #0369a1;
+      --accent: #f59e0b;
+      --secondary: #0f172a;
+      --bg-light: #f8fafc;
+      --card-bg: #ffffff;
+      --border: #e2e8f0;
+      --text-dark: #0f172a;
+      --text-muted: #64748b;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --radius: 8px;
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-light);
+      color: var(--text-dark);
+      line-height: 1.6;
+    }
+
+    /* Header Navigation */
+    header {
+      background-color: var(--secondary);
+      color: white;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: #38bdf8;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .logo span {
+      color: var(--accent);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: #cbd5e1;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: #ffffff;
+    }
+
+    .cart-btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: var(--radius);
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .cart-btn:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Sections */
+    section {
+      padding: 4rem 1rem;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 0.5rem;
+      color: var(--secondary);
+    }
+
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(135deg, var(--secondary) 0%, #1e293b 100%);
+      color: white;
+      text-align: center;
+      padding: 5rem 1rem;
+    }
+
+    .hero h1 {
+      font-size: 2.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero p {
+      color: #94a3b8;
+      font-size: 1.2rem;
+      max-width: 700px;
+      margin: 0 auto 2rem auto;
+    }
+
+    .hero-btns {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    .btn-primary, .btn-secondary {
+      padding: 0.75rem 1.75rem;
+      border-radius: var(--radius);
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-block;
+      cursor: pointer;
+      border: none;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .btn-secondary {
+      background-color: transparent;
+      border: 2px solid #38bdf8;
+      color: #38bdf8;
+    }
+
+    .btn-secondary:hover {
+      background-color: #38bdf8;
+      color: var(--secondary);
+    }
+
+    /* Storefront Controls & Grid */
+    .controls-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 2rem;
+      background: var(--card-bg);
+      padding: 1.25rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .controls-bar input,
+    .controls-bar select {
+      padding: 0.65rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      outline: none;
+      background-color: #fff;
+    }
+
+    .search-input {
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .product-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .product-img {
+      width: 100%;
+      height: 190px;
+      object-fit: cover;
+      background-color: #f1f5f9;
+    }
+
+    .product-info {
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 0.6rem;
+      width: max-content;
+    }
+
+    .badge-used { background-color: #fef3c7; color: #92400e; }
+    .badge-refurbished { background-color: #e0e7ff; color: #3730a3; }
+    .badge-new { background-color: #dcfce7; color: #166534; }
+
+    .product-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+    }
+
+    .product-specs {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-bottom: 1.25rem;
+      flex-grow: 1;
+    }
+
+    .product-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: auto;
+      padding-top: 0.5rem;
+      border-top: 1px dashed var(--border);
+    }
+
+    .product-price {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+    }
+
+    /* Services Grid */
+    .services-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .service-card {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .service-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Form Design */
+    .form-card {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+      max-width: 650px;
+      margin: 0 auto;
+    }
+
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.4rem;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      outline: none;
+    }
+
+    /* Feedback / Reviews Grid */
+    .feedback-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 3rem;
+    }
+
+    .feedback-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .stars {
+      color: #f59e0b;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Contact Details */
+    .contact-wrapper {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(3px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .modal-content {
+      background: white;
+      padding: 2rem;
+      border-radius: var(--radius);
+      width: 90%;
+      max-width: 500px;
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 0.5rem;
+    }
+
+    .close-btn {
+      cursor: pointer;
+      font-size: 1.5rem;
+    }
+
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    footer {
+      background: var(--secondary);
+      color: #94a3b8;
+      text-align: center;
+      padding: 2rem;
+      margin-top: 3rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Navigation Header -->
+  <header>
+    <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
+    <div class="nav-links">
+      <a href="#home">Home</a>
+      <a href="#products">Products</a>
+      <a href="#services">Services</a>
+      <a href="#about">About Us</a>
+      <a href="#feedback">Feedback</a>
+      <a href="#contact">Contact</a>
+      <a href="admin.html" style="color: #38bdf8; font-weight: 700;">Admin Panel</a>
+      <button class="cart-btn" id="openCartBtn">🛒 Cart (<span id="cartCount">0</span>)</button>
+    </div>
+  </header>
+
+  <!-- 1. Home / Hero Section -->
+  <section id="home" class="hero">
+    <h1>iFix Solutions Computer Shop</h1>
+    <p>Your Trusted Specialists for Laptop & PC Repairs, Hardware Upgrades, and High-Quality Second-Hand Laptops, Desktops, SSDs & RAM.</p>
+    <div class="hero-btns">
+      <a href="#products" class="btn-primary">Browse Shop Catalog</a>
+      <a href="#services" class="btn-secondary">Book a Repair</a>
+    </div>
+  </section>
+
+  <!-- 2. Products Section -->
+  <section id="products">
+    <div class="container">
+      <h2 class="section-title">Hardware & Second-Hand Catalog</h2>
+      <p class="section-subtitle">Fully tested and guaranteed with warranty</p>
+
+      <div class="controls-bar">
+        <input type="text" id="searchInput" class="search-input" placeholder="Search NVMe, ThinkPad, DDR4 RAM, MacBook...">
+        
+        <select id="categoryFilter">
+          <option value="ALL">All Categories</option>
+          <option value="Laptop">Laptops</option>
+          <option value="Desktop">Desktop PCs</option>
+          <option value="RAM">RAM</option>
+          <option value="Storage">SSD / Storage</option>
+          <option value="Equipment">Accessories & Peripherals</option>
+        </select>
+
+        <select id="conditionFilter">
+          <option value="ALL">All Conditions</option>
+          <option value="Grade A Used">Grade A Used</option>
+          <option value="Refurbished">Refurbished</option>
+          <option value="Brand New">Brand New</option>
+        </select>
+      </div>
+
+      <div class="product-grid" id="productGrid">
+        <!-- Products populated via JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Services Section -->
+  <section id="services" style="background-color: #f1f5f9;">
+    <div class="container">
+      <h2 class="section-title">Our Technical Services</h2>
+      <p class="section-subtitle">Fast turn-around repair and upgrade solutions by experienced technicians</p>
+
+      <div class="services-grid">
+        <div class="service-card">
+          <div class="service-icon">💻</div>
+          <h3>Laptop Diagnostics & Repair</h3>
+          <p>Fix motherboard issues, broken screen replacement, battery health checks, and power jack repairs.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🚀</div>
+          <h3>SSD & RAM Speed Upgrades</h3>
+          <p>Supercharge your slow computer with high-speed NVMe SSDs and memory upgrades with Windows cloning.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🖥️</div>
+          <h3>Custom PC Assembly</h3>
+          <p>Tailored office desktop or gaming PC builds to fit your exact budget and performance requirements.</p>
+        </div>
+        <div class="service-card">
+          <div class="service-icon">🧹</div>
+          <h3>Thermal Paste & Servicing</h3>
+          <p>Deep dust cleaning and thermal paste replacement to lower CPU/GPU temperatures and prevent overheating.</p>
+        </div>
+      </div>
+
+      <!-- Service Booking Form -->
+      <div style="margin-top: 3rem;">
+        <div class="form-card">
+          <h3 style="text-align: center; margin-bottom: 1rem;">Book a Technical Inspection / Service</h3>
+          <form id="serviceBookingForm">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" placeholder="John Doe" required>
+            </div>
+            <div class="form-group">
+              <label>Phone / WhatsApp Number</label>
+              <input type="tel" placeholder="+60 12-345 6789" required>
+            </div>
+            <div class="form-group">
+              <label>Device Type & Model</label>
+              <input type="text" placeholder="e.g. Asus ROG Strix / Dell Latitude 5400" required>
+            </div>
+            <div class="form-group">
+              <label>Requested Service</label>
+              <select required>
+                <option value="Diagnostic">General Repair / Fault Diagnostic</option>
+                <option value="Upgrade">SSD / RAM Upgrade</option>
+                <option value="Cleaning">Thermal Paste & Dust Cleaning</option>
+                <option value="OS">Windows OS Format & Cleanup</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Issue Description</label>
+              <textarea rows="3" placeholder="Describe what is wrong with your laptop or PC..."></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Submit Repair Booking Request</button>
+          </form>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 4. About Us Section -->
+  <section id="about">
+    <div class="container" style="max-width: 900px; text-align: center;">
+      <h2 class="section-title">About iFix Solutions</h2>
+      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem;">
+        At <strong>iFix Solutions</strong>, we pride ourselves on providing high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or professional repairs, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure 100% performance and reliability.
+      </p>
+    </div>
+  </section>
+
+  <!-- 5. User Feedback & Reviews Section -->
+  <section id="feedback" style="background-color: #f1f5f9;">
+    <div class="container">
+      <h2 class="section-title">Customer Feedback & Reviews</h2>
+      <p class="section-subtitle">Read what our happy customers have to say about iFix Solutions</p>
+
+      <div class="feedback-grid" id="feedbackGrid">
+        <div class="feedback-card">
+          <div class="stars">★★★★★</div>
+          <p>"Replaced my old laptop's HDD with a 512GB NVMe SSD at iFix Solutions. The boot time went from 3 minutes to 10 seconds! Excellent service!"</p>
+          <strong style="display: block; margin-top: 1rem; color: var(--secondary);">- Sharvinn D.</strong>
+        </div>
+        <div class="feedback-card">
+          <div class="stars">★★★★★</div>
+          <p>"Bought a Grade A Used ThinkPad laptop for my studies. Clean condition, fair pricing, and came with 3 months warranty. Highly recommended!"</p>
+          <strong style="display: block; margin-top: 1rem; color: var(--secondary);">- Michelle K.</strong>
+        </div>
+      </div>
+
+      <!-- Submit Feedback Form -->
+      <div class="form-card">
+        <h3>Leave Your Feedback</h3>
+        <form id="feedbackForm" style="margin-top: 1rem;">
+          <div class="form-group">
+            <label>Your Name</label>
+            <input type="text" id="fbName" placeholder="e.g. Alex Wong" required>
+          </div>
+          <div class="form-group">
+            <label>Rating</label>
+            <select id="fbRating" required>
+              <option value="5">★★★★★ (5/5 Stars - Excellent)</option>
+              <option value="4">★★★★☆ (4/5 Stars - Very Good)</option>
+              <option value="3">★★★☆☆ (3/5 Stars - Average)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Your Review / Experience</label>
+            <textarea id="fbComment" rows="3" placeholder="Share your experience with our services or products..." required></textarea>
+          </div>
+          <button type="submit" class="btn-primary" style="width: 100%;">Post Review</button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- 6. Contact Us Section -->
+  <section id="contact">
+    <div class="container">
+      <h2 class="section-title">Contact & Location</h2>
+      <p class="section-subtitle">Get in touch with us or visit our shop</p>
+
+      <div class="contact-wrapper">
+        <div class="form-card" style="margin: 0; max-width: 100%;">
+          <h3>iFix Solutions Shop Details</h3>
+          <p style="margin-top: 1rem;">📍 <strong>Address:</strong> No. 12, Tech Commerce Center, Computer Street</p>
+          <p style="margin-top: 0.5rem;">📞 <strong>Phone / WhatsApp:</strong> +60 12-345 6789</p>
+          <p style="margin-top: 0.5rem;">✉️ <strong>Email:</strong> support@ifixsolutions.com</p>
+          <p style="margin-top: 0.5rem;">⏰ <strong>Business Hours:</strong> Monday - Saturday (10:00 AM - 7:00 PM)</p>
+        </div>
+
+        <div class="form-card" style="margin: 0; max-width: 100%;">
+          <h3>Send Us a Quick Message</h3>
+          <form id="contactForm" style="margin-top: 1rem;">
+            <div class="form-group">
+              <label>Email Address</label>
+              <input type="email" placeholder="yourname@gmail.com" required>
+            </div>
+            <div class="form-group">
+              <label>Message</label>
+              <textarea rows="4" placeholder="How can we help you?" required></textarea>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Shopping Cart Modal Popup -->
+  <div class="modal" id="cartModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Your Shopping Cart</h3>
+        <span class="close-btn" id="closeCartBtn">&times;</span>
+      </div>
+      <div id="cartItemsContainer"></div>
+      <div style="margin-top: 1.5rem; text-align: right; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
+        <h4>Total Amount: <span style="color: var(--primary-dark);">RM <span id="cartTotal">0.00</span></span></h4>
+        <button class="btn-primary" id="checkoutBtn" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Proceed to Checkout</button>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 iFix Solutions Computer Shop. Built for Internship Project.</p>
+  </footer>
+
+  <!-- Combined JavaScript -->
+  <script>
+    const MOCK_PRODUCTS = [
+      { id: 1, title: "Lenovo ThinkPad X1 Carbon Gen 8", category: "Laptop", condition: "Grade A Used", specs: "Intel i7-10510U, 16GB RAM, 512GB NVMe SSD, 14\" FHD", price: 1850.00, image_url: "https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=500" },
+      { id: 2, title: "HP EliteBook 840 G6 Business Laptop", category: "Laptop", condition: "Grade A Used", specs: "Intel i5-8350U, 16GB RAM, 256GB SSD, Windows 11 Pro", price: 1250.00, image_url: "https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500" },
+      { id: 3, title: "Apple MacBook Pro 13\" (2019)", category: "Laptop", condition: "Refurbished", specs: "Intel i5, 8GB RAM, 256GB SSD, Touch Bar, Space Gray", price: 2100.00, image_url: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=500" },
+      { id: 4, title: "Dell OptiPlex 7070 Tower PC", category: "Desktop", condition: "Grade A Used", specs: "Intel i5-9500, 16GB DDR4 RAM, 512GB NVMe SSD", price: 980.00, image_url: "https://images.unsplash.com/photo-1587831990711-23ca6441447b?w=500" },
+      { id: 5, title: "Custom Gaming Rig (Entry Level)", category: "Desktop", condition: "Refurbished", specs: "AMD Ryzen 5 3600, GTX 1660 Super 6GB, 16GB RAM, 512GB SSD", price: 1950.00, image_url: "https://images.unsplash.com/photo-1587202372775-e229f172b9d7?w=500" },
+      { id: 6, title: "Kingston Fury Beast 16GB DDR4 3200MHz", category: "RAM", condition: "Brand New", specs: "Desktop RAM, High Performance Heatsink (CL16)", price: 165.00, image_url: "https://images.unsplash.com/photo-1562976540-1502c2145186?w=500" },
+      { id: 7, title: "Corsair Vengeance LPX 32GB (2x16GB) DDR4", category: "RAM", condition: "Brand New", specs: "3200MHz C16 Desktop Memory Kit, Black", price: 310.00, image_url: "https://images.unsplash.com/photo-1541029071515-84b54fbb8f83?w=500" },
+      { id: 8, title: "Crucial 8GB DDR4 3200MHz SODIMM", category: "RAM", condition: "Brand New", specs: "Laptop Memory Upgrade Module", price: 85.00, image_url: "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=500" },
+      { id: 9, title: "Samsung 970 EVO Plus 1TB NVMe M.2 SSD", category: "Storage", condition: "Refurbished", specs: "Read Speed up to 3,500 MB/s, 100% Health Status Verified", price: 295.00, image_url: "https://images.unsplash.com/photo-1597872200969-2b65d56bd16b?w=500" },
+      { id: 10, title: "Kingston A400 480GB 2.5\" SATA SSD", category: "Storage", condition: "Brand New", specs: "Solid State Drive for Laptop & PC Speed Boost", price: 145.00, image_url: "https://images.unsplash.com/photo-1531492746302-35112521c7d3?w=500" },
+      { id: 11, title: "Logitech G102 Lightsync Gaming Mouse", category: "Equipment", condition: "Brand New", specs: "RGB Color, 8000 DPI Sensor, Programmable Buttons", price: 79.00, image_url: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=500" },
+      { id: 12, title: "Redragon K552 Mechanical Keyboard", category: "Equipment", condition: "Brand New", specs: "Compact 87 Keys Tenkeyless, RGB Backlit, Red Switches", price: 140.00, image_url: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=500" }
+    ];
+
+    let cart = [];
+
+    const productGrid = document.getElementById('productGrid');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const conditionFilter = document.getElementById('conditionFilter');
+    const cartCount = document.getElementById('cartCount');
+    const cartModal = document.getElementById('cartModal');
+    const openCartBtn = document.getElementById('openCartBtn');
+    const closeCartBtn = document.getElementById('closeCartBtn');
+    const cartItemsContainer = document.getElementById('cartItemsContainer');
+    const cartTotal = document.getElementById('cartTotal');
+    const feedbackGrid = document.getElementById('feedbackGrid');
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProducts(MOCK_PRODUCTS);
+      setupEventListeners();
+    });
+
+    function renderProducts(items) {
+      productGrid.innerHTML = '';
+      if (items.length === 0) {
+        productGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No products found matching your search.</p>';
+        return;
+      }
+
+      items.forEach(product => {
+        const badgeClass = product.condition.includes('Used') ? 'badge-used' : 
+                           product.condition.includes('Refurbished') ? 'badge-refurbished' : 'badge-new';
+
+        const card = document.createElement('div');
+        card.className = 'product-card';
+        card.innerHTML = `
+          <img src="${product.image_url}" alt="${product.title}" class="product-img">
+          <div class="product-info">
+            <span class="badge ${badgeClass}">${product.condition}</span>
+            <h3 class="product-title">${product.title}</h3>
+            <p class="product-specs">${product.specs}</p>
+            <div class="product-bottom">
+              <span class="product-price">RM ${product.price.toFixed(2)}</span>
+              <button class="btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="addToCart(${product.id})">Add to Cart</button>
+            </div>
+          </div>
+        `;
+        productGrid.appendChild(card);
+      });
+    }
+
+    function filterProducts() {
+      const query = searchInput.value.toLowerCase();
+      const cat = categoryFilter.value;
+      const cond = conditionFilter.value;
+
+      const filtered = MOCK_PRODUCTS.filter(p => {
+        const matchesSearch = p.title.toLowerCase().includes(query) || p.specs.toLowerCase().includes(query);
+        const matchesCat = cat === 'ALL' || p.category === cat;
+        const matchesCond = cond === 'ALL' || p.condition === cond;
+        return matchesSearch && matchesCat && matchesCond;
+      });
+
+      renderProducts(filtered);
+    }
+
+    window.addToCart = function(id) {
+      const product = MOCK_PRODUCTS.find(p => p.id === id);
+      const existing = cart.find(item => item.id === id);
+      if (existing) {
+        existing.qty += 1;
+      } else {
+        cart.push({ ...product, qty: 1 });
+      }
+      updateCartUI();
+    };
+
+    function updateCartUI() {
+      cartCount.textContent = cart.reduce((sum, i) => sum + i.qty, 0);
+      cartItemsContainer.innerHTML = '';
+      let total = 0;
+
+      if (cart.length === 0) {
+        cartItemsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Your shopping cart is empty.</p>';
+      } else {
+        cart.forEach(item => {
+          total += item.price * item.qty;
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `
+            <div>
+              <strong>${item.title}</strong><br>
+              <small style="color: var(--text-muted);">RM ${item.price.toFixed(2)} × ${item.qty}</small>
+            </div>
+            <div><strong>RM ${(item.price * item.qty).toFixed(2)}</strong></div>
+          `;
+          cartItemsContainer.appendChild(div);
+        });
+      }
+      cartTotal.textContent = total.toFixed(2);
+    }
+
+    function setupEventListeners() {
+      searchInput.addEventListener('input', filterProducts);
+      categoryFilter.addEventListener('change', filterProducts);
+      conditionFilter.addEventListener('change', filterProducts);
+
+      openCartBtn.addEventListener('click', () => cartModal.style.display = 'flex');
+      closeCartBtn.addEventListener('click', () => cartModal.style.display = 'none');
+      window.addEventListener('click', (e) => {
+        if (e.target === cartModal) cartModal.style.display = 'none';
+      });
+
+      document.getElementById('serviceBookingForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Repair inspection request received! Our team will WhatsApp/call you shortly.');
+        e.target.reset();
+      });
+
+      document.getElementById('contactForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        alert('Thank you for reaching out to iFix Solutions! We will reply soon.');
+        e.target.reset();
+      });
+
+      document.getElementById('feedbackForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const name = document.getElementById('fbName').value;
+        const rating = parseInt(document.getElementById('fbRating').value);
+        const comment = document.getElementById('fbComment').value;
+
+        const starsStr = '★'.repeat(rating) + '☆'.repeat(5 - rating);
+
+        const card = document.createElement('div');
+        card.className = 'feedback-card';
+        card.innerHTML = `
+          <div class="stars">${starsStr}</div>
+          <p>"${comment}"</p>
+          <strong style="display: block; margin-top: 1rem; color: var(--secondary);">- ${name}</strong>
+        `;
+        feedbackGrid.prepend(card);
+
+        alert('Thank you for submitting your feedback!');
+        e.target.reset();
+      });
+    }
+  </script>
+</body>
+</html>
