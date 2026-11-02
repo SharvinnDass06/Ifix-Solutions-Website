@@ -1,24 +1,32 @@
 const API_URL = "https://ifix-solutions-backend-1.onrender.com/api/products";
 
+let cart = [];
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadStoreProducts();
+  setupEventListeners();
+});
+
 async function loadStoreProducts() {
-  // Finds the container where your product grid renders
   const container = document.getElementById("productGrid") || document.getElementById("product-list");
   if (!container) return;
 
-  const response = await fetch(API_URL);
+  try {
+    const response = await fetch(API_URL);
     const jsonResult = await response.json();
+    let products = jsonResult.data || jsonResult || [];
 
-    // Extract the products array from jsonResult.data
-    let products = jsonResult.data || [];
-
-    // Clear hardcoded static HTML items
     container.innerHTML = "";
 
-    // Loop through and display each product from your database
+    if (products.length === 0) {
+      container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No products found in the database.</p>`;
+      return;
+    }
+
     products.forEach(product => {
       const card = document.createElement("div");
       card.className = "product-card";
-      
+
       let imageHTML = "";
       if (product.image_url) {
         imageHTML = `<img src="${product.image_url}" alt="${product.name}" style="width: 100%; height: 160px; object-fit: cover;">`;
@@ -38,4 +46,6 @@ async function loadStoreProducts() {
   }
 }
 
-document.addEventListener("DOMContentLoaded", loadStoreProducts);
+function setupEventListeners() {
+  // Event listeners placeholder
+}
