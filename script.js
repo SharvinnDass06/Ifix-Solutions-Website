@@ -5,14 +5,11 @@ async function loadStoreProducts() {
   const container = document.getElementById("productGrid") || document.getElementById("product-list");
   if (!container) return;
 
-  try {
-    const response = await fetch(API_URL);
-    let products = await response.json();
+  const response = await fetch(API_URL);
+    const jsonResult = await response.json();
 
-    // Ensure products is an array
-    if (!Array.isArray(products)) {
-      products = products.products || [];
-    }
+    // Extract the products array from jsonResult.data
+    let products = jsonResult.data || [];
 
     // Clear hardcoded static HTML items
     container.innerHTML = "";
