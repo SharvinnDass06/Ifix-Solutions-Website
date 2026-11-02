@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFix Solutions - Admin Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: 40px auto; padding: 20px; background: #f4f4f9; }
+        .form-container { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        h2 { color: #333; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; }
+        button:hover { background: #0056b3; }
+        #message { margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Add New Product - iFix Solutions</h2>
+        <form id="productForm">
+            <div class="form-group">
+                <label for="name">Product Name:</label>
+                <input type="text" id="name" required placeholder="e.g. Kingston 8GB RAM">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category:</label>
+                <input type="text" id="category" required placeholder="e.g. RAM, Storage, Laptop">
+            </div>
+            
+            <div class="form-group">
+                <label for="price">Price (RM):</label>
+                <input type="number" step="0.01" id="price" required placeholder="e.g. 150.00">
+            </div>
+            
+            <div class="form-group">
+                <label for="stock_quantity">Stock Quantity:</label>
+                <input type="number" id="stock_quantity" required placeholder="e.g. 10">
+            </div>
+            
+            <button type="submit">Add Product to Database</button>
+        </form>
+        <div id="message"></div>
+    </div>
+
+    <script>
+        const form = document.getElementById('productForm');
+        const messageDiv = document.getElementById('message');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Stop the page from reloading
+
+            // Gather the values from the form inputs
+            const productData = {
+                name: document.getElementById('name').value,
+                category: document.getElementById('category').value,
+                price: document.getElementById('price').value,
+                stock_quantity: document.getElementById('stock_quantity').value
+            };
+
+            try {
+                // Send data to your backend server running on port 5000
+                const response = await fetch('http://localhost:5000/api/products', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(productData)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    messageDiv.style.color = 'green';
+                    messageDiv.textContent = 'Success! Product added to the database.';
+                    form.reset(); // Clear the form fields
+                } else {
+                    messageDiv.style.color = 'red';
+                    messageDiv.textContent = 'Error: Could not add product.';
+                }
+            } catch (err) {
+                console.error(err);
+                messageDiv.style.color = 'red';
+                messageDiv.textContent = 'Server connection error!';
+            }
+        });
+    </script>
+
+</body>
+</html>

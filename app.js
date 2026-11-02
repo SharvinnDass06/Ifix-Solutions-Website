@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_BASE_URL = 'https://ifix-solutions-backend-1.onrender.com/api';
 
 // Expanded Mock Inventory for iFix Solutions
 const MOCK_PRODUCTS = [
