@@ -7,7 +7,12 @@ async function loadStoreProducts() {
 
   try {
     const response = await fetch(API_URL);
-    const products = await response.json();
+   let products = await response.json();
+
+    // Ensure products is an array
+    if (!Array.isArray(products)) {
+      products = products.products || [];
+    }
 
     // Clear hardcoded static HTML items
     container.innerHTML = "";
@@ -17,6 +22,7 @@ async function loadStoreProducts() {
       const card = document.createElement("div");
       card.className = "product-card";
       card.innerHTML = `
+        ${product.image_url ? `<img src="${product.image_url}" alt="${product.name}" style="width: 100%; height: 160px; object-fit: cover;">` : ''}
         <h3>${product.name}</h3>
         <p>Category: ${product.category}</p>
         <p><strong>RM ${parseFloat(product.price).toFixed(2)}</strong></p>
