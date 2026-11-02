@@ -40,7 +40,10 @@
                 <label for="stock_quantity">Stock Quantity:</label>
                 <input type="number" id="stock_quantity" required placeholder="e.g. 10">
             </div>
-            
+           <div class="form-group">
+      <label for="image_url">Image URL:</label>
+      <input type="text" id="image_url" placeholder="e.g. https://example.com/laptop.jpg">
+    </div> 
             <button type="submit">Add Product to Database</button>
         </form>
         <div id="message"></div>
@@ -58,7 +61,8 @@
                 name: document.getElementById('name').value,
                 category: document.getElementById('category').value,
                 price: document.getElementById('price').value,
-                stock_quantity: document.getElementById('stock_quantity').value
+                stock_quantity: document.getElementById('stock_quantity').value,
+                image_url: document.getElementById('image_url').value
             };
 
             try {
