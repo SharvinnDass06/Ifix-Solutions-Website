@@ -1,6 +1,7 @@
 const API_URL = "https://ifix-solutions-backend-1.onrender.com/api/products";
 
 let allProducts = [];
+let cart = [];
 
 document.addEventListener('DOMContentLoaded', () => {
   loadStoreProducts();
@@ -50,8 +51,9 @@ function renderProducts(productsToRender) {
         <p class="product-specs">Category: ${product.category}</p>
         <div class="product-bottom">
           <span class="product-price">RM ${parseFloat(product.price).toFixed(2)}</span>
-          <span style="font-size: 0.85rem; color: var(--text-muted);">Stock: ${product.stock_quantity}</span>
+          <button class="btn-add-cart" onclick="addToCart(${product.id})">Add to Cart</button>
         </div>
+        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">Stock: ${product.stock_quantity}</div>
       </div>
     `;
     container.appendChild(card);
@@ -63,14 +65,16 @@ function setupEventListeners() {
   const categorySelect = document.querySelector('select');
 
   function filterAndRender() {
-    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
-    const selectedCategory = categorySelect ? categorySelect.value : "ALL";
+    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
+    const selectedCategory = categorySelect ? categorySelect.value.trim() : "ALL";
 
     const filtered = allProducts.filter(product => {
       const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
                             product.category.toLowerCase().includes(searchTerm);
       
-      const matchesCategory = selectedCategory === "ALL" || selectedCategory === "All Categories" || 
+      // Case-insensitive category match
+      const matchesCategory = selectedCategory === "ALL" || 
+                              selectedCategory === "All Categories" || 
                               product.category.toLowerCase() === selectedCategory.toLowerCase();
 
       return matchesSearch && matchesCategory;
@@ -81,6 +85,71 @@ function setupEventListeners() {
 
   if (searchInput) searchInput.addEventListener("input", filterAndRender);
   if (categorySelect) categorySelect.addEventListener("change", filterAndRender);
+
+  // Cart modal events
+  const cartModal = document.getElementById('cartModal');
+  const openCartBtn = document.getElementById('openCartBtn');
+  const closeCartBtn = document.getElementById('closeCartBtn');
+
+  if (openCartBtn && cartModal) {
+    openCartBtn.addEventListener('click', () => cartModal.style.display = 'flex');
+  }
+  if (closeCartBtn && cartModal) {
+    closeCartBtn.addEventListener('click', () => cartModal.style.display = 'none');
+  }
+  window.addEventListener('click', (e) => {
+    if (e.target === cartModal) cartModal.style.display = 'none';
+  });
+}
+
+window.addToCart = function(productId) {
+  const product = allProducts.find(p => p.id === productId);
+  if (!product) return;
+
+  const existing = cart.find(item => item.id === productId);
+  if (existing) {
+    existing.qty += 1;
+  } else {
+    cart.push({ ...product, qty: 1 });
+  }
+
+  updateCartUI();
+  alert(`Added ${product.name} to cart!`);
+};
+
+function updateCartUI() {
+  const cartCount = document.getElementById('cartCount');
+  const cartItemsContainer = document.getElementById('cartItemsContainer');
+  const cartTotal = document.getElementById('cartTotal');
+
+  if (cartCount) {
+    cartCount.textContent = cart.reduce((sum, i) => sum + i.qty, 0);
+  }
+
+  if (cartItemsContainer && cartTotal) {
+    cartItemsContainer.innerHTML = '';
+    let total = 0;
+
+    if (cart.length === 0) {
+      cartItemsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Your shopping cart is empty.</p>';
+    } else {
+      cart.forEach(item => {
+        const itemPrice = parseFloat(item.price);
+        total += itemPrice * item.qty;
+        const div = document.createElement('div');
+        div.className = 'cart-item';
+        div.innerHTML = `
+          <div>
+            <strong>${item.name}</strong><br>
+            <small style="color: var(--text-muted);">RM ${itemPrice.toFixed(2)} × ${item.qty}</small>
+          </div>
+          <div><strong>RM ${(itemPrice * item.qty).toFixed(2)}</strong></div>
+        `;
+        cartItemsContainer.appendChild(div);
+      });
+    }
+    cartTotal.textContent = total.toFixed(2);
+  }
 }
 
 function setupRepairForm() {
