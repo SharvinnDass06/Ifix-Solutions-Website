@@ -82,18 +82,17 @@ function setupEventListeners() {
   if (categorySelect) {
     categorySelect.addEventListener("change", filterAndRender);
   }
-// Handle Customer Repair Booking Form Submission
-const repairForm = document.querySelector('form'); 
-if (repairForm) {
-    repairForm.addEventListener('submit', async (e) => {
+const serviceBookingForm = document.getElementById('serviceBookingForm');
+if (serviceBookingForm) {
+    serviceBookingForm.addEventListener('submit', async (e) => {
         e.preventDefault();
         
         const formData = {
-            full_name: repairForm.querySelector('input:nth-of-type(1)').value,
-            phone: repairForm.querySelector('input:nth-of-type(2)').value,
-            device_model: repairForm.querySelector('input:nth-of-type(3)').value,
-            requested_service: repairForm.querySelector('select').value,
-            issue_description: repairForm.querySelector('textarea').value
+            full_name: serviceBookingForm.querySelector('input[placeholder="John Doe"]').value,
+            phone: serviceBookingForm.querySelector('input[type="tel"]').value,
+            device_model: serviceBookingForm.querySelector('input[placeholder*="Asus"]').value,
+            requested_service: serviceBookingForm.querySelector('select').value,
+            issue_description: serviceBookingForm.querySelector('textarea').value
         };
 
         try {
@@ -106,9 +105,9 @@ if (repairForm) {
             const result = await response.json();
             if (result.success) {
                 alert('Repair booking submitted successfully!');
-                repairForm.reset();
+                serviceBookingForm.reset();
             } else {
-                alert('Failed to submit booking.');
+                alert('Failed to submit booking: ' + (result.error || 'Unknown error'));
             }
         } catch (err) {
             console.error(err);
