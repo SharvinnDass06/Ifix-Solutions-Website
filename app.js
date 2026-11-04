@@ -252,4 +252,37 @@ function setupEventListeners() {
   window.addEventListener('click', (e) => {
     if (e.target === cartModal) cartModal.style.display = 'none';
   });
+// Handle Repair Booking Form Submission
+const repairForm = document.getElementById('repairForm');
+if (repairForm) {
+    repairForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const formData = {
+            full_name: repairForm.querySelector('input:nth-of-type(1)').value,
+            phone: repairForm.querySelector('input:nth-of-type(2)').value,
+            device_model: repairForm.querySelector('input:nth-of-type(3)').value,
+            requested_service: repairForm.querySelector('select').value,
+            issue_description: repairForm.querySelector('textarea').value
+        };
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/repairs`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+            
+            const result = await response.json();
+            if (result.success) {
+                alert('Repair booking submitted successfully!');
+                repairForm.reset();
+            } else {
+                alert('Failed to submit booking: ' + (result.error || 'Unknown error'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Server connection error.');
+        }
+    });
 }
