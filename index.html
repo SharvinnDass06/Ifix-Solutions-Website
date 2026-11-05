@@ -8,13 +8,6 @@
 </head>
 <body>
 
-  <!-- Top Utility Announcement Bar -->
-  <div class="top-announcement-bar">
-    <span>🔥 Nationwide Delivery & In-Store Pickup Available</span>
-    <span>💬 WhatsApp Support: +60 12-345 6789</span>
-    <span>⭐ 100% Genuine Parts & Local Warranty</span>
-  </div>
-
   <!-- Navigation Header -->
   <header>
     <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
@@ -39,42 +32,6 @@
       <a href="#services" class="btn-secondary">Book a Repair</a>
     </div>
   </section>
-
-  <!-- Shop by Category Section -->
-  <section class="container" style="padding-top: 1rem; padding-bottom: 2rem;">
-    <h2 class="section-title">Shop by Category</h2>
-    <p class="section-subtitle">Quick jump to your desired hardware and parts</p>
-    
-    <div class="category-icon-grid">
-      <a href="#products" class="category-card-item" onclick="filterCategory('Laptop')">
-        <div class="category-card-icon">💻</div>
-        <div class="category-card-name">Laptops</div>
-      </a>
-      <a href="#products" class="category-card-item" onclick="filterCategory('Desktop')">
-        <div class="category-card-icon">🖥️</div>
-        <div class="category-card-name">Desktop PCs</div>
-      </a>
-      <a href="#products" class="category-card-item" onclick="filterCategory('RAM')">
-        <div class="category-card-icon">🧠</div>
-        <div class="category-card-name">Memory (RAM)</div>
-      </a>
-      <a href="#products" class="category-card-item" onclick="filterCategory('Storage')">
-        <div class="category-card-icon">⚡</div>
-        <div class="category-card-name">SSD & Storage</div>
-      </a>
-      <a href="#products" class="category-card-item" onclick="filterCategory('Equipment')">
-        <div class="category-card-icon">🎧</div>
-        <div class="category-card-name">Accessories</div>
-      </a>
-    </div>
-  </section>
-
-  <!-- Popular Brands Marquee Ribbon -->
-  <div class="brand-ribbon">
-    <div class="brand-track">
-      <span>ACER</span> • <span>ASUS</span> • <span>HP</span> • <span>LENOVO</span> • <span>DELL</span> • <span>KINGSTON</span> • <span>LOGITECH</span> • <span>WESTERN DIGITAL</span>
-    </div>
-  </div>
 
   <!-- 2. Products Section -->
   <section id="products">
@@ -140,7 +97,7 @@
       <!-- Service Booking Form -->
       <div style="margin-top: 3rem;">
         <div class="form-card">
-          <h3 style="text-align: center; margin-bottom: 1rem; color: var(--secondary);">Book a Technical Inspection / Service</h3>
+          <h3 style="text-align: center; margin-bottom: 1rem;">Book a Technical Inspection / Service</h3>
           <form id="serviceBookingForm">
             <div class="form-group">
               <label>Full Name</label>
@@ -179,7 +136,7 @@
   <section id="about">
     <div class="container" style="max-width: 900px; text-align: center;">
       <h2 class="section-title">About iFix Solutions</h2>
-      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.8;">
+      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem;">
         At <strong>iFix Solutions</strong>, we pride ourselves on providing high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or professional repairs, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure 100% performance and reliability.
       </p>
     </div>
@@ -273,45 +230,14 @@
       </div>
       <div id="cartItemsContainer"></div>
       <div style="margin-top: 1.5rem; text-align: right; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
-        <h4>Total Amount: <span style="color: var(--primary);">RM <span id="cartTotal">0.00</span></span></h4>
+        <h4>Total Amount: <span style="color: var(--primary-dark);">RM <span id="cartTotal">0.00</span></span></h4>
         <button class="btn-primary" id="checkoutBtn" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Proceed to Checkout</button>
       </div>
     </div>
   </div>
 
-  <!-- Floating Pulsing WhatsApp Button -->
-  <a href="https://wa.me/60123456789?text=Hi%2C%20I%20am%20interested%20in%20your%20iFix%20Solutions%20services%2Fproducts." target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
-    💬
-  </a>
-
-  <!-- Multi-Column Retail Footer -->
-  <footer class="retail-footer">
-    <div class="container footer-grid">
-      <div>
-        <h3>iFix Solutions</h3>
-        <p style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">Your premier destination for high-end computer repairs, upgrades, and verified second-hand hardware.</p>
-      </div>
-      <div>
-        <h4>Quick Links</h4>
-        <ul style="list-style: none; margin-top: 0.5rem; color: #94a3b8; font-size: 0.9rem; line-height: 1.8;">
-          <li><a href="#home" style="color: inherit; text-decoration: none;">Home Store</a></li>
-          <li><a href="#products" style="color: inherit; text-decoration: none;">Browse Catalog</a></li>
-          <li><a href="#services" style="color: inherit; text-decoration: none;">Repair Bookings</a></li>
-          <li><a href="#about" style="color: inherit; text-decoration: none;">About Our Team</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Customer Care</h4>
-        <ul style="list-style: none; margin-top: 0.5rem; color: #94a3b8; font-size: 0.9rem; line-height: 1.8;">
-          <li><a href="#contact" style="color: inherit; text-decoration: none;">Store Locations</a></li>
-          <li><a href="#contact" style="color: inherit; text-decoration: none;">Warranty Policy</a></li>
-          <li><a href="#feedback" style="color: inherit; text-decoration: none;">Customer Reviews</a></li>
-        </ul>
-      </div>
-    </div>
-    <div style="text-align: center; border-top: 1px solid rgba(255, 255, 255, 0.1); margin-top: 2rem; padding-top: 1.5rem; color: #64748b; font-size: 0.85rem;">
-      &copy; 2026 iFix Solutions Computer Shop. All Rights Reserved.
-    </div>
+  <footer>
+    <p>&copy; 2026 iFix Solutions Computer Shop. Built for Internship Project.</p>
   </footer>
  
   <script src="script.js"></script>
