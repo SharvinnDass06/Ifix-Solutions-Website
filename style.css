@@ -1,6 +1,5 @@
 /* ==========================================================================
-   iFix Solutions - Professional Retail E-Commerce Theme
-   (Red, White, Black & Navy Accents with Smooth Animations)
+   iFix Solutions - Ultimate Retail E-Commerce Theme
    ========================================================================== */
 
 :root {
@@ -37,6 +36,20 @@ body {
   background-color: var(--bg-light);
   color: var(--text-dark);
   line-height: 1.6;
+}
+
+/* Top Announcement Bar */
+.top-announcement-bar {
+  background-color: var(--secondary);
+  color: #cbd5e1;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.4rem 2rem;
+  display: flex;
+  justify-content: space-around;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
 /* Glassmorphism Header with Red Accent */
@@ -226,6 +239,36 @@ section {
 .category-card-name {
   font-size: 0.95rem;
   font-weight: 700;
+}
+
+/* Brand Marquee Ticker Ribbon */
+.brand-ribbon {
+  background-color: #ffffff;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  padding: 1rem 0;
+  overflow: hidden;
+  white-space: nowrap;
+  margin-bottom: 2rem;
+}
+
+.brand-track {
+  display: inline-block;
+  animation: marquee 25s linear infinite;
+  font-weight: 800;
+  color: var(--text-muted);
+  font-size: 1.1rem;
+  letter-spacing: 1px;
+}
+
+.brand-track span {
+  padding: 0 2rem;
+  color: var(--secondary);
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
 
 /* Controls Bar & Storefront Grid */
@@ -567,11 +610,21 @@ section {
   100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
 }
 
-footer {
+/* Retail Footer */
+.retail-footer {
   background: var(--secondary);
-  color: #94a3b8;
-  text-align: center;
-  padding: 2rem;
-  margin-top: 3rem;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 3rem 1rem 1.5rem 1rem;
+  margin-top: 4rem;
+  border-top: 3px solid var(--primary);
 }
+
+.footer-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 2rem;
+}
+
+.retail-footer h3, .retail-footer h4 {
+  color: white;
+  margin-bottom: 0.75rem;
