@@ -8,49 +8,85 @@
 </head>
 <body>
 
-  <!-- Navigation Header -->
+  <div class="topbar">
+    <div class="topbar-in">
+      <span>✉ support@ifixsolutions.com</span>
+      <a href="#about">About Us</a>
+      <a href="#contact">Contact Us</a>
+    </div>
+  </div>
+
   <header>
-    <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
-    <div class="nav-links">
-      <a href="#home">Home</a>
+    <div class="head-main">
+      <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
+      <div class="search-box">
+        <span class="search-all">All ▾</span>
+        <input type="text" placeholder="Search products, brands or model numbers"
+          onfocus="document.getElementById('products').scrollIntoView()"
+          oninput="var s=document.getElementById('searchInput');s.value=this.value;s.dispatchEvent(new Event('input'))">
+        <span class="search-go">🔍</span>
+      </div>
+      <button class="cart-btn" id="openCartBtn">Cart (<span id="cartCount">0</span>)</button>
+      
+      
+    </div>
+    <input type="checkbox" id="menuToggle" class="menu-toggle">
+    <label for="menuToggle" class="menu-icon">☰</label>
+    <nav class="nav-links">
+      <a href="#home" class="active">Home</a>
+      <a href="#categories">Shop by Category</a>
       <a href="#products">Products</a>
       <a href="#services">Services</a>
       <a href="#about">About Us</a>
       <a href="#feedback">Feedback</a>
       <a href="#contact">Contact</a>
-      
-      <button class="cart-btn" id="openCartBtn">🛒 Cart (<span id="cartCount">0</span>)</button>
-    </div>
+      <a href="https://wa.me/60123456789" class="wa-link" target="_blank">WhatsApp to Order</a>
+    </nav>
   </header>
 
-  <!-- 1. Home / Hero Section -->
   <section id="home" class="hero">
-    <h1>iFix Solutions Computer Shop</h1>
-    <p>Your Trusted Specialists for Laptop & PC Repairs, Hardware Upgrades, and High-Quality Second-Hand Laptops, Desktops, SSDs & RAM.</p>
-    <div class="hero-btns">
-      <a href="#products" class="btn-primary">Browse Shop Catalog</a>
-      <a href="#services" class="btn-secondary">Book a Repair</a>
+    <div class="hero-inner">
+      <div class="hero-text">
+        <span class="hero-brand">iFix Solutions</span>
+        <h1>Laptops, PCs <br>&amp; Expert Repairs</h1>
+        <p>Enquire. Get advice. Place your order.</p>
+        <a href="https://wa.me/60123456789" target="_blank" class="btn-wa">💬 Chat with Us</a>
+        <small>Laptops • PCs • SSD &amp; RAM • Repairs</small>
+      </div>
+      <div class="hero-visual">💻<span>🖥️</span><span>📱</span></div>
     </div>
   </section>
 
-  <!-- 2. Products Section -->
+  <section id="categories" class="cats">
+    <div class="container">
+      <div class="cat-grid">
+        <a href="#products" class="cat"><div>💻</div>LAPTOP</a>
+        <a href="#products" class="cat"><div>🖥️</div>DESKTOP PC</a>
+        <a href="#products" class="cat"><div>🧠</div>RAM</a>
+        <a href="#products" class="cat"><div>💾</div>SSD / STORAGE</a>
+        <a href="#products" class="cat"><div>🖱️</div>ACCESSORIES</a>
+        <a href="#services" class="cat"><div>🔧</div>REPAIR SERVICES</a>
+        <a href="#products" class="cat"><div>🏷️</div>CLEARANCE SALE</a>
+        <a href="#contact" class="cat"><div>🏬</div>OUR SHOP</a>
+      </div>
+    </div>
+  </section>
+
   <section id="products">
     <div class="container">
-      <h2 class="section-title">Hardware & Second-Hand Catalog</h2>
+      <h2 class="section-title">Hardware &amp; Second-Hand Catalog</h2>
       <p class="section-subtitle">Fully tested and guaranteed with warranty</p>
 
       <div class="controls-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="Search NVMe, ThinkPad, DDR4 RAM, MacBook...">
-        
+        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search NVMe, ThinkPad, DDR4 RAM, MacBook...">
         <select id="categoryFilter">
           <option value="ALL">All Categories</option>
           <option value="Laptop">Laptops</option>
           <option value="Desktop">Desktop PCs</option>
           <option value="RAM">RAM</option>
           <option value="Storage">SSD / Storage</option>
-          <option value="Equipment">Accessories & Peripherals</option>
+          <option value="Equipment">Accessories &amp; Peripherals</option>
         </select>
-
         <select id="conditionFilter">
           <option value="ALL">All Conditions</option>
           <option value="Grade A Used">Grade A Used</option>
@@ -59,14 +95,11 @@
         </select>
       </div>
 
-      <div class="product-grid" id="productGrid">
-        <!-- Products populated via JS -->
-      </div>
+      <div class="product-grid" id="productGrid"></div>
     </div>
   </section>
 
-  <!-- 3. Services Section -->
-  <section id="services" style="background-color: #f1f5f9;">
+  <section id="services" class="alt">
     <div class="container">
       <h2 class="section-title">Our Technical Services</h2>
       <p class="section-subtitle">Fast turn-around repair and upgrade solutions by experienced technicians</p>
@@ -74,31 +107,30 @@
       <div class="services-grid">
         <div class="service-card">
           <div class="service-icon">💻</div>
-          <h3>Laptop Diagnostics & Repair</h3>
-          <p>Fix motherboard issues, broken screen replacement, battery health checks, and power jack repairs.</p>
+          <h3>Laptop Diagnostics &amp; Repair</h3>
+          <p>Motherboard issues, screen replacement, battery health checks and power jack repairs.</p>
         </div>
         <div class="service-card">
           <div class="service-icon">🚀</div>
-          <h3>SSD & RAM Speed Upgrades</h3>
-          <p>Supercharge your slow computer with high-speed NVMe SSDs and memory upgrades with Windows cloning.</p>
+          <h3>SSD &amp; RAM Speed Upgrades</h3>
+          <p>Supercharge a slow computer with NVMe SSDs and memory upgrades, including Windows cloning.</p>
         </div>
         <div class="service-card">
           <div class="service-icon">🖥️</div>
           <h3>Custom PC Assembly</h3>
-          <p>Tailored office desktop or gaming PC builds to fit your exact budget and performance requirements.</p>
+          <p>Office or gaming PC builds tailored to your budget and performance needs.</p>
         </div>
         <div class="service-card">
           <div class="service-icon">🧹</div>
-          <h3>Thermal Paste & Servicing</h3>
-          <p>Deep dust cleaning and thermal paste replacement to lower CPU/GPU temperatures and prevent overheating.</p>
+          <h3>Thermal Paste &amp; Servicing</h3>
+          <p>Deep dust cleaning and thermal paste replacement to lower temperatures and prevent overheating.</p>
         </div>
       </div>
 
-      <!-- Service Booking Form -->
-      <div style="margin-top: 3rem;">
-        <div class="form-card">
-          <h3 style="text-align: center; margin-bottom: 1rem;">Book a Technical Inspection / Service</h3>
-          <form id="serviceBookingForm">
+      <div class="form-card booking">
+        <h3>Book a Technical Inspection / Service</h3>
+        <form id="serviceBookingForm">
+          <div class="form-row">
             <div class="form-group">
               <label>Full Name</label>
               <input type="text" placeholder="John Doe" required>
@@ -107,8 +139,10 @@
               <label>Phone / WhatsApp Number</label>
               <input type="tel" placeholder="+60 12-345 6789" required>
             </div>
+          </div>
+          <div class="form-row">
             <div class="form-group">
-              <label>Device Type & Model</label>
+              <label>Device Type &amp; Model</label>
               <input type="text" placeholder="e.g. Asus ROG Strix / Dell Latitude 5400" required>
             </div>
             <div class="form-group">
@@ -116,55 +150,57 @@
               <select required>
                 <option value="Diagnostic">General Repair / Fault Diagnostic</option>
                 <option value="Upgrade">SSD / RAM Upgrade</option>
-                <option value="Cleaning">Thermal Paste & Dust Cleaning</option>
-                <option value="OS">Windows OS Format & Cleanup</option>
+                <option value="Cleaning">Thermal Paste &amp; Dust Cleaning</option>
+                <option value="OS">Windows OS Format &amp; Cleanup</option>
               </select>
             </div>
-            <div class="form-group">
-              <label>Issue Description</label>
-              <textarea rows="3" placeholder="Describe what is wrong with your laptop or PC..."></textarea>
-            </div>
-            <button type="submit" class="btn-primary" style="width: 100%;">Submit Repair Booking Request</button>
-          </form>
-        </div>
+          </div>
+          <div class="form-group">
+            <label>Issue Description</label>
+            <textarea rows="3" placeholder="Describe what is wrong with your laptop or PC..."></textarea>
+          </div>
+          <button type="submit" class="btn-primary full">Submit Repair Booking Request</button>
+        </form>
       </div>
-
     </div>
   </section>
 
-  <!-- 4. About Us Section -->
   <section id="about">
-    <div class="container" style="max-width: 900px; text-align: center;">
-      <h2 class="section-title">About iFix Solutions</h2>
-      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem;">
-        At <strong>iFix Solutions</strong>, we pride ourselves on providing high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or professional repairs, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure 100% performance and reliability.
-      </p>
+    <div class="container about-wrap">
+      <div>
+        <h2 class="section-title left">About iFix Solutions</h2>
+        <p class="about-text">At <strong>iFix Solutions</strong>, we provide high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or a professional repair, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure performance and reliability.</p>
+      </div>
+      <div class="stats">
+        <div><b>100%</b><small>Tested Items</small></div>
+        <div><b>3 mo+</b><small>Warranty</small></div>
+        <div><b>6 days</b><small>Open Weekly</small></div>
+        <div><b>5★</b><small>Customer Rated</small></div>
+      </div>
     </div>
   </section>
 
-  <!-- 5. User Feedback & Reviews Section -->
-  <section id="feedback" style="background-color: #f1f5f9;">
+  <section id="feedback" class="alt">
     <div class="container">
-      <h2 class="section-title">Customer Feedback & Reviews</h2>
+      <h2 class="section-title">Customer Feedback &amp; Reviews</h2>
       <p class="section-subtitle">Read what our happy customers have to say about iFix Solutions</p>
 
       <div class="feedback-grid" id="feedbackGrid">
         <div class="feedback-card">
           <div class="stars">★★★★★</div>
           <p>"Replaced my old laptop's HDD with a 512GB NVMe SSD at iFix Solutions. The boot time went from 3 minutes to 10 seconds! Excellent service!"</p>
-          <strong style="display: block; margin-top: 1rem; color: var(--secondary);">- Sharvinn D.</strong>
+          <strong>- Sharvinn D.</strong>
         </div>
         <div class="feedback-card">
           <div class="stars">★★★★★</div>
           <p>"Bought a Grade A Used ThinkPad laptop for my studies. Clean condition, fair pricing, and came with 3 months warranty. Highly recommended!"</p>
-          <strong style="display: block; margin-top: 1rem; color: var(--secondary);">- Michelle K.</strong>
+          <strong>- Michelle K.</strong>
         </div>
       </div>
 
-      <!-- Submit Feedback Form -->
       <div class="form-card">
         <h3>Leave Your Feedback</h3>
-        <form id="feedbackForm" style="margin-top: 1rem;">
+        <form id="feedbackForm">
           <div class="form-group">
             <label>Your Name</label>
             <input type="text" id="fbName" placeholder="e.g. Alex Wong" required>
@@ -181,31 +217,29 @@
             <label>Your Review / Experience</label>
             <textarea id="fbComment" rows="3" placeholder="Share your experience with our services or products..." required></textarea>
           </div>
-          <button type="submit" class="btn-primary" style="width: 100%;">Post Review</button>
+          <button type="submit" class="btn-primary full">Post Review</button>
         </form>
       </div>
-
     </div>
   </section>
 
-  <!-- 6. Contact Us Section -->
   <section id="contact">
     <div class="container">
-      <h2 class="section-title">Contact & Location</h2>
+      <h2 class="section-title">Contact &amp; Location</h2>
       <p class="section-subtitle">Get in touch with us or visit our shop</p>
 
       <div class="contact-wrapper">
-        <div class="form-card" style="margin: 0; max-width: 100%;">
+        <div class="form-card wide info-card">
           <h3>iFix Solutions Shop Details</h3>
-          <p style="margin-top: 1rem;">📍 <strong>Address:</strong> No. 12, Tech Commerce Center, Computer Street</p>
-          <p style="margin-top: 0.5rem;">📞 <strong>Phone / WhatsApp:</strong> +60 12-345 6789</p>
-          <p style="margin-top: 0.5rem;">✉️ <strong>Email:</strong> support@ifixsolutions.com</p>
-          <p style="margin-top: 0.5rem;">⏰ <strong>Business Hours:</strong> Monday - Saturday (10:00 AM - 7:00 PM)</p>
+          <p>📍 <strong>Address:</strong> No. 12, Tech Commerce Center, Computer Street</p>
+          <p>📞 <strong>Phone / WhatsApp:</strong> +60 12-345 6789</p>
+          <p>✉️ <strong>Email:</strong> support@ifixsolutions.com</p>
+          <p>⏰ <strong>Business Hours:</strong> Monday - Saturday (10:00 AM - 7:00 PM)</p>
         </div>
 
-        <div class="form-card" style="margin: 0; max-width: 100%;">
+        <div class="form-card wide">
           <h3>Send Us a Quick Message</h3>
-          <form id="contactForm" style="margin-top: 1rem;">
+          <form id="contactForm">
             <div class="form-group">
               <label>Email Address</label>
               <input type="email" placeholder="yourname@gmail.com" required>
@@ -214,14 +248,13 @@
               <label>Message</label>
               <textarea rows="4" placeholder="How can we help you?" required></textarea>
             </div>
-            <button type="submit" class="btn-primary" style="width: 100%;">Send Message</button>
+            <button type="submit" class="btn-primary full">Send Message</button>
           </form>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Shopping Cart Modal Popup -->
   <div class="modal" id="cartModal">
     <div class="modal-content">
       <div class="modal-header">
@@ -229,17 +262,33 @@
         <span class="close-btn" id="closeCartBtn">&times;</span>
       </div>
       <div id="cartItemsContainer"></div>
-      <div style="margin-top: 1.5rem; text-align: right; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
-        <h4>Total Amount: <span style="color: var(--primary-dark);">RM <span id="cartTotal">0.00</span></span></h4>
-        <button class="btn-primary" id="checkoutBtn" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Proceed to Checkout</button>
+      <div class="cart-footer">
+        <h4>Total Amount: <span>RM <span id="cartTotal">0.00</span></span></h4>
+        <button class="btn-primary full" id="checkoutBtn">Proceed to Checkout</button>
       </div>
     </div>
   </div>
 
+  <a href="https://wa.me/60123456789" target="_blank" class="wa-float" aria-label="WhatsApp">💬</a>
+
   <footer>
-    <p>&copy; 2026 iFix Solutions Computer Shop. Built for Internship Project.</p>
+    <div class="footer-grid">
+      <div>
+        <h4>🛠️ iFix Solutions</h4>
+        <p>Computer sales, repairs and upgrades you can rely on.</p>
+      </div>
+      <div>
+        <h4>Quick Links</h4>
+        <a href="#products">Products</a><a href="#services">Services</a><a href="#about">About Us</a><a href="#contact">Contact</a>
+      </div>
+      <div>
+        <h4>Get in Touch</h4>
+        <p>+60 12-345 6789</p><p>support@ifixsolutions.com</p><p>Mon–Sat, 10 AM – 7 PM</p>
+      </div>
+    </div>
+    <p class="copy">&copy; 2026 iFix Solutions Computer Shop. Built for Internship Project.</p>
   </footer>
- 
+
   <script src="script.js"></script>
 </body>
 </html>
