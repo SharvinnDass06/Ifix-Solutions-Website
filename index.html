@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>iFix Solutions - Computer Sales, Repairs & Upgrades</title>
- <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -30,6 +30,35 @@
     <div class="hero-btns">
       <a href="#products" class="btn-primary">Browse Shop Catalog</a>
       <a href="#services" class="btn-secondary">Book a Repair</a>
+    </div>
+  </section>
+
+  <!-- Shop by Category Section (Like Reference Site) -->
+  <section class="container" style="padding-top: 1rem; padding-bottom: 2rem;">
+    <h2 class="section-title">Shop by Category</h2>
+    <p class="section-subtitle">Quick jump to your desired hardware and parts</p>
+    
+    <div class="category-icon-grid">
+      <a href="#products" class="category-card-item" onclick="filterCategory('Laptop')">
+        <div class="category-card-icon">💻</div>
+        <div class="category-card-name">Laptops</div>
+      </a>
+      <a href="#products" class="category-card-item" onclick="filterCategory('Desktop')">
+        <div class="category-card-icon">🖥️</div>
+        <div class="category-card-name">Desktop PCs</div>
+      </a>
+      <a href="#products" class="category-card-item" onclick="filterCategory('RAM')">
+        <div class="category-card-icon">🧠</div>
+        <div class="category-card-name">Memory (RAM)</div>
+      </a>
+      <a href="#products" class="category-card-item" onclick="filterCategory('Storage')">
+        <div class="category-card-icon">⚡</div>
+        <div class="category-card-name">SSD & Storage</div>
+      </a>
+      <a href="#products" class="category-card-item" onclick="filterCategory('Equipment')">
+        <div class="category-card-icon">🎧</div>
+        <div class="category-card-name">Accessories</div>
+      </a>
     </div>
   </section>
 
@@ -97,7 +126,7 @@
       <!-- Service Booking Form -->
       <div style="margin-top: 3rem;">
         <div class="form-card">
-          <h3 style="text-align: center; margin-bottom: 1rem;">Book a Technical Inspection / Service</h3>
+          <h3 style="text-align: center; margin-bottom: 1rem; color: var(--secondary);">Book a Technical Inspection / Service</h3>
           <form id="serviceBookingForm">
             <div class="form-group">
               <label>Full Name</label>
@@ -136,7 +165,7 @@
   <section id="about">
     <div class="container" style="max-width: 900px; text-align: center;">
       <h2 class="section-title">About iFix Solutions</h2>
-      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem;">
+      <p style="font-size: 1.1rem; color: var(--text-muted); margin-top: 1rem; line-height: 1.8;">
         At <strong>iFix Solutions</strong>, we pride ourselves on providing high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or professional repairs, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure 100% performance and reliability.
       </p>
     </div>
@@ -230,14 +259,19 @@
       </div>
       <div id="cartItemsContainer"></div>
       <div style="margin-top: 1.5rem; text-align: right; border-top: 1px solid #e2e8f0; padding-top: 1rem;">
-        <h4>Total Amount: <span style="color: var(--primary-dark);">RM <span id="cartTotal">0.00</span></span></h4>
+        <h4>Total Amount: <span style="color: var(--primary);">RM <span id="cartTotal">0.00</span></span></h4>
         <button class="btn-primary" id="checkoutBtn" style="margin-top: 1rem; width: 100%; padding: 0.75rem;">Proceed to Checkout</button>
       </div>
     </div>
   </div>
 
+  <!-- Floating Pulsing WhatsApp Button -->
+  <a href="https://wa.me/60123456789?text=Hi%2C%20I%20am%20interested%20in%20your%20iFix%20Solutions%20services%2Fproducts." target="_blank" class="whatsapp-float" title="Chat on WhatsApp">
+    💬
+  </a>
+
   <footer>
-    <p>&copy; 2026 iFix Solutions Computer Shop. Built for Internship Project.</p>
+    <p>&copy; 2026 iFix Solutions Computer Shop. All Rights Reserved.</p>
   </footer>
  
   <script src="script.js"></script>

@@ -1,17 +1,20 @@
-/* iFix Solutions - Complete Upgraded Tech Theme */
+/* ==========================================================================
+   iFix Solutions - Professional Retail E-Commerce Theme
+   (Red, White, Black & Navy Accents with Smooth Animations)
+   ========================================================================== */
+
 :root {
-  --primary: #2563eb;
-  --primary-dark: #1d4ed8;
-  --primary-light: #dbeafe;
-  --accent: #f59e0b;
-  --secondary: #0f172a;
+  --primary: #dc2626;         /* Retail Red */
+  --primary-dark: #b91c1c;    /* Dark Red Hover */
+  --primary-light: #fee2e2;   /* Soft Red Tint */
+  --accent: #f59e0b;          /* Gold Star / Accent */
+  --secondary: #0f172a;       /* Dark Black/Navy Header & Footer */
   --bg-light: #f8fafc;
   --card-bg: #ffffff;
   --border: #e2e8f0;
   --text-dark: #0f172a;
   --text-muted: #64748b;
   --success: #16a34a;
-  --danger: #dc2626;
   --radius: 12px;
   --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04);
@@ -36,7 +39,7 @@ body {
   line-height: 1.6;
 }
 
-/* Glassmorphism Header */
+/* Glassmorphism Header with Red Accent */
 header {
   background-color: rgba(15, 23, 42, 0.95);
   backdrop-filter: blur(8px);
@@ -49,13 +52,13 @@ header {
   top: 0;
   z-index: 100;
   box-shadow: var(--shadow-md);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 3px solid var(--primary);
 }
 
 .logo {
   font-size: 1.5rem;
   font-weight: 800;
-  color: #38bdf8;
+  color: #ffffff;
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -63,7 +66,7 @@ header {
 }
 
 .logo span {
-  color: var(--accent);
+  color: var(--primary);
 }
 
 .nav-links {
@@ -75,7 +78,8 @@ header {
 .nav-links a {
   color: #cbd5e1;
   text-decoration: none;
-  font-weight: 500;
+  font-weight: 600;
+  font-size: 0.95rem;
   transition: color 0.2s ease;
 }
 
@@ -90,36 +94,12 @@ header {
   padding: 0.6rem 1.2rem;
   border-radius: var(--radius);
   cursor: pointer;
-  font-weight: 600;
+  font-weight: 700;
   transition: var(--transition);
 }
 
 .cart-btn:hover {
   background-color: var(--primary-dark);
-}
-
-/* Sections & Layout */
-section {
-  padding: 4rem 1rem;
-}
-
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.section-title {
-  font-size: 2rem;
-  font-weight: 800;
-  text-align: center;
-  margin-bottom: 0.5rem;
-  color: var(--secondary);
-}
-
-.section-subtitle {
-  text-align: center;
-  color: var(--text-muted);
-  margin-bottom: 2.5rem;
 }
 
 /* Hero Section */
@@ -133,6 +113,7 @@ section {
 .hero h1 {
   font-size: 2.8rem;
   margin-bottom: 1rem;
+  font-weight: 800;
 }
 
 .hero p {
@@ -171,13 +152,80 @@ section {
 
 .btn-secondary {
   background-color: transparent;
-  border: 2px solid #38bdf8;
-  color: #38bdf8;
+  border: 2px solid var(--primary);
+  color: #ffffff;
 }
 
 .btn-secondary:hover {
-  background-color: #38bdf8;
+  background-color: var(--primary);
+  color: white;
+}
+
+/* Container & Sections */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+section {
+  padding: 4rem 1rem;
+}
+
+.section-title {
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 0.5rem;
   color: var(--secondary);
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--text-muted);
+  margin-bottom: 2.5rem;
+}
+
+/* Category Icon Grid (Animated Lift & Pop) */
+.category-icon-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.category-card-item {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  color: var(--text-dark);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition);
+}
+
+.category-card-item:hover {
+  transform: translateY(-6px);
+  border-color: var(--primary);
+  box-shadow: 0 10px 20px -5px rgba(220, 38, 38, 0.2);
+  color: var(--primary);
+}
+
+.category-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.category-card-item:hover .category-card-icon {
+  transform: scale(1.15);
+}
+
+.category-card-name {
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
 /* Controls Bar & Storefront Grid */
@@ -214,6 +262,7 @@ section {
   gap: 1.75rem;
 }
 
+/* Product Card Animation (Lift & Quick View Overlay) */
 .product-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -223,11 +272,13 @@ section {
   display: flex;
   flex-direction: column;
   transition: var(--transition);
+  position: relative;
 }
 
 .product-card:hover {
   transform: translateY(-6px);
   box-shadow: var(--shadow-lg);
+  border-color: #cbd5e1;
 }
 
 .product-img-wrapper {
@@ -235,17 +286,41 @@ section {
   width: 100%;
   height: 190px;
   background-color: #f1f5f9;
+  position: relative;
 }
 
 .product-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .product-card:hover .product-img {
-  transform: scale(1.05);
+  transform: scale(1.08);
+}
+
+/* Quick View Badge on Hover */
+.product-img-wrapper::after {
+  content: "Quick View";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.9);
+  background: rgba(220, 38, 38, 0.9);
+  color: #ffffff;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  opacity: 0;
+  transition: all 0.3s ease;
+  pointer-events: none;
+}
+
+.product-card:hover .product-img-wrapper::after {
+  opacity: 1;
+  transform: translate(-50%, -50%) scale(1);
 }
 
 .product-info {
@@ -295,11 +370,11 @@ section {
 .product-price {
   font-size: 1.2rem;
   font-weight: 800;
-  color: var(--primary-dark);
+  color: var(--primary);
 }
 
 .btn-add-cart {
-  background-color: var(--primary);
+  background-color: var(--secondary);
   color: white;
   border: none;
   padding: 0.5rem 1rem;
@@ -310,7 +385,7 @@ section {
 }
 
 .btn-add-cart:hover {
-  background-color: var(--primary-dark);
+  background-color: var(--primary);
 }
 
 /* Services & Forms */
@@ -327,6 +402,12 @@ section {
   box-shadow: var(--shadow-md);
   border: 1px solid var(--border);
   text-align: center;
+  transition: var(--transition);
+}
+
+.service-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
 }
 
 .service-icon {
@@ -362,6 +443,14 @@ section {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   outline: none;
+  font-size: 0.95rem;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
 }
 
 .feedback-grid {
@@ -447,10 +536,42 @@ section {
   border-bottom: 1px solid var(--border);
 }
 
+/* Floating Pulsing WhatsApp Button */
+.whatsapp-float {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  background-color: #25d366;
+  color: white;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.8rem;
+  box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+  z-index: 999;
+  text-decoration: none;
+  animation: pulse 2s infinite;
+  transition: transform 0.2s ease;
+}
+
+.whatsapp-float:hover {
+  transform: scale(1.1);
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
+  70% { box-shadow: 0 0 0 14px rgba(37, 211, 102, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+}
+
 footer {
   background: var(--secondary);
   color: #94a3b8;
   text-align: center;
   padding: 2rem;
   margin-top: 3rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
