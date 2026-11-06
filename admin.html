@@ -5,56 +5,116 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iFix Solutions - Admin Dashboard</title>
     <style>
-        body { font-family: Arial, sans-serif; max-width: 900px; margin: 40px auto; padding: 20px; background: #f4f4f9; color: #333; }
-        .card { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 30px; }
-        h2, h3 { color: #0f172a; margin-bottom: 15px; }
+        :root {
+            --primary: #0284c7;
+            --primary-hover: #0369a1;
+            --danger: #dc2626;
+            --danger-hover: #b91c1c;
+            --success: #16a34a;
+            --success-hover: #15803d;
+            --warning: #ca8a04;
+            --warning-hover: #a16207;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        body { font-family: system-ui, -apple-system, sans-serif; max-width: 1000px; margin: 30px auto; padding: 20px; background: var(--bg); color: var(--text); }
+        
+        .header-title { text-align: center; margin-bottom: 25px; color: #0f172a; font-size: 2rem; }
+        
+        /* Stats Overview Row */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .stat-card { background: var(--card-bg); padding: 20px; border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); border-left: 4px solid var(--primary); }
+        .stat-card h4 { margin: 0; color: #64748b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stat-card p { margin: 8px 0 0 0; font-size: 1.8rem; font-weight: bold; color: #0f172a; }
+
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); margin-bottom: 30px; }
+        h2 { color: #0f172a; margin-top: 0; margin-bottom: 20px; font-size: 1.25rem; border-bottom: 2px solid var(--border); padding-bottom: 10px; }
+        
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .form-group { margin-bottom: 15px; }
-        label { display: block; margin-bottom: 5px; font-weight: bold; }
-        input, select, textarea { width: 100%; padding: 8px; box-sizing: border-box; border: 1px solid #ccc; border-radius: 4px; }
-        button { background: #0284c7; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-size: 16px; font-weight: bold; }
-        button:hover { background: #0369a1; }
-        .delete-btn { background-color: #dc2626; padding: 6px 12px; font-size: 14px; }
-        .delete-btn:hover { background-color: #b91c1c; }
-        .done-btn { background-color: #16a34a; padding: 6px 12px; font-size: 14px; margin-right: 5px; }
-        .done-btn:hover { background-color: #15803d; }
-        .cancel-btn { background-color: #ca8a04; padding: 6px 12px; font-size: 14px; margin-right: 5px; }
-        .cancel-btn:hover { background-color: #a16207; }
-        #message { margin-top: 15px; font-weight: bold; }
-        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #e2e8f0; gap: 10px; }
-        .repair-card { background: #f8fafc; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; margin-bottom: 15px; }
-        .status-badge { display: inline-block; padding: 3px 8px; border-radius: 4px; font-size: 12px; font-weight: bold; text-transform: uppercase; }
+        .form-group.full { grid-column: span 2; }
+        
+        label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 10px; box-sizing: border-box; border: 1px solid var(--border); border-radius: 6px; font-size: 0.95rem; background: #fff; }
+        input:focus, select:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.1); }
+        
+        button { background: var(--primary); color: white; border: none; padding: 10px 18px; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: background 0.2s; }
+        button:hover { background: var(--primary-hover); }
+        
+        .delete-btn { background-color: var(--danger); padding: 6px 12px; font-size: 0.85rem; }
+        .delete-btn:hover { background-color: var(--danger-hover); }
+        .done-btn { background-color: var(--success); padding: 6px 12px; font-size: 0.85rem; margin-right: 5px; }
+        .done-btn:hover { background-color: var(--success-hover); }
+        .cancel-btn { background-color: var(--warning); padding: 6px 12px; font-size: 0.85rem; margin-right: 5px; }
+        .cancel-btn:hover { background-color: var(--warning-hover); }
+        .update-stock-btn { background-color: var(--success); padding: 6px 10px; font-size: 0.8rem; }
+        .update-stock-btn:hover { background-color: var(--success-hover); }
+        
+        #message { margin-top: 15px; font-weight: 600; font-size: 0.95rem; }
+        
+        .admin-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); gap: 15px; }
+        .admin-item:last-child { border-bottom: none; }
+        .product-info { display: flex; align-items: center; gap: 15px; flex: 1; }
+        .product-thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; background: #e2e8f0; border: 1px solid var(--border); }
+        
+        .stock-edit-group { display: flex; align-items: center; gap: 8px; }
+        .stock-input { width: 70px; padding: 5px; text-align: center; }
+
+        .repair-card { background: #f8fafc; border: 1px solid var(--border); padding: 18px; border-radius: 8px; margin-bottom: 15px; }
+        .repair-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        
+        .status-badge { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
         .status-Pending { background: #fef08a; color: #854d0e; }
         .status-Completed { background: #dcfce7; color: #166534; }
         .status-Cancelled { background: #fee2e2; color: #991b1b; }
+
+        .repair-details p { margin: 6px 0; font-size: 0.95rem; }
     </style>
 </head>
 <body>
 
-    <h1 style="text-align: center; margin-bottom: 30px;">🛠️ iFix Solutions Admin Dashboard</h1>
+    <h1 class="header-title">🛠️ iFix Solutions Admin Dashboard</h1>
+
+    <!-- Summary Metrics Row -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h4>Total Products</h4>
+            <p id="statTotalProducts">0</p>
+        </div>
+        <div class="stat-card" style="border-left-color: var(--warning);">
+            <h4>Pending Repairs</h4>
+            <p id="statPendingRepairs">0</p>
+        </div>
+    </div>
 
     <!-- 1. Add New Product Section -->
     <div class="card">
         <h2>Add New Product to Catalog</h2>
         <form id="productForm">
-            <div class="form-group">
-                <label for="name">Product Name:</label>
-                <input type="text" id="name" required placeholder="e.g. Kingston 8GB RAM">
-            </div>
-            <div class="form-group">
-                <label for="category">Category:</label>
-                <input type="text" id="category" required placeholder="e.g. RAM, Storage, Laptop">
-            </div>
-            <div class="form-group">
-                <label for="price">Price (RM):</label>
-                <input type="number" step="0.01" id="price" required placeholder="e.g. 150.00">
-            </div>
-            <div class="form-group">
-                <label for="image_url">Image URL:</label>
-                <input type="text" id="image_url" placeholder="Paste image link here">
-            </div>
-            <div class="form-group">
-                <label for="stock_quantity">Stock Quantity:</label>
-                <input type="number" id="stock_quantity" required placeholder="e.g. 10">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="name">Product Name</label>
+                    <input type="text" id="name" required placeholder="e.g. Kingston 8GB RAM">
+                </div>
+                <div class="form-group">
+                    <label for="category">Category</label>
+                    <input type="text" id="category" required placeholder="e.g. RAM, Storage, Laptop">
+                </div>
+                <div class="form-group">
+                    <label for="price">Price (RM)</label>
+                    <input type="number" step="0.01" id="price" required placeholder="e.g. 150.00">
+                </div>
+                <div class="form-group">
+                    <label for="stock_quantity">Stock Quantity</label>
+                    <input type="number" id="stock_quantity" required placeholder="e.g. 10">
+                </div>
+                <div class="form-group full">
+                    <label for="image_url">Image URL</label>
+                    <input type="text" id="image_url" placeholder="https://example.com/product-image.jpg">
+                </div>
             </div>
             <button type="submit">Add Product to Database</button>
         </form>
@@ -63,7 +123,7 @@
 
     <!-- 2. Manage Products Inventory Section -->
     <div class="card">
-        <h2>Live Product Inventory & Deletion</h2>
+        <h2>Live Product Inventory, Stock Editing &amp; Deletion</h2>
         <div id="admin-product-list">
             <p style="color: #64748b;">Loading products...</p>
         </div>
@@ -103,17 +163,17 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    messageDiv.style.color = 'green';
+                    messageDiv.style.color = 'var(--success)';
                     messageDiv.textContent = 'Success! Product added to the database.';
                     productForm.reset();
                     loadAdminProducts();
                 } else {
-                    messageDiv.style.color = 'red';
+                    messageDiv.style.color = 'var(--danger)';
                     messageDiv.textContent = 'Error: Could not add product.';
                 }
             } catch (err) {
                 console.error(err);
-                messageDiv.style.color = 'red';
+                messageDiv.style.color = 'var(--danger)';
                 messageDiv.textContent = 'Server connection error!';
             }
         });
@@ -127,22 +187,59 @@
                 listContainer.innerHTML = '';
 
                 const products = result.data || result || [];
+                document.getElementById('statTotalProducts').textContent = products.length;
+
                 if (products.length > 0) {
                     products.forEach(product => {
                         const item = document.createElement('div');
                         item.className = 'admin-item';
+                        const imgSrc = product.image_url || 'https://via.placeholder.com/45?text=No+Img';
                         item.innerHTML = `
-                            <span><strong>${product.name}</strong> - RM ${parseFloat(product.price).toFixed(2)} (Stock: ${product.stock_quantity})</span>
-                            <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
+                            <div class="product-info">
+                                <img src="${imgSrc}" class="product-thumb" alt="" onerror="this.src='https://via.placeholder.com/45?text=Img'">
+                                <div>
+                                    <strong>${product.name}</strong><br>
+                                    <small style="color: #64748b;">Category: ${product.category || 'General'} | RM ${parseFloat(product.price).toFixed(2)}</small>
+                                </div>
+                            </div>
+                            <div class="stock-edit-group">
+                                <label style="font-size: 0.8rem; margin:0;">Stock:</label>
+                                <input type="number" id="stock-${product.id}" class="stock-input" value="${product.stock_quantity}">
+                                <button class="update-stock-btn" onclick="updateStock('${product.id}')">Save</button>
+                                <button class="delete-btn" onclick="deleteProduct('${product.id}')">Delete</button>
+                            </div>
                         `;
                         listContainer.appendChild(item);
                     });
                 } else {
-                    listContainer.innerHTML = '<p>No products found in database.</p>';
+                    listContainer.innerHTML = '<p style="color: #64748b;">No products found in database.</p>';
                 }
             } catch (err) {
                 console.error('Error loading products:', err);
-                document.getElementById('admin-product-list').innerHTML = '<p style="color: red;">Error loading inventory.</p>';
+                document.getElementById('admin-product-list').innerHTML = '<p style="color: var(--danger);">Error loading inventory.</p>';
+            }
+        }
+
+        // --- Update Stock Quantity Function ---
+        async function updateStock(id) {
+            const newStock = document.getElementById(`stock-${id}`).value;
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/products/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ stock_quantity: newStock })
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    alert('Stock quantity updated successfully!');
+                    loadAdminProducts();
+                } else {
+                    alert('Failed to update stock: ' + (result.error || 'Unknown error'));
+                }
+            } catch (err) {
+                console.error('Error updating stock:', err);
+                alert('Server error while updating stock.');
             }
         }
 
@@ -157,7 +254,6 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('Product deleted successfully!');
                     loadAdminProducts();
                 } else {
                     alert('Failed to delete: ' + (result.error || 'Unknown error'));
@@ -177,32 +273,37 @@
                 repairContainer.innerHTML = '';
 
                 const repairs = result.data || result || [];
+                const pendingCount = repairs.filter(r => (r.status || 'Pending') === 'Pending').length;
+                document.getElementById('statPendingRepairs').textContent = pendingCount;
+
                 if (repairs.length > 0) {
                     repairs.forEach(repair => {
                         const currentStatus = repair.status || 'Pending';
                         const card = document.createElement('div');
                         card.className = 'repair-card';
                         card.innerHTML = `
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                            <div class="repair-header">
                                 <span class="status-badge status-${currentStatus}">Status: ${currentStatus}</span>
                                 <div>
                                     <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
                                     <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
                                 </div>
                             </div>
-                            <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
-                            <p><strong>Device:</strong> ${repair.device_model}</p>
-                            <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
-                            <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
+                            <div class="repair-details">
+                                <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
+                                <p><strong>Device:</strong> ${repair.device_model}</p>
+                                <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
+                                <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
+                            </div>
                         `;
                         repairContainer.appendChild(card);
                     });
                 } else {
-                    repairContainer.innerHTML = '<p>No repair bookings found in database.</p>';
+                    repairContainer.innerHTML = '<p style="color: #64748b;">No repair bookings found in database.</p>';
                 }
             } catch (err) {
                 console.error('Error loading repairs:', err);
-                document.getElementById('admin-repair-list').innerHTML = '<p style="color: red;">Error loading repair bookings.</p>';
+                document.getElementById('admin-repair-list').innerHTML = '<p style="color: var(--danger);">Error loading repair bookings.</p>';
             }
         }
 
@@ -217,7 +318,7 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    loadAdminRepairs(); // Refresh list to show updated status badge
+                    loadAdminRepairs(); 
                 } else {
                     alert('Failed to update status: ' + (result.error || 'Unknown error'));
                 }
