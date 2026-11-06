@@ -13,6 +13,10 @@
       <span>✉ support@ifixsolutions.com</span>
       <a href="#about">About Us</a>
       <a href="#contact">Contact Us</a>
+    </div>
+  </div>
+
+  <header>
     <div class="head-main">
       <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
       <div class="search-box">
@@ -24,20 +28,12 @@
           <option value="Storage">SSD / Storage</option>
           <option value="Equipment">Accessories</option>
         </select>
-        <input type="text" class="search-input" placeholder="Search products, brands or model numbers"
-          onfocus="document.getElementById('products').scrollIntoView()">
-        <span class="search-go">🔍</span>
-      </div>
-      <button class="cart-btn" id="openCartBtn">Cart (<span id="cartCount">0</span>)</button>
-    </div>
         <input type="text" placeholder="Search products, brands or model numbers"
           onfocus="document.getElementById('products').scrollIntoView()"
           oninput="var s=document.getElementById('searchInput');s.value=this.value;s.dispatchEvent(new Event('input'))">
         <span class="search-go">🔍</span>
       </div>
       <button class="cart-btn" id="openCartBtn">Cart (<span id="cartCount">0</span>)</button>
-      
-      
     </div>
     <input type="checkbox" id="menuToggle" class="menu-toggle">
     <label for="menuToggle" class="menu-icon">☰</label>
