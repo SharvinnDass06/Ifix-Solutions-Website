@@ -3,12 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>iFix Solutions - Admin Panel</title>
+    <title>iFix Solutions - Admin Dashboard</title>
     <style>
         :root {
             --primary: #b91c1c;
             --primary-hover: #991b1b;
             --success: #16a34a;
+            --warning: #d97706;
+            --info: #0284c7;
             --danger: #dc2626;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
@@ -33,7 +35,6 @@
             color: var(--text-main);
         }
 
-        /* Summary Metrics Cards */
         .metrics-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -83,7 +84,7 @@
             font-weight: 600;
         }
 
-        .form-group input, .form-group select {
+        .form-group input, .form-group select, .form-group textarea {
             width: 100%;
             padding: 10px;
             border: 1px solid var(--border-color);
@@ -108,18 +109,22 @@
             background-color: var(--primary-hover);
         }
 
-        /* Search Bar */
-        .search-box {
-            width: 100%;
-            padding: 12px 15px;
+        .search-filter-bar {
+            display: flex;
+            gap: 10px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box, .filter-select {
+            flex: 1;
+            min-width: 200px;
+            padding: 10px 15px;
             border: 1px solid var(--border-color);
             border-radius: 6px;
             font-size: 1rem;
-            box-sizing: border-box;
         }
 
-        /* Inventory Items */
         .admin-item {
             display: flex;
             justify-content: space-between;
@@ -165,57 +170,64 @@
             text-align: center;
         }
 
-        .save-btn {
-            background-color: var(--success);
-            padding: 6px 14px;
-            font-size: 0.9rem;
-        }
-
-        .save-btn:hover {
-            background-color: #15803d;
-        }
-
-        .delete-btn {
-            background-color: var(--danger);
-            padding: 6px 14px;
-            font-size: 0.9rem;
-        }
-
-        .delete-btn:hover {
-            background-color: #b91c1c;
-        }
+        .save-btn { background-color: var(--success); padding: 6px 14px; font-size: 0.9rem; }
+        .save-btn:hover { background-color: #15803d; }
+        .delete-btn { background-color: var(--danger); padding: 6px 14px; font-size: 0.9rem; }
+        .delete-btn:hover { background-color: #b91c1c; }
 
         /* Repair Bookings */
         .repair-card {
             background: #fff;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
-            padding: 15px;
-            margin-bottom: 15px;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .repair-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             flex-wrap: wrap;
             gap: 10px;
         }
 
         .status-badge {
-            padding: 4px 10px;
+            padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.85rem;
             font-weight: bold;
         }
 
-        .status-Pending { background: #fef3c7; color: #d97706; }
-        .status-Completed { background: #dcfce7; color: #15803d; }
-        .status-Cancelled { background: #fee2e2; color: #b91c1c; }
+        .status-Pending { background: #fef3c7; color: var(--warning); }
+        .status-In-Progress { background: #e0f2fe; color: var(--info); }
+        .status-Completed { background: #dcfce7; color: var(--success); }
+        .status-Cancelled { background: #fee2e2; color: var(--danger); }
 
+        .repair-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .progress-btn { background-color: var(--info); padding: 5px 10px; font-size: 0.85rem; }
         .done-btn { background-color: var(--success); padding: 5px 10px; font-size: 0.85rem; }
-        .cancel-btn { background-color: var(--danger); padding: 5px 10px; font-size: 0.85rem; margin-left: 5px; }
+        .cancel-btn { background-color: var(--danger); padding: 5px 10px; font-size: 0.85rem; }
+
+        .repair-form-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px dashed var(--border-color);
+            display: grid;
+            grid-template-columns: 1fr 150px auto;
+            gap: 10px;
+            align-items: flex-end;
+        }
+        @media(max-width: 700px) {
+            .repair-form-section { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -267,7 +279,9 @@
         <!-- Live Inventory Section -->
         <div class="admin-section">
             <h2>Live Product Inventory & Management</h2>
-            <input type="text" id="productSearch" class="search-box" placeholder="Search products by name or category..." onkeyup="filterProducts()">
+            <div class="search-filter-bar">
+                <input type="text" id="productSearch" class="search-box" placeholder="Search products by name..." onkeyup="filterProducts()">
+            </div>
             <div id="admin-product-list">
                 <p style="color: #64748b;">Loading products...</p>
             </div>
@@ -276,6 +290,16 @@
         <!-- Customer Repair Bookings Section -->
         <div class="admin-section">
             <h2>Customer Repair Bookings</h2>
+            <div class="search-filter-bar">
+                <input type="text" id="repairSearch" class="search-box" placeholder="Search by customer name or phone..." onkeyup="filterRepairs()">
+                <select id="repairStatusFilter" class="filter-select" onchange="filterRepairs()">
+                    <option value="">All Statuses</option>
+                    <option value="Pending">Pending</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                    <option value="Cancelled">Cancelled</option>
+                </select>
+            </div>
             <div id="admin-repair-list">
                 <p style="color: #64748b;">Loading repair bookings...</p>
             </div>
@@ -285,8 +309,9 @@
     <script>
         const BACKEND_URL = 'https://ifix-solutions-backend-1.onrender.com';
         let allProductsCache = [];
+        let allRepairsCache = [];
 
-        // --- Handle Product Form Submission ---
+        // --- Product Form Submission ---
         const productForm = document.getElementById('productForm');
         const messageDiv = document.getElementById('message');
 
@@ -307,15 +332,14 @@
                     body: JSON.stringify(productData)
                 });
                 const result = await response.json();
-
                 if (result.success) {
                     messageDiv.style.color = 'var(--success)';
-                    messageDiv.textContent = 'Success! Product added to the database.';
+                    messageDiv.textContent = 'Success! Product added.';
                     productForm.reset();
                     loadAdminProducts();
                 } else {
                     messageDiv.style.color = 'var(--danger)';
-                    messageDiv.textContent = 'Error: Could not add product.';
+                    messageDiv.textContent = 'Error adding product.';
                 }
             } catch (err) {
                 console.error(err);
@@ -324,7 +348,7 @@
             }
         });
 
-        // --- Load & Display Admin Products ---
+        // --- Load Products ---
         async function loadAdminProducts() {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/products`);
@@ -334,11 +358,9 @@
                 document.getElementById('statTotalProducts').textContent = allProductsCache.length;
             } catch (err) {
                 console.error('Error loading products:', err);
-                document.getElementById('admin-product-list').innerHTML = '<p style="color: var(--danger);">Error loading inventory.</p>';
             }
         }
 
-        // --- Render Products List ---
         function displayProducts(products) {
             const listContainer = document.getElementById('admin-product-list');
             listContainer.innerHTML = '';
@@ -372,112 +394,115 @@
             }
         }
 
-        // --- Search / Filter Function ---
         function filterProducts() {
             const query = document.getElementById('productSearch').value.toLowerCase();
-            const filtered = allProductsCache.filter(p => 
-                p.name.toLowerCase().includes(query) || 
-                (p.category && p.category.toLowerCase().includes(query))
-            );
+            const filtered = allProductsCache.filter(p => p.name.toLowerCase().includes(query) || (p.category && p.category.toLowerCase().includes(query)));
             displayProducts(filtered);
         }
 
-        // --- Update Product Price & Stock Function ---
         async function updateProduct(id, name, category, imageUrl) {
             const newPrice = document.getElementById(`price-${id}`).value;
             const newStock = document.getElementById(`stock-${id}`).value;
-            
             try {
                 const response = await fetch(`${BACKEND_URL}/api/products/${id}`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        name: name,
-                        category: category,
-                        price: newPrice,
-                        stock_quantity: newStock,
-                        image_url: imageUrl
-                    })
+                    body: JSON.stringify({ name, category, price: newPrice, stock_quantity: newStock, image_url: imageUrl })
                 });
                 const result = await response.json();
-
                 if (result.success) {
                     alert('Product updated successfully!');
                     loadAdminProducts();
                 } else {
-                    alert('Failed to update product: ' + (result.error || 'Unknown error'));
+                    alert('Failed to update product.');
                 }
             } catch (err) {
-                console.error('Error updating product:', err);
-                alert('Server error while updating product.');
+                console.error(err);
+                alert('Server error while updating.');
             }
         }
 
-        // --- Delete Product Function ---
         async function deleteProduct(id) {
             if (!confirm('Are you sure you want to delete this product?')) return;
-
             try {
-                const response = await fetch(`${BACKEND_URL}/api/products/${id}`, {
-                    method: 'DELETE'
-                });
+                const response = await fetch(`${BACKEND_URL}/api/products/${id}`, { method: 'DELETE' });
                 const result = await response.json();
-
-                if (result.success) {
-                    loadAdminProducts();
-                } else {
-                    alert('Failed to delete: ' + (result.error || 'Unknown error'));
-                }
+                if (result.success) loadAdminProducts();
             } catch (err) {
-                console.error('Error deleting product:', err);
-                alert('Server error while deleting.');
+                console.error(err);
             }
         }
 
-        // --- Load Customer Repair Bookings ---
+        // --- Load Repair Bookings ---
         async function loadAdminRepairs() {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/repairs`);
                 const result = await response.json();
-                const repairContainer = document.getElementById('admin-repair-list');
-                repairContainer.innerHTML = '';
-
-                const repairs = result.data || result || [];
-                const pendingCount = repairs.filter(r => (r.status || 'Pending') === 'Pending').length;
+                allRepairsCache = result.data || result || [];
+                displayRepairs(allRepairsCache);
+                
+                const pendingCount = allRepairsCache.filter(r => (r.status || 'Pending') === 'Pending').length;
                 document.getElementById('statPendingRepairs').textContent = pendingCount;
-
-                if (repairs.length > 0) {
-                    repairs.forEach(repair => {
-                        const currentStatus = repair.status || 'Pending';
-                        const card = document.createElement('div');
-                        card.className = 'repair-card';
-                        card.innerHTML = `
-                            <div class="repair-header">
-                                <span class="status-badge status-${currentStatus}">Status: ${currentStatus}</span>
-                                <div>
-                                    <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
-                                    <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
-                                </div>
-                            </div>
-                            <div class="repair-details">
-                                <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
-                                <p><strong>Device:</strong> ${repair.device_model}</p>
-                                <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
-                                <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
-                            </div>
-                        `;
-                        repairContainer.appendChild(card);
-                    });
-                } else {
-                    repairContainer.innerHTML = '<p style="color: #64748b;">No repair bookings found in database.</p>';
-                }
             } catch (err) {
                 console.error('Error loading repairs:', err);
-                document.getElementById('admin-repair-list').innerHTML = '<p style="color: var(--danger);">Error loading repair bookings.</p>';
             }
         }
 
-        // --- Update Repair Status Function ---
+        function displayRepairs(repairs) {
+            const repairContainer = document.getElementById('admin-repair-list');
+            repairContainer.innerHTML = '';
+
+            if (repairs.length > 0) {
+                repairs.forEach(repair => {
+                    const currentStatus = repair.status || 'Pending';
+                    const card = document.createElement('div');
+                    card.className = 'repair-card';
+                    card.innerHTML = `
+                        <div class="repair-header">
+                            <span class="status-badge status-${currentStatus.replace(' ', '-')}">Status: ${currentStatus}</span>
+                            <div class="repair-actions">
+                                <button class="progress-btn" onclick="updateRepairStatus('${repair.id}', 'In Progress')">In Progress</button>
+                                <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
+                                <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
+                            </div>
+                        </div>
+                        <div class="repair-details">
+                            <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
+                            <p><strong>Device:</strong> ${repair.device_model}</p>
+                            <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
+                            <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
+                        </div>
+                        <div class="repair-form-section">
+                            <div class="form-group" style="margin:0;">
+                                <label style="font-size:0.85rem;">Technician Notes:</label>
+                                <input type="text" id="notes-${repair.id}" value="${repair.notes || ''}" placeholder="e.g. Replaced screen & battery">
+                            </div>
+                            <div class="form-group" style="margin:0;">
+                                <label style="font-size:0.85rem;">Total Cost (RM):</label>
+                                <input type="number" step="0.01" id="cost-${repair.id}" value="${repair.cost || ''}" placeholder="e.g. 250.00">
+                            </div>
+                            <button class="save-btn" style="height: 42px;" onclick="saveRepairDetails('${repair.id}')">Save Notes</button>
+                        </div>
+                    `;
+                    repairContainer.appendChild(card);
+                });
+            } else {
+                repairContainer.innerHTML = '<p style="color: #64748b;">No repair bookings found.</p>';
+            }
+        }
+
+        function filterRepairs() {
+            const query = document.getElementById('repairSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('repairStatusFilter').value;
+
+            const filtered = allRepairsCache.filter(r => {
+                const matchesText = r.full_name.toLowerCase().includes(query) || r.phone.toLowerCase().includes(query);
+                const matchesStatus = statusFilter === '' || (r.status || 'Pending') === statusFilter;
+                return matchesText && matchesStatus;
+            });
+            displayRepairs(filtered);
+        }
+
         async function updateRepairStatus(id, newStatus) {
             try {
                 const response = await fetch(`${BACKEND_URL}/api/repairs/${id}`, {
@@ -486,19 +511,35 @@
                     body: JSON.stringify({ status: newStatus })
                 });
                 const result = await response.json();
-
-                if (result.success) {
-                    loadAdminRepairs(); 
-                } else {
-                    alert('Failed to update status: ' + (result.error || 'Unknown error'));
-                }
+                if (result.success) loadAdminRepairs();
             } catch (err) {
-                console.error('Error updating status:', err);
-                alert('Server error while updating status.');
+                console.error(err);
             }
         }
 
-        // Initial load when page opens
+        async function saveRepairDetails(id) {
+            const notes = document.getElementById(`notes-${id}`).value;
+            const cost = document.getElementById(`cost-${id}`).value;
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/repairs/${id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ notes, cost })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Repair notes and cost saved successfully!');
+                    loadAdminRepairs();
+                } else {
+                    alert('Failed to save repair details.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error while saving.');
+            }
+        }
+
+        // Initial load
         loadAdminProducts();
         loadAdminRepairs();
     </script>
