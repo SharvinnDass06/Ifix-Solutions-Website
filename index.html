@@ -20,20 +20,12 @@
     <div class="head-main">
       <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
       <div class="search-box">
-        <select id="headerCategorySelect" style="border: none; background: #e4e4e4; border-radius: 999px; padding: .35rem .8rem; font-size: .8rem; color: #555; outline: none; cursor: pointer; margin-right: 4px;">
-          <option value="ALL">All</option>
-          <option value="Laptop">Laptops</option>
-          <option value="Desktop">Desktop PCs</option>
-          <option value="RAM">RAM</option>
-          <option value="Storage">SSD / Storage</option>
-          <option value="Equipment">Accessories</option>
-        </select>
         <input type="text" placeholder="Search products, brands or model numbers"
           onfocus="document.getElementById('products').scrollIntoView()"
           oninput="var s=document.getElementById('searchInput');s.value=this.value;s.dispatchEvent(new Event('input'))">
         <span class="search-go">🔍</span>
       </div>
-      <button class="cart-btn" id="openCartBtn">Cart (<span id="cartCount">0</span>)</button>
+      <button class="cart-btn" id="openCartBtn">Cart <span id="cartCount">0</span></button>
     </div>
     <input type="checkbox" id="menuToggle" class="menu-toggle">
     <label for="menuToggle" class="menu-icon">☰</label>
