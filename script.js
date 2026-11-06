@@ -62,20 +62,22 @@ function renderProducts(productsToRender) {
 
 function setupEventListeners() {
   const searchInput = document.querySelector('.search-input');
-  const categorySelect = document.querySelector('select');
+  const categorySelect = document.querySelector('header select') || document.querySelector('.controls-bar select') || document.querySelector('select');
 
   function filterAndRender() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
-    const selectedCategory = categorySelect ? categorySelect.value.trim() : "ALL";
+    const selectedCategory = categorySelect ? categorySelect.value.trim() : "all";
 
     const filtered = allProducts.filter(product => {
-      const matchesSearch = product.name.toLowerCase().includes(searchTerm) || 
-                            product.category.toLowerCase().includes(searchTerm);
+      const productName = product.name ? product.name.toLowerCase() : "";
+      const productCategory = product.category ? product.category.toLowerCase() : "";
+
+      const matchesSearch = productName.includes(searchTerm) || 
+                            productCategory.includes(searchTerm);
       
-      // Case-insensitive category match
-      const matchesCategory = selectedCategory === "ALL" || 
-                              selectedCategory === "All Categories" || 
-                              product.category.toLowerCase() === selectedCategory.toLowerCase();
+      const matchesCategory = selectedCategory.toLowerCase() === "all" || 
+                              selectedCategory.toLowerCase() === "all categories" || 
+                              productCategory === selectedCategory.toLowerCase();
 
       return matchesSearch && matchesCategory;
     });
