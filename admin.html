@@ -12,6 +12,8 @@
             --warning: #d97706;
             --info: #0284c7;
             --danger: #dc2626;
+            --whatsapp: #25d366;
+            --whatsapp-hover: #1ebe5d;
             --bg-color: #f8fafc;
             --card-bg: #ffffff;
             --text-main: #1e293b;
@@ -210,11 +212,25 @@
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            align-items: center;
         }
 
         .progress-btn { background-color: var(--info); padding: 5px 10px; font-size: 0.85rem; }
         .done-btn { background-color: var(--success); padding: 5px 10px; font-size: 0.85rem; }
         .cancel-btn { background-color: var(--danger); padding: 5px 10px; font-size: 0.85rem; }
+        .whatsapp-btn {
+            background-color: var(--whatsapp);
+            color: white;
+            padding: 5px 12px;
+            font-size: 0.85rem;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .whatsapp-btn:hover { background-color: var(--whatsapp-hover); color: white; }
 
         .repair-form-section {
             margin-top: 15px;
@@ -455,12 +471,19 @@
             if (repairs.length > 0) {
                 repairs.forEach(repair => {
                     const currentStatus = repair.status || 'Pending';
+                    
+                    // Format phone for WhatsApp link
+                    const cleanPhone = repair.phone ? repair.phone.replace(/[^0-9]/g, '') : '';
+                    const waMessage = encodeURIComponent(`Hi ${repair.full_name}, regarding your repair booking for your ${repair.device_model} at iFix Solutions: `);
+                    const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
+
                     const card = document.createElement('div');
                     card.className = 'repair-card';
                     card.innerHTML = `
                         <div class="repair-header">
                             <span class="status-badge status-${currentStatus.replace(' ', '-')}">Status: ${currentStatus}</span>
                             <div class="repair-actions">
+                                <a href="${waLink}" target="_blank" class="whatsapp-btn">💬 WhatsApp Customer</a>
                                 <button class="progress-btn" onclick="updateRepairStatus('${repair.id}', 'In Progress')">In Progress</button>
                                 <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
                                 <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
