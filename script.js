@@ -122,6 +122,20 @@ window.addToCart = function(productId) {
   alert(`Added ${product.name} to cart!`);
 };
 
+// Remove or decrease item quantity from cart
+window.removeFromCart = function(productId) {
+  const existing = cart.find(item => item.id === productId);
+  if (existing) {
+    if (existing.qty > 1) {
+      existing.qty -= 1; // Decrease quantity if more than 1
+    } else {
+      cart = cart.filter(item => item.id !== productId); // Remove completely if qty is 1
+    }
+  }
+  saveCart();
+  updateCartUI();
+};
+
 // Helper function to save cart state
 function saveCart() {
   localStorage.setItem('ifix_cart', JSON.stringify(cart));
@@ -149,11 +163,13 @@ function updateCartUI() {
         const div = document.createElement('div');
         div.className = 'cart-item';
         div.innerHTML = `
-          <div>
-            <strong>${item.name}</strong><br>
-            <small style="color: var(--text-muted);">RM ${itemPrice.toFixed(2)} × ${item.qty}</small>
+          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 0.8rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
+            <div>
+              <strong>${item.name}</strong><br>
+              <small style="color: var(--text-muted);">RM ${itemPrice.toFixed(2)} × ${item.qty} = <strong>RM ${(itemPrice * item.qty).toFixed(2)}</strong></small>
+            </div>
+            <button onclick="removeFromCart(${item.id})" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Remove</button>
           </div>
-          <div><strong>RM ${(itemPrice * item.qty).toFixed(2)}</strong></div>
         `;
         cartItemsContainer.appendChild(div);
       });
