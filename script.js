@@ -1,12 +1,14 @@
 const API_URL = "https://ifix-solutions-backend-1.onrender.com/api/products";
 
 let allProducts = [];
-let cart = [];
+// Load saved cart from browser storage if it exists, otherwise start empty
+let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
 
 document.addEventListener('DOMContentLoaded', () => {
   loadStoreProducts();
   setupEventListeners();
   setupRepairForm();
+  updateCartUI(); // Render the saved cart right when the page loads
 });
 
 async function loadStoreProducts() {
@@ -115,9 +117,15 @@ window.addToCart = function(productId) {
     cart.push({ ...product, qty: 1 });
   }
 
+  saveCart(); // Save changes to localStorage
   updateCartUI();
   alert(`Added ${product.name} to cart!`);
 };
+
+// Helper function to save cart state
+function saveCart() {
+  localStorage.setItem('ifix_cart', JSON.stringify(cart));
+}
 
 function updateCartUI() {
   const cartCount = document.getElementById('cartCount');
