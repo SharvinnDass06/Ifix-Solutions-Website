@@ -323,6 +323,14 @@
     </div>
 
     <script>
+        // --- Staff PIN Authentication ---
+        const staffPin = prompt("Enter Staff Access PIN:");
+        // You can change "1234" to whatever secret PIN code you want your staff to use
+        if (staffPin !== "1234") {
+            alert("Access Denied! Incorrect PIN.");
+            window.location.href = "index.html";
+        }
+
         const BACKEND_URL = 'https://ifix-solutions-backend-1.onrender.com';
         let allProductsCache = [];
         let allRepairsCache = [];
@@ -472,7 +480,6 @@
                 repairs.forEach(repair => {
                     const currentStatus = repair.status || 'Pending';
                     
-                    // Format phone for WhatsApp link
                     const cleanPhone = repair.phone ? repair.phone.replace(/[^0-9]/g, '') : '';
                     const waMessage = encodeURIComponent(`Hi ${repair.full_name}, regarding your repair booking for your ${repair.device_model} at iFix Solutions: `);
                     const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
