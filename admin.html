@@ -325,7 +325,6 @@
     <script>
         // --- Staff PIN Authentication ---
         const staffPin = prompt("Enter Staff Access PIN:");
-        // You can change "1234" to whatever secret PIN code you want your staff to use
         if (staffPin !== "1234") {
             alert("Access Denied! Incorrect PIN.");
             window.location.href = "index.html";
@@ -334,6 +333,10 @@
         const BACKEND_URL = 'https://ifix-solutions-backend-1.onrender.com';
         let allProductsCache = [];
         let allRepairsCache = [];
+
+        // Pagination variables for repair bookings
+        let currentRepairPage = 1;
+        const repairsPerPage = 5; // Show 5 repairs per page
 
         // --- Product Form Submission ---
         const productForm = document.getElementById('productForm');
@@ -476,52 +479,126 @@
             const repairContainer = document.getElementById('admin-repair-list');
             repairContainer.innerHTML = '';
 
-            if (repairs.length > 0) {
-                repairs.forEach(repair => {
-                    const currentStatus = repair.status || 'Pending';
-                    
-                    const cleanPhone = repair.phone ? repair.phone.replace(/[^0-9]/g, '') : '';
-                    const waMessage = encodeURIComponent(`Hi ${repair.full_name}, regarding your repair booking for your ${repair.device_model} at iFix Solutions: `);
-                    const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
-
-                    const card = document.createElement('div');
-                    card.className = 'repair-card';
-                    card.innerHTML = `
-                        <div class="repair-header">
-                            <span class="status-badge status-${currentStatus.replace(' ', '-')}">Status: ${currentStatus}</span>
-                            <div class="repair-actions">
-                                <a href="${waLink}" target="_blank" class="whatsapp-btn">💬 WhatsApp Customer</a>
-                                <button class="progress-btn" onclick="updateRepairStatus('${repair.id}', 'In Progress')">In Progress</button>
-                                <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
-                                <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
-                            </div>
-                        </div>
-                        <div class="repair-details">
-                            <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
-                            <p><strong>Device:</strong> ${repair.device_model}</p>
-                            <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
-                            <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
-                        </div>
-                        <div class="repair-form-section">
-                            <div class="form-group" style="margin:0;">
-                                <label style="font-size:0.85rem;">Technician Notes:</label>
-                                <input type="text" id="notes-${repair.id}" value="${repair.notes || ''}" placeholder="e.g. Replaced screen & battery">
-                            </div>
-                            <div class="form-group" style="margin:0;">
-                                <label style="font-size:0.85rem;">Total Cost (RM):</label>
-                                <input type="number" step="0.01" id="cost-${repair.id}" value="${repair.cost || ''}" placeholder="e.g. 250.00">
-                            </div>
-                            <button class="save-btn" style="height: 42px;" onclick="saveRepairDetails('${repair.id}')">Save Notes</button>
-                        </div>
-                    `;
-                    repairContainer.appendChild(card);
-                });
-            } else {
+            if (repairs.length === 0) {
                 repairContainer.innerHTML = '<p style="color: #64748b;">No repair bookings found.</p>';
+                const existingPagination = document.getElementById('repairPaginationContainer');
+                if (existingPagination) existingPagination.innerHTML = '';
+                return;
             }
+
+            // --- Pagination Logic for Repairs ---
+            const totalPages = Math.ceil(repairs.length / repairsPerPage);
+            if (currentRepairPage > totalPages) currentRepairPage = 1;
+
+            const startIndex = (currentRepairPage - 1) * repairsPerPage;
+            const endIndex = startIndex + repairsPerPage;
+            const paginatedRepairs = repairs.slice(startIndex, endIndex);
+
+            paginatedRepairs.forEach(repair => {
+                const currentStatus = repair.status || 'Pending';
+                
+                const cleanPhone = repair.phone ? repair.phone.replace(/[^0-9]/g, '') : '';
+                const waMessage = encodeURIComponent(`Hi ${repair.full_name}, regarding your repair booking for your ${repair.device_model} at iFix Solutions: `);
+                const waLink = `https://wa.me/${cleanPhone}?text=${waMessage}`;
+
+                const card = document.createElement('div');
+                card.className = 'repair-card';
+                card.innerHTML = `
+                    <div class="repair-header">
+                        <span class="status-badge status-${currentStatus.replace(' ', '-')}">Status: ${currentStatus}</span>
+                        <div class="repair-actions">
+                            <a href="${waLink}" target="_blank" class="whatsapp-btn">💬 WhatsApp Customer</a>
+                            <button class="progress-btn" onclick="updateRepairStatus('${repair.id}', 'In Progress')">In Progress</button>
+                            <button class="done-btn" onclick="updateRepairStatus('${repair.id}', 'Completed')">Mark Done</button>
+                            <button class="cancel-btn" onclick="updateRepairStatus('${repair.id}', 'Cancelled')">Cancel</button>
+                            <button class="delete-btn" onclick="deleteRepair('${repair.id}')">Delete</button>
+                        </div>
+                    </div>
+                    <div class="repair-details">
+                        <p><strong>Customer:</strong> ${repair.full_name} (${repair.phone})</p>
+                        <p><strong>Device:</strong> ${repair.device_model}</p>
+                        <p><strong>Service Requested:</strong> ${repair.requested_service}</p>
+                        <p><strong>Issue:</strong> ${repair.issue_description || 'None provided'}</p>
+                    </div>
+                    <div class="repair-form-section">
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem;">Technician Notes:</label>
+                            <input type="text" id="notes-${repair.id}" value="${repair.notes || ''}" placeholder="e.g. Replaced screen & battery">
+                        </div>
+                        <div class="form-group" style="margin:0;">
+                            <label style="font-size:0.85rem;">Total Cost (RM):</label>
+                            <input type="number" step="0.01" id="cost-${repair.id}" value="${repair.cost || ''}" placeholder="e.g. 250.00">
+                        </div>
+                        <button class="save-btn" style="height: 42px;" onclick="saveRepairDetails('${repair.id}')">Save Notes</button>
+                    </div>
+                `;
+                repairContainer.appendChild(card);
+            });
+
+            renderRepairPaginationControls(totalPages, repairs);
+        }
+
+        function renderRepairPaginationControls(totalPages, repairs) {
+            let paginationContainer = document.getElementById('repairPaginationContainer');
+            
+            if (!paginationContainer) {
+                const repairList = document.getElementById('admin-repair-list');
+                paginationContainer = document.createElement('div');
+                paginationContainer.id = 'repairPaginationContainer';
+                paginationContainer.style.cssText = 'display: flex; justify-content: center; gap: 8px; margin: 2rem 0; align-items: center;';
+                repairList.parentNode.insertBefore(paginationContainer, repairList.nextSibling);
+            }
+
+            paginationContainer.innerHTML = '';
+
+            if (totalPages <= 1) return;
+
+            // Previous Button
+            const prevBtn = document.createElement('button');
+            prevBtn.textContent = 'Previous';
+            prevBtn.style.cssText = 'padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff; color: #000; font-weight: normal;';
+            prevBtn.disabled = currentRepairPage === 1;
+            if (currentRepairPage === 1) prevBtn.style.opacity = '0.5';
+            prevBtn.onclick = () => {
+                if (currentRepairPage > 1) {
+                    currentRepairPage--;
+                    displayRepairs(repairs);
+                    window.scrollTo({ top: document.getElementById('admin-repair-list').offsetTop - 100, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(prevBtn);
+
+            // Page Number Buttons
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.textContent = i;
+                pageBtn.style.cssText = `padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; background: ${i === currentRepairPage ? 'var(--primary, #b91c1c)' : '#fff'}; color: ${i === currentRepairPage ? '#fff' : '#000'};`;
+                pageBtn.onclick = () => {
+                    currentRepairPage = i;
+                    displayRepairs(repairs);
+                    window.scrollTo({ top: document.getElementById('admin-repair-list').offsetTop - 100, behavior: 'smooth' });
+                };
+                paginationContainer.appendChild(pageBtn);
+            }
+
+            // Next Button
+            const nextBtn = document.createElement('button');
+            nextBtn.textContent = 'Next';
+            nextBtn.style.cssText = 'padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff; color: #000; font-weight: normal;';
+            nextBtn.disabled = currentRepairPage === totalPages;
+            if (currentRepairPage === totalPages) nextBtn.style.opacity = '0.5';
+            nextBtn.onclick = () => {
+                if (currentRepairPage < totalPages) {
+                    currentRepairPage++;
+                    displayRepairs(repairs);
+                    window.scrollTo({ top: document.getElementById('admin-repair-list').offsetTop - 100, behavior: 'smooth' });
+                }
+            };
+            paginationContainer.appendChild(nextBtn);
         }
 
         function filterRepairs() {
+            currentRepairPage = 1; // Reset to page 1 on filter/search change
             const query = document.getElementById('repairSearch').value.toLowerCase();
             const statusFilter = document.getElementById('repairStatusFilter').value;
 
@@ -566,6 +643,22 @@
             } catch (err) {
                 console.error(err);
                 alert('Server error while saving.');
+            }
+        }
+
+        async function deleteRepair(id) {
+            if (!confirm('Are you sure you want to delete this repair booking?')) return;
+            try {
+                const response = await fetch(`${BACKEND_URL}/api/repairs/${id}`, { method: 'DELETE' });
+                const result = await response.json();
+                if (result.success) {
+                    loadAdminRepairs();
+                } else {
+                    alert('Failed to delete repair booking.');
+                }
+            } catch (err) {
+                console.error(err);
+                alert('Server error while deleting repair.');
             }
         }
 
