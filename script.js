@@ -142,7 +142,8 @@ function setupEventListeners() {
   const searchInput = document.querySelector('.search-input');
   const categorySelect = document.querySelector('header select') || document.querySelector('.controls-bar select') || document.querySelector('select');
 
-  function filterAndRender() {
+  function filterAndRender(e) {
+    if (e) e.preventDefault();
     currentPage = 1; // Reset to page 1 on filter/search change
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
     const selectedCategory = categorySelect ? categorySelect.value.trim() : "all";
@@ -164,7 +165,18 @@ function setupEventListeners() {
     renderProducts(filtered);
   }
 
-  if (searchInput) searchInput.addEventListener("input", filterAndRender);
+  if (searchInput) {
+    searchInput.addEventListener("input", filterAndRender);
+    
+    // Prevent form submission jump if search input is wrapped in a form tag
+    const parentForm = searchInput.closest('form');
+    if (parentForm) {
+      parentForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+      });
+    }
+  }
+
   if (categorySelect) categorySelect.addEventListener("change", filterAndRender);
 
   // Cart modal events
