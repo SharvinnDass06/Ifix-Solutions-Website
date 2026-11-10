@@ -1,6 +1,9 @@
 const API_URL = "https://ifix-solutions-backend-1.onrender.com/api/products";
 
 let allProducts = [];
+let currentPage = 1;
+const itemsPerPage = 8; // Change this number if you want more or fewer products per page
+
 // Load saved cart from browser storage if it exists, otherwise start empty
 let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
 
@@ -34,10 +37,21 @@ function renderProducts(productsToRender) {
 
   if (productsToRender.length === 0) {
     container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No products found in database.</p>`;
+    const existingPagination = document.getElementById("paginationContainer");
+    if (existingPagination) existingPagination.innerHTML = "";
     return;
   }
 
-  productsToRender.forEach(product => {
+  // --- Pagination Logic ---
+  const totalPages = Math.ceil(productsToRender.length / itemsPerPage);
+  if (currentPage > totalPages) currentPage = 1;
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedItems = productsToRender.slice(startIndex, endIndex);
+
+  // Render current page items
+  paginatedItems.forEach(product => {
     const card = document.createElement("div");
     card.className = "product-card";
 
@@ -60,6 +74,68 @@ function renderProducts(productsToRender) {
     `;
     container.appendChild(card);
   });
+
+  // Render pagination buttons below grid
+  renderPaginationControls(totalPages, productsToRender);
+}
+
+function renderPaginationControls(totalPages, productsToRender) {
+  let paginationContainer = document.getElementById("paginationContainer");
+  
+  if (!paginationContainer) {
+    const productGrid = document.getElementById("productGrid");
+    paginationContainer = document.createElement("div");
+    paginationContainer.id = "paginationContainer";
+    paginationContainer.style.cssText = "grid-column: 1/-1; display: flex; justify-content: center; gap: 8px; margin: 2rem 0; align-items: center;";
+    productGrid.parentNode.insertBefore(paginationContainer, productGrid.nextSibling);
+  }
+
+  paginationContainer.innerHTML = "";
+
+  if (totalPages <= 1) return;
+
+  // Previous Button
+  const prevBtn = document.createElement("button");
+  prevBtn.textContent = "Previous";
+  prevBtn.style.cssText = "padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;";
+  prevBtn.disabled = currentPage === 1;
+  if (currentPage === 1) prevBtn.style.opacity = "0.5";
+  prevBtn.onclick = () => {
+    if (currentPage > 1) {
+      currentPage--;
+      renderProducts(productsToRender);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+  paginationContainer.appendChild(prevBtn);
+
+  // Page Number Buttons
+  for (let i = 1; i <= totalPages; i++) {
+    const pageBtn = document.createElement("button");
+    pageBtn.textContent = i;
+    pageBtn.style.cssText = `padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; background: ${i === currentPage ? 'var(--primary, #b91c1c)' : '#fff'}; color: ${i === currentPage ? '#fff' : '#000'};`;
+    pageBtn.onclick = () => {
+      currentPage = i;
+      renderProducts(productsToRender);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+    paginationContainer.appendChild(pageBtn);
+  }
+
+  // Next Button
+  const nextBtn = document.createElement("button");
+  nextBtn.textContent = "Next";
+  nextBtn.style.cssText = "padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;";
+  nextBtn.disabled = currentPage === totalPages;
+  if (currentPage === totalPages) nextBtn.style.opacity = "0.5";
+  nextBtn.onclick = () => {
+    if (currentPage < totalPages) {
+      currentPage++;
+      renderProducts(productsToRender);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+  paginationContainer.appendChild(nextBtn);
 }
 
 function setupEventListeners() {
@@ -67,6 +143,7 @@ function setupEventListeners() {
   const categorySelect = document.querySelector('header select') || document.querySelector('.controls-bar select') || document.querySelector('select');
 
   function filterAndRender() {
+    currentPage = 1; // Reset to page 1 on filter/search change
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
     const selectedCategory = categorySelect ? categorySelect.value.trim() : "all";
 
@@ -117,26 +194,24 @@ window.addToCart = function(productId) {
     cart.push({ ...product, qty: 1 });
   }
 
-  saveCart(); // Save changes to localStorage
+  saveCart();
   updateCartUI();
   alert(`Added ${product.name} to cart!`);
 };
 
-// Remove or decrease item quantity from cart
 window.removeFromCart = function(productId) {
   const existing = cart.find(item => item.id === productId);
   if (existing) {
     if (existing.qty > 1) {
-      existing.qty -= 1; // Decrease quantity if more than 1
+      existing.qty -= 1;
     } else {
-      cart = cart.filter(item => item.id !== productId); // Remove completely if qty is 1
+      cart = cart.filter(item => item.id !== productId);
     }
   }
   saveCart();
   updateCartUI();
 };
 
-// Helper function to save cart state
 function saveCart() {
   localStorage.setItem('ifix_cart', JSON.stringify(cart));
 }
