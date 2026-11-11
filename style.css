@@ -1,15 +1,17 @@
-//* ==========================================
-   1. GLOBAL STYLES & RESET
+/* ==========================================
+   1. GLOBAL STYLES & BRAND THEME (RED/BLACK/WHITE)
    ========================================== */
 :root {
-    --primary: #b91c1c;
-    --primary-hover: #991b1b;
-    --secondary-bg: #f8fafc;
-    --card-bg: #ffffff;
-    --text-dark: #1e293b;
-    --text-muted: #64748b;
-    --border-color: #e2e8f0;
-    --star-gold: #ffb100;
+    --primary: #b91c1c;         /* Primary Red */
+    --primary-hover: #991b1b;   /* Dark Red Hover */
+    --accent-red: #dc2626;      /* Vibrant Red Accent */
+    --bg-dark: #0f172a;         /* Dark Black/Navy Background */
+    --bg-light: #f8fafc;        /* Off-White Body Background */
+    --card-bg: #ffffff;         /* Clean White Card Background */
+    --text-dark: #0f172a;        /* Black Text */
+    --text-muted: #64748b;      /* Muted Gray Text */
+    --border-color: #e2e8f0;    /* Light Border */
+    --star-gold: #ffb100;       /* Star Rating Gold */
 }
 
 * {
@@ -20,7 +22,7 @@
 }
 
 body {
-    background-color: var(--secondary-bg);
+    background-color: var(--bg-light);
     color: var(--text-dark);
     line-height: 1.6;
 }
@@ -37,11 +39,11 @@ a {
 }
 
 /* ==========================================
-   2. HEADER & NAVIGATION
+   2. HEADER & NAVIGATION (WHITE & RED)
    ========================================== */
 header {
     background-color: #ffffff;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -83,12 +85,13 @@ header {
     outline: none;
     background-color: #f1f5f9;
     font-size: 0.95rem;
-    transition: background 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
 }
 
 .search-input:focus {
     background-color: #ffffff;
     border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15);
 }
 
 .search-btn {
@@ -98,18 +101,18 @@ header {
     transform: translateY(-50%);
     background: none;
     border: none;
-    color: var(--text-muted);
+    color: var(--primary);
     cursor: pointer;
     font-size: 1rem;
 }
 
 .cart-btn {
     background-color: #ffffff;
-    border: 1px solid var(--primary);
+    border: 2px solid var(--primary);
     color: var(--primary);
-    padding: 8px 16px;
+    padding: 8px 18px;
     border-radius: 6px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
     transition: all 0.2s;
 }
@@ -122,7 +125,7 @@ header {
 .main-nav {
     background-color: #ffffff;
     border-top: 1px solid var(--border-color);
-    border-bottom: 1px solid var(--border-color);
+    border-bottom: 2px solid var(--primary);
 }
 
 .main-nav .container {
@@ -142,7 +145,7 @@ header {
     display: block;
     padding: 12px 0;
     font-size: 0.95rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--text-dark);
     position: relative;
     white-space: nowrap;
@@ -165,12 +168,13 @@ header {
 .whatsapp-nav-btn {
     background-color: var(--primary);
     color: #ffffff !important;
-    padding: 8px 16px;
-    border-radius: 4px;
-    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 700;
     display: inline-flex;
     align-items: center;
     gap: 8px;
+    transition: background 0.2s;
 }
 
 .whatsapp-nav-btn:hover {
@@ -178,7 +182,7 @@ header {
 }
 
 /* ==========================================
-   3. HERO & CATEGORIES
+   3. HERO & CATEGORY BANNER (BLACK & RED CARDS)
    ========================================== */
 .hero-section {
     padding: 30px 0;
@@ -191,16 +195,20 @@ header {
 }
 
 .cat-card {
-    background: var(--card-bg);
-    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
     padding: 20px;
     text-align: center;
-    box-shadow: 0 4px 6px -1px rgba(0,0,0,0.03);
-    transition: transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    transition: all 0.3s ease;
+    cursor: pointer;
 }
 
 .cat-card:hover {
-    transform: translateY(-50px);
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 8px 20px rgba(185, 28, 28, 0.12);
 }
 
 .cat-card img {
@@ -210,7 +218,8 @@ header {
 }
 
 .cat-card h3 {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    font-weight: 800;
     color: var(--text-dark);
     letter-spacing: 0.5px;
 }
@@ -230,6 +239,8 @@ header {
     font-size: 1.8rem;
     font-weight: 800;
     color: var(--text-dark);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .section-title .highlight {
@@ -257,6 +268,7 @@ header {
     border-radius: 8px;
     background-color: #ffffff;
     font-size: 0.95rem;
+    font-weight: 600;
     outline: none;
 }
 
@@ -268,17 +280,18 @@ header {
 
 .product-card {
     background: var(--card-bg);
-    border-radius: 8px;
+    border-radius: 10px;
     border: 1px solid var(--border-color);
     overflow: hidden;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    transition: box-shadow 0.2s;
+    transition: all 0.3s ease;
 }
 
 .product-card:hover {
-    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
 .product-card img {
@@ -311,12 +324,35 @@ header {
     color: #ffffff;
     border: none;
     border-radius: 6px;
-    font-weight: 600;
+    font-weight: 700;
     cursor: pointer;
+    transition: background 0.2s;
+}
+
+.add-cart-btn:hover {
+    background-color: var(--primary-hover);
 }
 
 /* ==========================================
-   5. CUSTOMER DELIVERY SHOWCASE (AUTO-SLIDER)
+   5. REPAIR BOOKING SECTION (FORM STYLES)
+   ========================================== */
+.repair-booking-section {
+    padding: 50px 0;
+    background: #ffffff;
+    border-top: 1px solid var(--border-color);
+    border-bottom: 1px solid var(--border-color);
+}
+
+#repairBookingForm input:focus, 
+#repairBookingForm select:focus, 
+#repairBookingForm textarea:focus {
+    outline: none;
+    border-color: var(--primary) !important;
+    box-shadow: 0 0 0 3px rgba(185, 28, 28, 0.15);
+}
+
+/* ==========================================
+   6. CUSTOMER DELIVERY SHOWCASE (AUTO-SLIDER)
    ========================================== */
 .customer-showcase-section {
     padding: 50px 0 30px 0;
@@ -338,7 +374,7 @@ header {
     animation: slideLeft 30s linear infinite;
 }
 
-/* Pause marquee on hover */
+/* Freeze auto-sliding marquee when mouse hovers over photos */
 .customer-track:hover {
     animation-play-state: paused;
 }
@@ -353,12 +389,14 @@ header {
     height: 280px;
     object-fit: cover;
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.06);
-    transition: transform 0.3s ease;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    border: 2px solid transparent;
 }
 
 .customer-track .photo-card img:hover {
-    transform: scale(1.03);
+    transform: scale(1.04);
+    border-color: var(--primary);
 }
 
 @keyframes slideLeft {
@@ -371,7 +409,7 @@ header {
 }
 
 /* ==========================================
-   6. GOOGLE REVIEWS SECTION
+   7. GOOGLE REVIEWS SECTION (CARD STYLING)
    ========================================== */
 .google-reviews-section {
     padding: 40px 0 60px 0;
@@ -389,10 +427,16 @@ header {
     padding: 24px;
     border-radius: 12px;
     border: 1px solid var(--border-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.08);
 }
 
 .review-header {
@@ -410,7 +454,7 @@ header {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    font-weight: bold;
+    font-weight: 700;
     font-size: 1.1rem;
     flex-shrink: 0;
 }
@@ -423,7 +467,7 @@ header {
     margin: 0;
     font-size: 0.95rem;
     font-weight: 700;
-    color: #1e293b;
+    color: var(--text-dark);
     line-height: 1.3;
 }
 
@@ -453,18 +497,23 @@ header {
 }
 
 .read-more {
-    color: #0284c7;
+    color: var(--primary);
     cursor: pointer;
-    font-weight: 600;
+    font-weight: 700;
+}
+
+.read-more:hover {
+    text-decoration: underline;
 }
 
 /* ==========================================
-   7. FOOTER & MODAL
+   8. FOOTER & MODALS (BLACK & WHITE THEME)
    ========================================== */
 footer {
-    background-color: #0f172a;
+    background-color: #0b0f19; /* Pure Dark Black Background */
     color: #94a3b8;
     padding: 50px 0 20px 0;
+    border-top: 3px solid var(--primary);
 }
 
 .footer-content {
@@ -474,8 +523,16 @@ footer {
     margin-bottom: 30px;
 }
 
-.footer-content h3, .footer-content h4 {
+.footer-content h3 {
+    color: var(--primary);
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 15px;
+}
+
+.footer-content h4 {
     color: #ffffff;
+    font-size: 1.1rem;
     margin-bottom: 15px;
 }
 
@@ -485,6 +542,10 @@ footer {
 
 .footer-content li {
     margin-bottom: 8px;
+}
+
+.footer-content a:hover {
+    color: var(--primary);
 }
 
 .footer-bottom {
@@ -500,7 +561,7 @@ footer {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.5);
+    background: rgba(0,0,0,0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -514,6 +575,7 @@ footer {
     max-width: 500px;
     width: 90%;
     position: relative;
+    border-top: 4px solid var(--primary);
 }
 
 .close-btn {
@@ -522,4 +584,9 @@ footer {
     top: 15px;
     font-size: 1.5rem;
     cursor: pointer;
+    color: var(--text-dark);
+}
+
+.close-btn:hover {
+    color: var(--primary);
 }
