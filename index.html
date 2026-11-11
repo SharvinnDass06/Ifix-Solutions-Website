@@ -1,278 +1,253 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>iFix Solutions - Computer Sales, Repairs & Upgrades</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iFix Solutions - Computer & Laptop Repair, Sales, and Services</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
 
-  <div class="topbar">
-    <div class="topbar-in">
-      <span>✉ support@ifixsolutions.com</span>
-      <a href="#about">About Us</a>
-      <a href="#contact">Contact Us</a>
-    </div>
-  </div>
-
-  <header>
-    <div class="head-main">
-      <a href="#home" class="logo">🛠️ iFix <span>Solutions</span></a>
-      <div class="search-box">
-        <input type="text" placeholder="Search products, brands or model numbers"
-          onfocus="document.getElementById('products').scrollIntoView()"
-          oninput="var s=document.getElementById('searchInput');s.value=this.value;s.dispatchEvent(new Event('input'))">
-        <span class="search-go">🔍</span>
-      </div>
-      <button class="cart-btn" id="openCartBtn">Cart <span id="cartCount">0</span></button>
-    </div>
-    <input type="checkbox" id="menuToggle" class="menu-toggle">
-    <label for="menuToggle" class="menu-icon">☰</label>
-    <nav class="nav-links">
-      <a href="#home" class="active">Home</a>
-      <a href="#categories">Shop by Category</a>
-      <a href="#products">Products</a>
-      <a href="#services">Services</a>
-      <a href="#about">About Us</a>
-      <a href="#feedback">Feedback</a>
-      <a href="#contact">Contact</a>
-      <a href="https://wa.me/60123456789" class="wa-link" target="_blank">WhatsApp to Order</a>
-    </nav>
-  </header>
-
-  <section id="home" class="hero">
-    <div class="hero-inner">
-      <div class="hero-text">
-        <span class="hero-brand">iFix Solutions</span>
-        <h1>Laptops, PCs <br>&amp; Expert Repairs</h1>
-        <p>Enquire. Get advice. Place your order.</p>
-        <a href="https://wa.me/60123456789" target="_blank" class="btn-wa">💬 Chat with Us</a>
-        <small>Laptops • PCs • SSD &amp; RAM • Repairs</small>
-      </div>
-      <div class="hero-visual">💻<span>🖥️</span><span>📱</span></div>
-    </div>
-  </section>
-
-  <section id="categories" class="cats">
-    <div class="container">
-      <div class="cat-grid">
-        <a href="#products" class="cat"><div>💻</div>LAPTOP</a>
-        <a href="#products" class="cat"><div>🖥️</div>DESKTOP PC</a>
-        <a href="#products" class="cat"><div>🧠</div>RAM</a>
-        <a href="#products" class="cat"><div>💾</div>SSD / STORAGE</a>
-        <a href="#products" class="cat"><div>🖱️</div>ACCESSORIES</a>
-        <a href="#services" class="cat"><div>🔧</div>REPAIR SERVICES</a>
-        <a href="#products" class="cat"><div>🏷️</div>CLEARANCE SALE</a>
-        <a href="#contact" class="cat"><div>🏬</div>OUR SHOP</a>
-      </div>
-    </div>
-  </section>
-
-  <section id="products">
-    <div class="container">
-      <h2 class="section-title">Hardware &amp; Second-Hand Catalog</h2>
-      <p class="section-subtitle">Fully tested and guaranteed with warranty</p>
-
-      <div class="controls-bar">
-        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search NVMe, ThinkPad, DDR4 RAM, MacBook...">
-        <select id="categoryFilter">
-          <option value="ALL">All Categories</option>
-          <option value="Laptop">Laptops</option>
-          <option value="Desktop">Desktop PCs</option>
-          <option value="RAM">RAM</option>
-          <option value="Storage">SSD / Storage</option>
-          <option value="Equipment">Accessories &amp; Peripherals</option>
-        </select>
-        <select id="conditionFilter">
-          <option value="ALL">All Conditions</option>
-          <option value="Grade A Used">Grade A Used</option>
-          <option value="Refurbished">Refurbished</option>
-          <option value="Brand New">Brand New</option>
-        </select>
-      </div>
-
-      <div class="product-grid" id="productGrid"></div>
-    </div>
-  </section>
-
-  <section id="services" class="alt">
-    <div class="container">
-      <h2 class="section-title">Our Technical Services</h2>
-      <p class="section-subtitle">Fast turn-around repair and upgrade solutions by experienced technicians</p>
-
-      <div class="services-grid">
-        <div class="service-card">
-          <div class="service-icon">💻</div>
-          <h3>Laptop Diagnostics &amp; Repair</h3>
-          <p>Motherboard issues, screen replacement, battery health checks and power jack repairs.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🚀</div>
-          <h3>SSD &amp; RAM Speed Upgrades</h3>
-          <p>Supercharge a slow computer with NVMe SSDs and memory upgrades, including Windows cloning.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🖥️</div>
-          <h3>Custom PC Assembly</h3>
-          <p>Office or gaming PC builds tailored to your budget and performance needs.</p>
-        </div>
-        <div class="service-card">
-          <div class="service-icon">🧹</div>
-          <h3>Thermal Paste &amp; Servicing</h3>
-          <p>Deep dust cleaning and thermal paste replacement to lower temperatures and prevent overheating.</p>
-        </div>
-      </div>
-
-      <div class="form-card booking">
-        <h3>Book a Technical Inspection / Service</h3>
-        <form id="serviceBookingForm">
-          <div class="form-row">
-            <div class="form-group">
-              <label>Full Name</label>
-              <input type="text" placeholder="John Doe" required>
+    <!-- Top Navigation / Header -->
+    <header>
+        <div class="top-header container">
+            <div class="logo">
+                <i class="fa-solid fa-screwdriver-wrench"></i> <span>iFix</span> Solutions
             </div>
-            <div class="form-group">
-              <label>Phone / WhatsApp Number</label>
-              <input type="tel" placeholder="+60 12-345 6789" required>
+            <div class="search-container">
+                <input type="text" class="search-input" placeholder="Search products, brands or model numbers">
+                <button class="search-btn"><i class="fa-solid fa-search"></i></button>
             </div>
-          </div>
-          <div class="form-row">
-            <div class="form-group">
-              <label>Device Type &amp; Model</label>
-              <input type="text" placeholder="e.g. Asus ROG Strix / Dell Latitude 5400" required>
+            <div class="header-actions">
+                <button id="openCartBtn" class="cart-btn">Cart <span id="cartCount">0</span></button>
             </div>
-            <div class="form-group">
-              <label>Requested Service</label>
-              <select required>
-                <option value="Diagnostic">General Repair / Fault Diagnostic</option>
-                <option value="Upgrade">SSD / RAM Upgrade</option>
-                <option value="Cleaning">Thermal Paste &amp; Dust Cleaning</option>
-                <option value="OS">Windows OS Format &amp; Cleanup</option>
-              </select>
-            </div>
-          </div>
-          <div class="form-group">
-            <label>Issue Description</label>
-            <textarea rows="3" placeholder="Describe what is wrong with your laptop or PC..."></textarea>
-          </div>
-          <button type="submit" class="btn-primary full">Submit Repair Booking Request</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section id="about">
-    <div class="container about-wrap">
-      <div>
-        <h2 class="section-title left">About iFix Solutions</h2>
-        <p class="about-text">At <strong>iFix Solutions</strong>, we provide high-quality computer repair services, honest technical advice, and top-tier second-hand computer equipment. Whether you need a reliable laptop for work, an SSD upgrade to speed up your daily tasks, or a professional repair, our experienced technicians are here to help. Every item sold undergoes rigorous testing to ensure performance and reliability.</p>
-      </div>
-      <div class="stats">
-        <div><b>100%</b><small>Tested Items</small></div>
-        <div><b>3 mo+</b><small>Warranty</small></div>
-        <div><b>6 days</b><small>Open Weekly</small></div>
-        <div><b>5★</b><small>Customer Rated</small></div>
-      </div>
-    </div>
-  </section>
-
-  <section id="feedback" class="alt">
-    <div class="container">
-      <h2 class="section-title">Customer Feedback</h2>
-      <p class="section-subtitle">Share your experience or leave a review with us</p>
-
-      <div class="form-card">
-        <h3>Leave Your Feedback</h3>
-        <form id="feedbackForm">
-          <div class="form-group">
-            <label>Your Name</label>
-            <input type="text" id="fbName" placeholder="e.g. Alex Wong" required>
-          </div>
-          <div class="form-group">
-            <label>Rating</label>
-            <select id="fbRating" required>
-              <option value="5">★★★★★ (5/5 Stars - Excellent)</option>
-              <option value="4">★★★★☆ (4/5 Stars - Very Good)</option>
-              <option value="3">★★★☆☆ (3/5 Stars - Average)</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label>Your Review / Experience</label>
-            <textarea id="fbComment" rows="3" placeholder="Share your experience with our services or products..." required></textarea>
-          </div>
-          <button type="submit" class="btn-primary full">Post Review</button>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section id="contact">
-    <div class="container">
-      <h2 class="section-title">Contact &amp; Location</h2>
-      <p class="section-subtitle">Get in touch with us or visit our shop</p>
-
-      <div class="contact-wrapper">
-        <div class="form-card wide info-card">
-          <h3>iFix Solutions Shop Details</h3>
-          <p>📍 <strong>Address:</strong> No. 12, Tech Commerce Center, Computer Street</p>
-          <p>📞 <strong>Phone / WhatsApp:</strong> +60 12-345 6789</p>
-          <p>✉️ <strong>Email:</strong> support@ifixsolutions.com</p>
-          <p>⏰ <strong>Business Hours:</strong> Monday - Saturday (10:00 AM - 7:00 PM)</p>
         </div>
+        <nav class="main-nav">
+            <div class="container">
+                <ul>
+                    <li><a href="#home" class="active">Home</a></li>
+                    <li><a href="#categories">Shop by Category</a></li>
+                    <li><a href="#products">Products</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#about">About Us</a></li>
+                    <li><a href="#reviews">Feedback</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <li><a href="admin.html" target="_blank" class="admin-link">Admin Panel</a></li>
+                </ul>
+                <a href="https://wa.me/60123456789" target="_blank" class="whatsapp-nav-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp to Order</a>
+            </div>
+        </nav>
+    </header>
 
-        <div class="form-card wide">
-          <h3>Send Us a Quick Message</h3>
-          <form id="contactForm">
-            <div class="form-group">
-              <label>Email Address</label>
-              <input type="email" placeholder="yourname@gmail.com" required>
+    <!-- Hero Section / Categories Banner -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="category-banner-grid">
+                <div class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300" alt="Accessories">
+                    <h3>ACCESSORIES</h3>
+                </div>
+                <div class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300" alt="Repair Services">
+                    <h3>REPAIR SERVICES</h3>
+                </div>
+                <div class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300" alt="Clearance Sale">
+                    <h3>CLEARANCE SALE</h3>
+                </div>
+                <div class="cat-card">
+                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300" alt="Our Shop">
+                    <h3>OUR SHOP</h3>
+                </div>
             </div>
-            <div class="form-group">
-              <label>Message</label>
-              <textarea rows="4" placeholder="How can we help you?" required></textarea>
-            </div>
-            <button type="submit" class="btn-primary full">Send Message</button>
-          </form>
         </div>
-      </div>
+    </section>
+
+    <!-- Catalog Section -->
+    <section id="products" class="catalog-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Hardware & Second-Hand Catalog</h2>
+                <p>Fully tested and guaranteed with warranty</p>
+            </div>
+
+            <div class="controls-bar">
+                <input type="text" class="search-input" placeholder="Search catalog...">
+                <select class="filter-select">
+                    <option value="all">All Categories</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Desktop PC">Desktop PC</option>
+                    <option value="RAM">RAM</option>
+                    <option value="SSD / Storage">SSD / Storage</option>
+                    <option value="Accessories">Accessories</option>
+                </select>
+                <select class="filter-select">
+                    <option value="all">All Conditions</option>
+                    <option value="Brand New">Brand New</option>
+                    <option value="Second-Hand">Second-Hand / Refurbished</option>
+                </select>
+            </div>
+
+            <!-- Product Grid Container -->
+            <div id="productGrid" class="product-grid">
+                <p style="text-align: center; color: #64748b; grid-column: 1 / -1;">Loading products from database...</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- CUSTOMER DELIVERY SHOWCASE (AUTO-SLIDER) -->
+    <!-- ========================================== -->
+    <section class="customer-showcase-section" id="customer-showcase">
+        <div class="container">
+            <h2 class="section-title">our <span class="highlight">CUSTOMER</span></h2>
+            
+            <div class="customer-slider-container">
+                <div class="customer-track">
+                    <!-- Original Set of Photos -->
+                    <div class="photo-card"><img src="images/customer1.jpg" alt="Customer delivery 1" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer2.jpg" alt="Customer delivery 2" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer3.jpg" alt="Customer delivery 3" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer4.jpg" alt="Customer delivery 4" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer5.jpg" alt="Customer delivery 5" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300'"></div>
+                    
+                    <!-- Duplicated Set for Seamless Infinite Loop -->
+                    <div class="photo-card"><img src="images/customer1.jpg" alt="Customer delivery 1" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer2.jpg" alt="Customer delivery 2" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer3.jpg" alt="Customer delivery 3" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer4.jpg" alt="Customer delivery 4" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300'"></div>
+                    <div class="photo-card"><img src="images/customer5.jpg" alt="Customer delivery 5" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300'"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- GOOGLE REVIEWS SECTION -->
+    <!-- ========================================== -->
+    <section class="google-reviews-section" id="reviews">
+        <div class="container">
+            <h2 class="section-title">Hear What our <span class="highlight">CUSTOMER</span> Say</h2>
+            
+            <div class="reviews-grid">
+                <!-- Review Card 1 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="avatar-letter" style="background-color: #8e44ad;">a</div>
+                        <div class="reviewer-info">
+                            <h4>ayeem trey</h4>
+                            <div class="stars">★★★★★</div>
+                            <span class="review-date">October 18, 2026</span>
+                        </div>
+                        <span class="google-logo-icon">G</span>
+                    </div>
+                    <p class="review-text">Pengalaman membeli yang baik, kemas penyambungan wayar dan harga yang berpatutan. <span class="read-more">Read more</span></p>
+                </div>
+
+                <!-- Review Card 2 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="avatar-letter" style="background-color: #2980b9;">M</div>
+                        <div class="reviewer-info">
+                            <h4>MUHAMMAD MUIZZUDDIN BIN KAMARUZAMAN</h4>
+                            <div class="stars">★★★★★</div>
+                            <span class="review-date">October 4, 2026</span>
+                        </div>
+                        <span class="google-logo-icon">G</span>
+                    </div>
+                    <p class="review-text">Senang berurusan. Penghantaran selamat. Team Sawada sangat membantu dalam pemilihan... <span class="read-more">Read more</span></p>
+                </div>
+
+                <!-- Review Card 3 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="avatar-letter" style="background-color: #27ae60;">A</div>
+                        <div class="reviewer-info">
+                            <h4>Arif Syn</h4>
+                            <div class="stars">★★★★★</div>
+                            <span class="review-date">September 28, 2026</span>
+                        </div>
+                        <span class="google-logo-icon">G</span>
+                    </div>
+                    <p class="review-text">SELLER SANGAT RESPONSIVE LAYAN CUSTOMER , HARGA BERPATUTAN DENGAN BAJET!!</p>
+                </div>
+
+                <!-- Review Card 4 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="avatar-letter" style="background-color: #d35400;">Q</div>
+                        <div class="reviewer-info">
+                            <h4>Qamarul Anwar</h4>
+                            <div class="stars">★★★★★</div>
+                            <span class="review-date">September 22, 2026</span>
+                        </div>
+                        <span class="google-logo-icon">G</span>
+                    </div>
+                    <p class="review-text">Service dari iFix terbaik, packing barang dijamin sampai dengan baik. <span class="read-more">Read more</span></p>
+                </div>
+
+                <!-- Review Card 5 -->
+                <div class="review-card">
+                    <div class="review-header">
+                        <div class="avatar-letter" style="background-color: #16a085;">A</div>
+                        <div class="reviewer-info">
+                            <h4>Abdulah Alsolaiman</h4>
+                            <div class="stars">★★★★★</div>
+                            <span class="review-date">September 20, 2026</span>
+                        </div>
+                        <span class="google-logo-icon">G</span>
+                    </div>
+                    <p class="review-text">This is legit one guys. I like it. I first <span class="read-more">Read more</span></p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer / Contact Section -->
+    <footer id="contact">
+        <div class="container footer-content">
+            <div>
+                <h3>iFix Solutions</h3>
+                <p>Your trusted partner for computer sales, upgrades, and expert hardware repairs.</p>
+            </div>
+            <div>
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#products">Catalog</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#reviews">Reviews</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4>Contact Us</h4>
+                <p><i class="fa-solid fa-phone"></i> +60 12-345 6789</p>
+                <p><i class="fa-solid fa-location-dot"></i> Seremban, Negeri Sembilan</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 iFix Solutions. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Modal -->
+    <div id="cartModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span id="closeCartBtn" class="close-btn">&times;</span>
+            <h2>Your Shopping Cart</h2>
+            <div id="cartItemsList">
+                <p>Your cart is empty.</p>
+            </div>
+            <div class="cart-total">
+                <strong>Total: RM <span id="cartTotalPrice">0.00</span></strong>
+            </div>
+            <button class="whatsapp-nav-btn" style="width:100%; margin-top:15px; text-align:center;">Checkout via WhatsApp</button>
+        </div>
     </div>
-  </section>
 
-  <div class="modal" id="cartModal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3>Your Shopping Cart</h3>
-        <span class="close-btn" id="closeCartBtn">&times;</span>
-      </div>
-      <div id="cartItemsContainer"></div>
-      <div class="cart-footer">
-        <h4>Total Amount: <span>RM <span id="cartTotal">0.00</span></span></h4>
-        <button class="btn-primary full" id="checkoutBtn">Proceed to Checkout</button>
-      </div>
-    </div>
-  </div>
-
-  <a href="https://wa.me/60123456789" target="_blank" class="wa-float" aria-label="WhatsApp">💬</a>
-
-  <footer>
-    <div class="footer-grid">
-      <div>
-        <h4>🛠️ iFix Solutions</h4>
-        <p>Computer sales, repairs and upgrades you can rely on.</p>
-      </div>
-      <div>
-        <h4>Quick Links</h4>
-        <a href="#products">Products</a><a href="#services">Services</a><a href="#about">About Us</a><a href="#contact">Contact</a>
-      </div>
-      <div>
-        <h4>Get in Touch</h4>
-        <p>+60 12-345 6789</p><p>support@ifixsolutions.com</p><p>Mon–Sat, 10 AM – 7 PM</p>
-      </div>
-    </div>
-    <p class="copy">&copy; 2026 iFix Solutions Computer Shop.</p>
-  </footer>
-
-  <script src="script.js"></script>
+    <!-- Main JS script file -->
+    <script src="script.js"></script>
 </body>
 </html>
