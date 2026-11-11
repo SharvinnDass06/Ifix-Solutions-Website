@@ -30,9 +30,9 @@
                     <li><a href="#home" class="active">Home</a></li>
                     <li><a href="#categories">Shop by Category</a></li>
                     <li><a href="#products">Products</a></li>
-                    <li><a href="#services">Services</a></li>
+                    <li><a href="#services">Repair Services</a></li>
                     <li><a href="#about">About Us</a></li>
-                    <li><a href="#reviews">Feedback</a></li>
+                    <li><a href="#reviews">Reviews</a></li>
                     <li><a href="#contact">Contact</a></li>
                     <li><a href="admin.html" target="_blank" class="admin-link">Admin Panel</a></li>
                 </ul>
@@ -94,6 +94,48 @@
             <div id="productGrid" class="product-grid">
                 <p style="text-align: center; color: #64748b; grid-column: 1 / -1;">Loading products from database...</p>
             </div>
+        </div>
+    </section>
+
+    <!-- ========================================== -->
+    <!-- REPAIR BOOKING SERVICE SECTION -->
+    <!-- ========================================== -->
+    <section id="services" class="repair-booking-section" style="padding: 50px 0; background: #ffffff;">
+        <div class="container" style="max-width: 800px;">
+            <div class="section-header" style="text-align: center; margin-bottom: 30px;">
+                <h2>Book a Repair Service</h2>
+                <p>Fill out the form below and our technician will get in touch with you.</p>
+            </div>
+            <form id="repairBookingForm" style="background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Full Name</label>
+                    <input type="text" id="repairName" required placeholder="e.g. Alex Wong" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Phone Number (WhatsApp)</label>
+                    <input type="text" id="repairPhone" required placeholder="e.g. +60123456789" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Device Model</label>
+                    <input type="text" id="repairDevice" required placeholder="e.g. MacBook Pro 2020 / ASUS ROG" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Requested Service</label>
+                    <select id="repairServiceType" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
+                        <option value="Screen Replacement">Screen Replacement</option>
+                        <option value="Battery Replacement">Battery Replacement</option>
+                        <option value="Format & OS Installation">Format & OS Installation</option>
+                        <option value="Hardware Upgrade (RAM/SSD)">Hardware Upgrade (RAM/SSD)</option>
+                        <option value="General Diagnostics & Repair">General Diagnostics & Repair</option>
+                    </select>
+                </div>
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Issue Description</label>
+                    <textarea id="repairIssue" rows="4" placeholder="Describe the issue with your device..." style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;"></textarea>
+                </div>
+                <button type="submit" style="width: 100%; padding: 14px; background: #b91c1c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;">Submit Repair Booking</button>
+            </form>
+            <div id="repairMsg" style="text-align: center; margin-top: 15px; font-weight: bold;"></div>
         </div>
     </section>
 
