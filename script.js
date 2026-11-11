@@ -1,309 +1,280 @@
-const API_URL = "https://ifix-solutions-backend-1.onrender.com/api/products";
+const API_BASE = "https://ifix-solutions-backend-1.onrender.com/api";
+const WHATSAPP_NUMBER = "60123456789";
+const ITEMS_PER_PAGE = 8;
 
-let allProducts = [];
-let currentPage = 1;
-const itemsPerPage = 8; // Change this number if you want more or fewer products per page
+let allProducts = [], filtered = [], currentPage = 1;
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('ifix_cart')) || []; } catch (e) { cart = []; }
 
-// Load saved cart from browser storage if it exists, otherwise start empty
-let cart = JSON.parse(localStorage.getItem('ifix_cart')) || [];
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const money = n => 'RM ' + (parseFloat(n) || 0).toFixed(2);
+const SKELETONS = '<div class="skeleton"></div>'.repeat(4);
 
 document.addEventListener('DOMContentLoaded', () => {
-  loadStoreProducts();
-  setupEventListeners();
+  loadProducts();
+  setupFilters();
+  setupCart();
   setupRepairForm();
-  updateCartUI(); // Render the saved cart right when the page loads
+  setupPageUI();
+  updateCart();
 });
 
-async function loadStoreProducts() {
-  const container = document.getElementById("productGrid");
-  if (!container) return;
+/* ---------- Toast ---------- */
+let toastTimer;
+function say(msg) {
+  const t = $('#toast'); if (!t) return;
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
+}
 
+/* ---------- Products ---------- */
+async function loadProducts() {
+  const grid = $('#productGrid'); if (!grid) return;
+  // Free hosting can take a while to wake up, so tell people why it is slow
+  const slow = setTimeout(() => grid.insertAdjacentHTML('beforeend',
+    '<p class="grid-message">Connecting to the store server. The first load can take up to a minute.</p>'), 5000);
   try {
-    const response = await fetch(API_URL);
-    const jsonResult = await response.json();
-    allProducts = jsonResult.data || jsonResult || [];
-    renderProducts(allProducts);
-  } catch (error) {
-    console.error("Error loading products:", error);
-    container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">Unable to load products from server.</p>`;
-  }
+    const res = await fetch(`${API_BASE}/products`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    const list = json.data || json;
+    allProducts = Array.isArray(list) ? list : [];
+    // Only show the Condition filter if your products actually carry that field
+    const cond = $('#conditionFilter');
+    if (cond) cond.hidden = !allProducts.some(p => p.condition || p.condition_type);
+    applyFilters();
+  } catch (err) {
+    console.error('Error loading products:', err);
+    grid.innerHTML = '<div class="grid-message">We could not load the products.<br><button class="btn btn-primary" id="retryBtn">Try again</button></div>';
+    $('#retryBtn').onclick = () => { grid.innerHTML = SKELETONS; loadProducts(); };
+  } finally { clearTimeout(slow); }
 }
 
-function renderProducts(productsToRender) {
-  const container = document.getElementById("productGrid");
-  if (!container) return;
+function applyFilters(resetPage = true) {
+  if (resetPage) currentPage = 1;
+  const q = ($('#catalogSearch')?.value || '').toLowerCase().trim();
+  const cat = ($('#categoryFilter')?.value || 'all').toLowerCase();
+  const cond = ($('#conditionFilter')?.value || 'all').toLowerCase();
+  const condOn = cond !== 'all' && !$('#conditionFilter').hidden;
 
-  container.innerHTML = "";
+  filtered = allProducts.filter(p => {
+    const name = (p.name || '').toLowerCase(), pc = (p.category || '').toLowerCase();
+    const pcond = String(p.condition || p.condition_type || '').toLowerCase();
+    return (name.includes(q) || pc.includes(q))
+      && (cat === 'all' || pc === cat)
+      && (!condOn || pcond.includes(cond.split(/[ /-]/)[0]));
+  });
+  renderProducts();
+}
 
-  if (productsToRender.length === 0) {
-    container.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--text-muted);">No products found in database.</p>`;
-    const existingPagination = document.getElementById("paginationContainer");
-    if (existingPagination) existingPagination.innerHTML = "";
-    return;
-  }
-
-  // --- Pagination Logic ---
-  const totalPages = Math.ceil(productsToRender.length / itemsPerPage);
-  if (currentPage > totalPages) currentPage = 1;
-
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedItems = productsToRender.slice(startIndex, endIndex);
-
-  // Render current page items
-  paginatedItems.forEach(product => {
-    const card = document.createElement("div");
-    card.className = "product-card";
-
-    let imageHTML = "";
-    if (product.image_url) {
-      imageHTML = `<img src="${product.image_url}" alt="${product.name}" class="product-img">`;
-    }
-
-    card.innerHTML = `
-      ${imageHTML}
-      <div class="product-info">
-        <h3 class="product-title">${product.name}</h3>
-        <p class="product-specs">Category: ${product.category}</p>
-        <div class="product-bottom">
-          <span class="product-price">RM ${parseFloat(product.price).toFixed(2)}</span>
-          <button class="btn-add-cart" onclick="addToCart(${product.id})">Add to Cart</button>
-        </div>
-        <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">Stock: ${product.stock_quantity}</div>
+function productCard(p) {
+  const stock = Number(p.stock_quantity);
+  const known = !isNaN(stock) && p.stock_quantity !== null && p.stock_quantity !== '';
+  const out = known && stock <= 0;
+  const stockText = !known ? '' : out ? 'Currently unavailable' : stock <= 3 ? `Only ${stock} left` : `${stock} in stock`;
+  const img = p.image_url
+    ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-img" loading="lazy">`
+    : '<div class="product-img ph"><i class="fa-solid fa-laptop"></i></div>';
+  return `<div class="product-card">${img}
+    <div class="product-info">
+      <h3 class="product-title">${esc(p.name)}</h3>
+      <p class="product-specs">${esc(p.category)}</p>
+      <div class="product-bottom">
+        <span class="product-price">${money(p.price)}</span>
+        <button class="btn-add-cart" data-id="${esc(p.id)}" ${out ? 'disabled' : ''}>${out ? 'Out of stock' : 'Add to cart'}</button>
       </div>
-    `;
-    container.appendChild(card);
-  });
-
-  // Render pagination buttons below grid
-  renderPaginationControls(totalPages, productsToRender);
+      ${stockText ? `<div class="stock ${known && stock <= 3 ? 'low' : ''}">${stockText}</div>` : ''}
+    </div></div>`;
 }
 
-function renderPaginationControls(totalPages, productsToRender) {
-  let paginationContainer = document.getElementById("paginationContainer");
-  
-  if (!paginationContainer) {
-    const productGrid = document.getElementById("productGrid");
-    paginationContainer = document.createElement("div");
-    paginationContainer.id = "paginationContainer";
-    paginationContainer.style.cssText = "grid-column: 1/-1; display: flex; justify-content: center; gap: 8px; margin: 2rem 0; align-items: center;";
-    productGrid.parentNode.insertBefore(paginationContainer, productGrid.nextSibling);
+function renderProducts() {
+  const grid = $('#productGrid'); if (!grid) return;
+  if (!filtered.length) {
+    grid.innerHTML = `<p class="grid-message">${allProducts.length ? 'No products match your search. Try another keyword or clear the filters.' : 'No products available yet. Check back soon.'}</p>`;
+    renderPagination(0); return;
   }
-
-  paginationContainer.innerHTML = "";
-
-  if (totalPages <= 1) return;
-
-  // Previous Button
-  const prevBtn = document.createElement("button");
-  prevBtn.textContent = "Previous";
-  prevBtn.style.cssText = "padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;";
-  prevBtn.disabled = currentPage === 1;
-  if (currentPage === 1) prevBtn.style.opacity = "0.5";
-  prevBtn.onclick = () => {
-    if (currentPage > 1) {
-      currentPage--;
-      renderProducts(productsToRender);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-  paginationContainer.appendChild(prevBtn);
-
-  // Page Number Buttons
-  for (let i = 1; i <= totalPages; i++) {
-    const pageBtn = document.createElement("button");
-    pageBtn.textContent = i;
-    pageBtn.style.cssText = `padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; font-weight: bold; background: ${i === currentPage ? 'var(--primary, #b91c1c)' : '#fff'}; color: ${i === currentPage ? '#fff' : '#000'};`;
-    pageBtn.onclick = () => {
-      currentPage = i;
-      renderProducts(productsToRender);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
-    paginationContainer.appendChild(pageBtn);
-  }
-
-  // Next Button
-  const nextBtn = document.createElement("button");
-  nextBtn.textContent = "Next";
-  nextBtn.style.cssText = "padding: 6px 12px; cursor: pointer; border-radius: 4px; border: 1px solid #ccc; background: #fff;";
-  nextBtn.disabled = currentPage === totalPages;
-  if (currentPage === totalPages) nextBtn.style.opacity = "0.5";
-  nextBtn.onclick = () => {
-    if (currentPage < totalPages) {
-      currentPage++;
-      renderProducts(productsToRender);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  };
-  paginationContainer.appendChild(nextBtn);
+  const pages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
+  if (currentPage > pages) currentPage = 1;
+  const start = (currentPage - 1) * ITEMS_PER_PAGE;
+  grid.innerHTML = filtered.slice(start, start + ITEMS_PER_PAGE).map(productCard).join('');
+  renderPagination(pages);
 }
 
-function setupEventListeners() {
-  const searchInput = document.querySelector('.search-input');
-  const categorySelect = document.querySelector('header select') || document.querySelector('.controls-bar select') || document.querySelector('select');
+function renderPagination(pages) {
+  let el = $('#paginationContainer');
+  if (!el) { el = document.createElement('div'); el.id = 'paginationContainer'; el.className = 'pagination'; $('#productGrid').after(el); }
+  if (pages <= 1) { el.innerHTML = ''; return; }
+  const btn = (label, page, cls = '', off = false) =>
+    `<button data-page="${page}" class="${cls}" ${off ? 'disabled' : ''} ${cls === 'current' ? 'aria-current="page"' : ''}>${label}</button>`;
+  let html = btn('Previous', currentPage - 1, '', currentPage === 1);
+  for (let i = 1; i <= pages; i++) html += btn(i, i, i === currentPage ? 'current' : '');
+  el.innerHTML = html + btn('Next', currentPage + 1, '', currentPage === pages);
+}
 
-  function filterAndRender(e) {
-    if (e) e.preventDefault();
+function setupFilters() {
+  const header = $('#headerSearch'), catalog = $('#catalogSearch');
+  const goToCatalog = () => $('#products').scrollIntoView({ behavior: 'smooth' });
 
-    // Lock and save current scroll position so page doesn't jump
-    const currentScrollY = window.scrollY;
+  header.addEventListener('input', () => { catalog.value = header.value; applyFilters(); });
+  catalog.addEventListener('input', () => { header.value = catalog.value; applyFilters(); });
+  header.addEventListener('keydown', e => { if (e.key === 'Enter') goToCatalog(); });
+  $('.search-btn').addEventListener('click', goToCatalog);
+  ['#categoryFilter', '#conditionFilter'].forEach(s => $(s).addEventListener('change', () => applyFilters()));
 
-    currentPage = 1; // Reset to page 1 on filter/search change
-    const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
-    const selectedCategory = categorySelect ? categorySelect.value.trim() : "all";
+  // Category cards on the home page pre-select the filter
+  $$('.cat-card[data-category]').forEach(c => c.addEventListener('click', () => {
+    $('#categoryFilter').value = c.dataset.category; applyFilters();
+  }));
 
-    const filtered = allProducts.filter(product => {
-      const productName = product.name ? product.name.toLowerCase() : "";
-      const productCategory = product.category ? product.category.toLowerCase() : "";
-
-      const matchesSearch = productName.includes(searchTerm) || 
-                            productCategory.includes(searchTerm);
-      
-      const matchesCategory = selectedCategory.toLowerCase() === "all" || 
-                              selectedCategory.toLowerCase() === "all categories" || 
-                              productCategory === selectedCategory.toLowerCase();
-
-      return matchesSearch && matchesCategory;
-    });
-
-    renderProducts(filtered);
-
-    // Instantly restore scroll position
-    window.scrollTo({ top: currentScrollY, behavior: 'auto' });
-  }
-
-  if (searchInput) {
-    searchInput.addEventListener("input", filterAndRender);
-    
-    // Prevent form submission jump if search input is wrapped in a form tag
-    const parentForm = searchInput.closest('form');
-    if (parentForm) {
-      parentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-      });
-    }
-  }
-
-  if (categorySelect) categorySelect.addEventListener("change", filterAndRender);
-
-  // Cart modal events
-  const cartModal = document.getElementById('cartModal');
-  const openCartBtn = document.getElementById('openCartBtn');
-  const closeCartBtn = document.getElementById('closeCartBtn');
-
-  if (openCartBtn && cartModal) {
-    openCartBtn.addEventListener('click', () => cartModal.style.display = 'flex');
-  }
-  if (closeCartBtn && cartModal) {
-    closeCartBtn.addEventListener('click', () => cartModal.style.display = 'none');
-  }
-  window.addEventListener('click', (e) => {
-    if (e.target === cartModal) cartModal.style.display = 'none';
+  document.addEventListener('click', e => {
+    const pg = e.target.closest('#paginationContainer button');
+    if (pg && !pg.disabled) { currentPage = Number(pg.dataset.page); renderProducts(); goToCatalog(); }
+    const add = e.target.closest('.btn-add-cart');
+    if (add) addToCart(add.dataset.id);
   });
 }
 
-window.addToCart = function(productId) {
-  const product = allProducts.find(p => p.id === productId);
-  if (!product) return;
+/* ---------- Cart ---------- */
+function saveCart() { try { localStorage.setItem('ifix_cart', JSON.stringify(cart)); } catch (e) { /* storage unavailable */ } }
 
-  const existing = cart.find(item => item.id === productId);
-  if (existing) {
-    existing.qty += 1;
-  } else {
-    cart.push({ ...product, qty: 1 });
-  }
-
-  saveCart();
-  updateCartUI();
-  alert(`Added ${product.name} to cart!`);
-};
-
-window.removeFromCart = function(productId) {
-  const existing = cart.find(item => item.id === productId);
-  if (existing) {
-    if (existing.qty > 1) {
-      existing.qty -= 1;
-    } else {
-      cart = cart.filter(item => item.id !== productId);
-    }
-  }
-  saveCart();
-  updateCartUI();
-};
-
-function saveCart() {
-  localStorage.setItem('ifix_cart', JSON.stringify(cart));
+function addToCart(id) {
+  const p = allProducts.find(x => String(x.id) === String(id)); if (!p) return;
+  const item = cart.find(i => String(i.id) === String(id));
+  const max = Number(p.stock_quantity);
+  if (item && !isNaN(max) && item.qty >= max) return say(`Only ${max} in stock`);
+  item ? item.qty++ : cart.push({ ...p, qty: 1 });
+  saveCart(); updateCart(); say(`${p.name} added to cart`);
 }
 
-function updateCartUI() {
-  const cartCount = document.getElementById('cartCount');
-  const cartItemsContainer = document.getElementById('cartItemsContainer');
-  const cartTotal = document.getElementById('cartTotal');
-
-  if (cartCount) {
-    cartCount.textContent = cart.reduce((sum, i) => sum + i.qty, 0);
-  }
-
-  if (cartItemsContainer && cartTotal) {
-    cartItemsContainer.innerHTML = '';
-    let total = 0;
-
-    if (cart.length === 0) {
-      cartItemsContainer.innerHTML = '<p style="text-align: center; color: var(--text-muted); padding: 1rem;">Your shopping cart is empty.</p>';
-    } else {
-      cart.forEach(item => {
-        const itemPrice = parseFloat(item.price);
-        total += itemPrice * item.qty;
-        const div = document.createElement('div');
-        div.className = 'cart-item';
-        div.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-bottom: 0.8rem; border-bottom: 1px solid #eee; padding-bottom: 0.5rem;">
-            <div>
-              <strong>${item.name}</strong><br>
-              <small style="color: var(--text-muted);">RM ${itemPrice.toFixed(2)} × ${item.qty} = <strong>RM ${(itemPrice * item.qty).toFixed(2)}</strong></small>
-            </div>
-            <button onclick="removeFromCart(${item.id})" style="background: #ef4444; color: white; border: none; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 0.8rem;">Remove</button>
-          </div>
-        `;
-        cartItemsContainer.appendChild(div);
-      });
-    }
-    cartTotal.textContent = total.toFixed(2);
-  }
+function changeQty(id, delta) {
+  const item = cart.find(i => String(i.id) === String(id)); if (!item) return;
+  const max = Number(item.stock_quantity);
+  if (delta > 0 && !isNaN(max) && item.qty >= max) return say(`Only ${max} in stock`);
+  item.qty += delta;
+  if (item.qty <= 0) cart = cart.filter(i => i !== item);
+  saveCart(); updateCart();
 }
 
+function updateCart() {
+  const count = cart.reduce((s, i) => s + i.qty, 0);
+  const badge = $('#cartCount');
+  if (badge && badge.textContent !== String(count)) {
+    badge.textContent = count;
+    badge.classList.remove('bump'); void badge.offsetWidth; badge.classList.add('bump');
+  }
+  const list = $('#cartItemsList'), totalEl = $('#cartTotalPrice');
+  if (!list || !totalEl) return;
+  let total = 0;
+  list.innerHTML = cart.length ? cart.map(i => {
+    const price = parseFloat(i.price) || 0; total += price * i.qty;
+    return `<div class="cart-item">
+      <div><strong>${esc(i.name)}</strong><br><small>${money(price)} each &middot; <b>${money(price * i.qty)}</b></small></div>
+      <div class="qty">
+        <button data-act="dec" data-id="${esc(i.id)}" aria-label="${i.qty === 1 ? 'Remove' : 'Decrease quantity'}">&minus;</button>
+        <span>${i.qty}</span>
+        <button data-act="inc" data-id="${esc(i.id)}" aria-label="Increase quantity">+</button>
+      </div></div>`;
+  }).join('') : '<p class="empty-cart">Your cart is empty. Add something from the catalog.</p>';
+  totalEl.textContent = total.toFixed(2);
+}
+
+function setupCart() {
+  const modal = $('#cartModal');
+  const setOpen = open => { modal.style.display = open ? 'flex' : 'none'; document.body.style.overflow = open ? 'hidden' : ''; };
+  $('#openCartBtn').addEventListener('click', () => setOpen(true));
+  $('#closeCartBtn').addEventListener('click', () => setOpen(false));
+  modal.addEventListener('click', e => { if (e.target === modal) setOpen(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') setOpen(false); });
+
+  $('#cartItemsList').addEventListener('click', e => {
+    const b = e.target.closest('button[data-act]'); if (!b) return;
+    changeQty(b.dataset.id, b.dataset.act === 'inc' ? 1 : -1);
+  });
+
+  $('.checkout-btn').addEventListener('click', () => {
+    if (!cart.length) return say('Your cart is empty');
+    const total = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
+    const lines = cart.map(i => `- ${i.name} x${i.qty} (${money((parseFloat(i.price) || 0) * i.qty)})`);
+    const text = `Hi iFix Solutions, I would like to order:\n${lines.join('\n')}\nTotal: ${money(total)}`;
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+  });
+}
+
+/* ---------- Repair booking ---------- */
 function setupRepairForm() {
-  const serviceBookingForm = document.getElementById('serviceBookingForm');
-  if (serviceBookingForm) {
-      serviceBookingForm.addEventListener('submit', async (e) => {
-          e.preventDefault();
-          
-          const formData = {
-              full_name: serviceBookingForm.querySelector('input[placeholder="John Doe"]').value,
-              phone: serviceBookingForm.querySelector('input[type="tel"]').value,
-              device_model: serviceBookingForm.querySelector('input[placeholder*="Asus"]').value,
-              requested_service: serviceBookingForm.querySelector('select').value,
-              issue_description: serviceBookingForm.querySelector('textarea').value
-          };
+  const form = $('#repairBookingForm'); if (!form) return;
+  const msg = $('#repairMsg'), btn = $('button[type="submit"]', form);
 
-          try {
-              const response = await fetch('https://ifix-solutions-backend-1.onrender.com/api/repairs', {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(formData)
-              });
-              
-              const result = await response.json();
-              if (result.success) {
-                  alert('Repair booking submitted successfully!');
-                  serviceBookingForm.reset();
-              } else {
-                  alert('Failed to submit booking: ' + (result.error || 'Unknown error'));
-              }
-          } catch (err) {
-              console.error(err);
-              alert('Server connection error.');
-          }
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
+    const data = {
+      full_name: $('#repairName').value.trim(),
+      phone: $('#repairPhone').value.trim(),
+      device_model: $('#repairDevice').value.trim(),
+      requested_service: $('#repairServiceType').value,
+      issue_description: $('#repairIssue').value.trim()
+    };
+    const label = btn.textContent;
+    btn.disabled = true; btn.classList.add('loading'); btn.textContent = 'Submitting...';
+    msg.className = ''; msg.textContent = '';
+    try {
+      const res = await fetch(`${API_BASE}/repairs`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data)
       });
+      const result = await res.json().catch(() => ({}));
+      if (result.success) {
+        msg.className = 'ok'; msg.textContent = 'Booking received. We will contact you on WhatsApp soon.';
+        form.reset(); say('Repair booking submitted');
+      } else {
+        msg.className = 'err'; msg.textContent = result.error || 'Something went wrong. Please check your details and try again.';
+      }
+    } catch (err) {
+      console.error(err);
+      msg.className = 'err'; msg.textContent = 'Could not reach the server. Check your connection and try again.';
+    } finally {
+      btn.disabled = false; btn.classList.remove('loading'); btn.textContent = label;
+    }
+  });
+
+  // Hero quick-fix chips pre-select the service
+  $$('.chip').forEach(chip => chip.addEventListener('click', () => {
+    const sel = $('#repairServiceType');
+    sel.value = chip.dataset.service;
+    sel.classList.remove('flash'); void sel.offsetWidth; sel.classList.add('flash');
+    $('#services').scrollIntoView({ behavior: 'smooth' });
+  }));
+}
+
+/* ---------- Page UI: header, menu, scrollspy, slider ---------- */
+function setupPageUI() {
+  const header = $('header');
+  const onScroll = () => header.classList.toggle('scrolled', scrollY > 8);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  const toggle = $('#menuToggle'), nav = $('#mainNav');
+  const setMenu = open => {
+    nav.classList.toggle('open', open);
+    toggle.setAttribute('aria-expanded', open);
+    toggle.firstElementChild.className = open ? 'fa-solid fa-xmark' : 'fa-solid fa-bars';
+  };
+  toggle.addEventListener('click', () => setMenu(!nav.classList.contains('open')));
+  $$('#mainNav a').forEach(a => a.addEventListener('click', () => setMenu(false)));
+
+  const links = $$('#mainNav ul a');
+  const spy = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+  }), { rootMargin: '-40% 0px -55% 0px' });
+  links.forEach(l => { const t = $(l.getAttribute('href')); if (t) spy.observe(t); });
+
+  // Seamless customer photo loop: duplicate the set once
+  const track = $('.customer-track');
+  if (track) {
+    $$('.photo-card', track).forEach(c => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); track.appendChild(k); });
+    track.addEventListener('error', e => {
+      const f = e.target.dataset && e.target.dataset.fallback;
+      if (f && e.target.src !== f) e.target.src = f;
+    }, true);
   }
 }

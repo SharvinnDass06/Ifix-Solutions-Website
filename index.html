@@ -4,27 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>iFix Solutions - Computer & Laptop Repair, Sales, and Services</title>
-    <link rel="stylesheet" href="style.css">
-    <!-- FontAwesome for icons -->
+    <meta name="description" content="Tested second-hand and brand-new laptops, desktops, RAM and storage with warranty, plus expert computer repair.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- Top Navigation / Header -->
     <header>
         <div class="top-header container">
-            <div class="logo">
-                <i class="fa-solid fa-screwdriver-wrench"></i> <span>iFix</span> Solutions
-            </div>
+            <a href="#home" class="logo"><i class="fa-solid fa-screwdriver-wrench"></i><span>iFix</span> Solutions</a>
             <div class="search-container">
-                <input type="text" class="search-input" placeholder="Search products, brands or model numbers">
-                <button class="search-btn"><i class="fa-solid fa-search"></i></button>
+                <input type="text" class="search-input" id="headerSearch" placeholder="Search products, brands or model numbers" aria-label="Search products">
+                <button class="search-btn" aria-label="Search"><i class="fa-solid fa-search"></i></button>
             </div>
             <div class="header-actions">
-                <button id="openCartBtn" class="cart-btn">Cart <span id="cartCount">0</span></button>
+                <button id="openCartBtn" class="cart-btn"><i class="fa-solid fa-cart-shopping"></i><b>Cart</b> <span id="cartCount">0</span></button>
+                <button class="menu-toggle" id="menuToggle" aria-label="Open menu" aria-expanded="false" aria-controls="mainNav"><i class="fa-solid fa-bars"></i></button>
             </div>
         </div>
-        <nav class="main-nav">
+        <nav class="main-nav" id="mainNav">
             <div class="container">
                 <ul>
                     <li><a href="#home" class="active">Home</a></li>
@@ -34,48 +35,68 @@
                     <li><a href="#about">About Us</a></li>
                     <li><a href="#reviews">Reviews</a></li>
                     <li><a href="#contact">Contact</a></li>
-                    <li><a href="admin.html" target="_blank" class="admin-link">Admin Panel</a></li>
                 </ul>
-                <a href="https://wa.me/60123456789" target="_blank" class="whatsapp-nav-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp to Order</a>
+                <a href="https://wa.me/60123456789" target="_blank" rel="noopener" class="whatsapp-nav-btn"><i class="fa-brands fa-whatsapp"></i> WhatsApp to Order</a>
             </div>
         </nav>
     </header>
 
-    <!-- Hero Section / Categories Banner -->
-    <section id="home" class="hero-section">
-        <div class="container">
-            <div class="category-banner-grid">
-                <div class="cat-card">
-                    <img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300" alt="Accessories">
-                    <h3>ACCESSORIES</h3>
+    <!-- Hero -->
+    <section id="home" class="hero">
+        <div class="container hero-grid">
+            <div class="hero-copy">
+                <h1>Tested laptops and PCs. Repairs you can trust.</h1>
+                <p>Brand-new and second-hand hardware, every item tested and covered by warranty. Device not working? Book a repair and we will reply on WhatsApp.</p>
+                <div class="hero-actions">
+                    <a href="#products" class="btn btn-primary">Browse catalog</a>
+                    <a href="#services" class="btn btn-ghost">Book a repair</a>
                 </div>
-                <div class="cat-card">
-                    <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=300" alt="Repair Services">
-                    <h3>REPAIR SERVICES</h3>
+                <div class="quick-fix">
+                    <span>What needs fixing?</span>
+                    <div class="chips">
+                        <button class="chip" data-service="Screen Replacement">Cracked screen</button>
+                        <button class="chip" data-service="Battery Replacement">Weak battery</button>
+                        <button class="chip" data-service="Format & OS Installation">Slow or won't boot</button>
+                        <button class="chip" data-service="Hardware Upgrade (RAM/SSD)">Needs more speed</button>
+                    </div>
                 </div>
-                <div class="cat-card">
-                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=300" alt="Clearance Sale">
-                    <h3>CLEARANCE SALE</h3>
-                </div>
-                <div class="cat-card">
-                    <img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=300" alt="Our Shop">
-                    <h3>OUR SHOP</h3>
-                </div>
+            </div>
+            <div class="hero-visual">
+                <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=900" alt="Technician repairing a laptop">
+                <div class="hero-badge"><i class="fa-brands fa-google"></i><div><strong>5.0 on Google</strong><span class="stars">★★★★★</span></div></div>
             </div>
         </div>
     </section>
 
-    <!-- Catalog Section -->
+    <!-- About strip -->
+    <section id="about" class="about-strip">
+        <div class="container about-grid">
+            <div><i class="fa-solid fa-circle-check"></i><h3>Tested before sale</h3><p>Every item is checked and guaranteed with warranty.</p></div>
+            <div><i class="fa-solid fa-screwdriver-wrench"></i><h3>Expert repairs</h3><p>Screens, batteries, upgrades and full diagnostics.</p></div>
+            <div><i class="fa-brands fa-whatsapp"></i><h3>Fast replies</h3><p>Order, ask or track your repair directly on WhatsApp.</p></div>
+        </div>
+    </section>
+
+    <!-- Categories -->
+    <section id="categories" class="category-section">
+        <div class="container">
+            <div class="section-header"><h2>Shop by category</h2><p>Jump straight to what you need.</p></div>
+            <div class="category-banner-grid">
+                <a class="cat-card" href="#products" data-category="Accessories"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600" alt="Accessories" loading="lazy"><h3>Accessories</h3></a>
+                <a class="cat-card" href="#services"><img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600" alt="Repair Services" loading="lazy"><h3>Repair services</h3></a>
+                <a class="cat-card" href="#products" data-category="all"><img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600" alt="Clearance Sale" loading="lazy"><h3>Clearance sale</h3></a>
+                <a class="cat-card" href="#contact"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Our Shop" loading="lazy"><h3>Our shop</h3></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Catalog -->
     <section id="products" class="catalog-section">
         <div class="container">
-            <div class="section-header">
-                <h2>Hardware & Second-Hand Catalog</h2>
-                <p>Fully tested and guaranteed with warranty</p>
-            </div>
-
+            <div class="section-header"><h2>Hardware & second-hand catalog</h2><p>Fully tested and guaranteed with warranty.</p></div>
             <div class="controls-bar">
-                <input type="text" class="search-input" placeholder="Search catalog...">
-                <select class="filter-select">
+                <input type="text" class="search-input" id="catalogSearch" placeholder="Search catalog..." aria-label="Search catalog">
+                <select class="filter-select" id="categoryFilter" aria-label="Category">
                     <option value="all">All Categories</option>
                     <option value="Laptop">Laptop</option>
                     <option value="Desktop PC">Desktop PC</option>
@@ -83,171 +104,102 @@
                     <option value="SSD / Storage">SSD / Storage</option>
                     <option value="Accessories">Accessories</option>
                 </select>
-                <select class="filter-select">
+                <select class="filter-select" id="conditionFilter" aria-label="Condition">
                     <option value="all">All Conditions</option>
                     <option value="Brand New">Brand New</option>
                     <option value="Second-Hand">Second-Hand / Refurbished</option>
                 </select>
             </div>
-
-            <!-- Product Grid Container -->
-            <div id="productGrid" class="product-grid">
-                <p style="text-align: center; color: #64748b; grid-column: 1 / -1;">Loading products from database...</p>
+            <div id="productGrid" class="product-grid" aria-live="polite">
+                <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
             </div>
         </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- REPAIR BOOKING SERVICE SECTION -->
-    <!-- ========================================== -->
-    <section id="services" class="repair-booking-section" style="padding: 50px 0; background: #ffffff;">
-        <div class="container" style="max-width: 800px;">
-            <div class="section-header" style="text-align: center; margin-bottom: 30px;">
-                <h2>Book a Repair Service</h2>
-                <p>Fill out the form below and our technician will get in touch with you.</p>
+    <!-- Repair booking -->
+    <section id="services" class="repair-booking-section">
+        <div class="container repair-grid">
+            <div class="repair-intro">
+                <h2>Book a repair</h2>
+                <p>Tell us what is wrong and which device it is. A technician will contact you on WhatsApp with next steps.</p>
+                <ul class="repair-list">
+                    <li><i class="fa-solid fa-check"></i> Screen and battery replacement</li>
+                    <li><i class="fa-solid fa-check"></i> Format and OS installation</li>
+                    <li><i class="fa-solid fa-check"></i> RAM and SSD upgrades</li>
+                    <li><i class="fa-solid fa-check"></i> General diagnostics and repair</li>
+                </ul>
             </div>
-            <form id="repairBookingForm" style="background: #f8fafc; padding: 30px; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 15px rgba(0,0,0,0.03);">
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Full Name</label>
-                    <input type="text" id="repairName" required placeholder="e.g. Alex Wong" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Phone Number (WhatsApp)</label>
-                    <input type="text" id="repairPhone" required placeholder="e.g. +60123456789" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Device Model</label>
-                    <input type="text" id="repairDevice" required placeholder="e.g. MacBook Pro 2020 / ASUS ROG" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;">
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Requested Service</label>
-                    <select id="repairServiceType" style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; background: #fff;">
-                        <option value="Screen Replacement">Screen Replacement</option>
-                        <option value="Battery Replacement">Battery Replacement</option>
-                        <option value="Format & OS Installation">Format & OS Installation</option>
-                        <option value="Hardware Upgrade (RAM/SSD)">Hardware Upgrade (RAM/SSD)</option>
-                        <option value="General Diagnostics & Repair">General Diagnostics & Repair</option>
-                    </select>
-                </div>
-                <div style="margin-bottom: 20px;">
-                    <label style="display: block; font-weight: 600; margin-bottom: 8px;">Issue Description</label>
-                    <textarea id="repairIssue" rows="4" placeholder="Describe the issue with your device..." style="width: 100%; padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px;"></textarea>
-                </div>
-                <button type="submit" style="width: 100%; padding: 14px; background: #b91c1c; color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer;">Submit Repair Booking</button>
-            </form>
-            <div id="repairMsg" style="text-align: center; margin-top: 15px; font-weight: bold;"></div>
+            <div class="repair-card">
+                <form id="repairBookingForm">
+                    <div class="form-row">
+                        <div class="field"><label for="repairName">Full name</label><input type="text" id="repairName" required placeholder="e.g. Alex Wong" autocomplete="name"></div>
+                        <div class="field"><label for="repairPhone">Phone (WhatsApp)</label><input type="tel" id="repairPhone" required placeholder="e.g. +60123456789" autocomplete="tel"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="field"><label for="repairDevice">Device model</label><input type="text" id="repairDevice" required placeholder="e.g. MacBook Pro 2020 / ASUS ROG"></div>
+                        <div class="field"><label for="repairServiceType">Requested service</label>
+                            <select id="repairServiceType">
+                                <option value="Screen Replacement">Screen Replacement</option>
+                                <option value="Battery Replacement">Battery Replacement</option>
+                                <option value="Format & OS Installation">Format & OS Installation</option>
+                                <option value="Hardware Upgrade (RAM/SSD)">Hardware Upgrade (RAM/SSD)</option>
+                                <option value="General Diagnostics & Repair">General Diagnostics & Repair</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field"><label for="repairIssue">Issue description</label><textarea id="repairIssue" rows="4" placeholder="Describe the issue with your device..."></textarea></div>
+                    <button type="submit" class="btn btn-primary btn-block">Submit repair booking</button>
+                </form>
+                <div id="repairMsg" role="status"></div>
+            </div>
         </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- CUSTOMER DELIVERY SHOWCASE (AUTO-SLIDER) -->
-    <!-- ========================================== -->
+    <!-- Customer showcase (JS duplicates the photos for a seamless loop) -->
     <section class="customer-showcase-section" id="customer-showcase">
         <div class="container">
-            <h2 class="section-title">our <span class="highlight">CUSTOMER</span></h2>
-            
-            <div class="customer-slider-container">
-                <div class="customer-track">
-                    <!-- Original Set of Photos -->
-                    <div class="photo-card"><img src="images/customer1.jpg" alt="Customer delivery 1" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer2.jpg" alt="Customer delivery 2" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer3.jpg" alt="Customer delivery 3" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer4.jpg" alt="Customer delivery 4" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer5.jpg" alt="Customer delivery 5" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300'"></div>
-                    
-                    <!-- Duplicated Set for Seamless Infinite Loop -->
-                    <div class="photo-card"><img src="images/customer1.jpg" alt="Customer delivery 1" onerror="this.src='https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer2.jpg" alt="Customer delivery 2" onerror="this.src='https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer3.jpg" alt="Customer delivery 3" onerror="this.src='https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer4.jpg" alt="Customer delivery 4" onerror="this.src='https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300'"></div>
-                    <div class="photo-card"><img src="images/customer5.jpg" alt="Customer delivery 5" onerror="this.src='https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300'"></div>
-                </div>
+            <div class="section-header"><h2>Delivered to our customers</h2><p>Hover to pause.</p></div>
+        </div>
+        <div class="customer-slider-container">
+            <div class="customer-track">
+                <div class="photo-card"><img src="images/customer1.jpg" alt="Customer delivery 1" data-fallback="https://images.unsplash.com/photo-1531482615713-2afd69097998?w=300" loading="lazy"></div>
+                <div class="photo-card"><img src="images/customer2.jpg" alt="Customer delivery 2" data-fallback="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?w=300" loading="lazy"></div>
+                <div class="photo-card"><img src="images/customer3.jpg" alt="Customer delivery 3" data-fallback="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=300" loading="lazy"></div>
+                <div class="photo-card"><img src="images/customer4.jpg" alt="Customer delivery 4" data-fallback="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=300" loading="lazy"></div>
+                <div class="photo-card"><img src="images/customer5.jpg" alt="Customer delivery 5" data-fallback="https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=300" loading="lazy"></div>
             </div>
         </div>
     </section>
 
-    <!-- ========================================== -->
-    <!-- GOOGLE REVIEWS SECTION -->
-    <!-- ========================================== -->
+    <!-- Reviews -->
     <section class="google-reviews-section" id="reviews">
         <div class="container">
-            <h2 class="section-title">Hear What our <span class="highlight">CUSTOMER</span> Say</h2>
-            
+            <div class="section-header"><h2>What our customers say</h2><p><span class="stars">★★★★★</span> Rated 5.0 on Google</p></div>
             <div class="reviews-grid">
-                <!-- Review Card 1 -->
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="avatar-letter" style="background-color: #8e44ad;">a</div>
-                        <div class="reviewer-info">
-                            <h4>ayeem trey</h4>
-                            <div class="stars">★★★★★</div>
-                            <span class="review-date">October 18, 2026</span>
-                        </div>
-                        <span class="google-logo-icon">G</span>
-                    </div>
-                    <p class="review-text">Pengalaman membeli yang baik, kemas penyambungan wayar dan harga yang berpatutan. <span class="read-more">Read more</span></p>
-                </div>
-
-                <!-- Review Card 2 -->
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="avatar-letter" style="background-color: #2980b9;">M</div>
-                        <div class="reviewer-info">
-                            <h4>MUHAMMAD MUIZZUDDIN BIN KAMARUZAMAN</h4>
-                            <div class="stars">★★★★★</div>
-                            <span class="review-date">October 4, 2026</span>
-                        </div>
-                        <span class="google-logo-icon">G</span>
-                    </div>
-                    <p class="review-text">Senang berurusan. Penghantaran selamat. Team Sawada sangat membantu dalam pemilihan... <span class="read-more">Read more</span></p>
-                </div>
-
-                <!-- Review Card 3 -->
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="avatar-letter" style="background-color: #27ae60;">A</div>
-                        <div class="reviewer-info">
-                            <h4>Arif Syn</h4>
-                            <div class="stars">★★★★★</div>
-                            <span class="review-date">September 28, 2026</span>
-                        </div>
-                        <span class="google-logo-icon">G</span>
-                    </div>
+                <article class="review-card">
+                    <div class="review-header"><div class="avatar-letter" style="background-color:#8e44ad">a</div><div class="reviewer-info"><h4>ayeem trey</h4><div class="stars">★★★★★</div><span class="review-date">October 18, 2026</span></div><span class="google-logo-icon">G</span></div>
+                    <p class="review-text">Pengalaman membeli yang baik, kemas penyambungan wayar dan harga yang berpatutan.</p>
+                </article>
+                <article class="review-card">
+                    <div class="review-header"><div class="avatar-letter" style="background-color:#2980b9">M</div><div class="reviewer-info"><h4>MUHAMMAD MUIZZUDDIN BIN KAMARUZAMAN</h4><div class="stars">★★★★★</div><span class="review-date">October 4, 2026</span></div><span class="google-logo-icon">G</span></div>
+                    <p class="review-text">Senang berurusan. Penghantaran selamat. Team Sawada sangat membantu dalam pemilihan...</p>
+                </article>
+                <article class="review-card">
+                    <div class="review-header"><div class="avatar-letter" style="background-color:#27ae60">A</div><div class="reviewer-info"><h4>Arif Syn</h4><div class="stars">★★★★★</div><span class="review-date">September 28, 2026</span></div><span class="google-logo-icon">G</span></div>
                     <p class="review-text">SELLER SANGAT RESPONSIVE LAYAN CUSTOMER , HARGA BERPATUTAN DENGAN BAJET!!</p>
-                </div>
-
-                <!-- Review Card 4 -->
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="avatar-letter" style="background-color: #d35400;">Q</div>
-                        <div class="reviewer-info">
-                            <h4>Qamarul Anwar</h4>
-                            <div class="stars">★★★★★</div>
-                            <span class="review-date">September 22, 2026</span>
-                        </div>
-                        <span class="google-logo-icon">G</span>
-                    </div>
-                    <p class="review-text">Service dari iFix terbaik, packing barang dijamin sampai dengan baik. <span class="read-more">Read more</span></p>
-                </div>
-
-                <!-- Review Card 5 -->
-                <div class="review-card">
-                    <div class="review-header">
-                        <div class="avatar-letter" style="background-color: #16a085;">A</div>
-                        <div class="reviewer-info">
-                            <h4>Abdulah Alsolaiman</h4>
-                            <div class="stars">★★★★★</div>
-                            <span class="review-date">September 20, 2026</span>
-                        </div>
-                        <span class="google-logo-icon">G</span>
-                    </div>
-                    <p class="review-text">This is legit one guys. I like it. I first <span class="read-more">Read more</span></p>
-                </div>
+                </article>
+                <article class="review-card">
+                    <div class="review-header"><div class="avatar-letter" style="background-color:#d35400">Q</div><div class="reviewer-info"><h4>Qamarul Anwar</h4><div class="stars">★★★★★</div><span class="review-date">September 22, 2026</span></div><span class="google-logo-icon">G</span></div>
+                    <p class="review-text">Service dari iFix terbaik, packing barang dijamin sampai dengan baik.</p>
+                </article>
+                <article class="review-card">
+                    <div class="review-header"><div class="avatar-letter" style="background-color:#16a085">A</div><div class="reviewer-info"><h4>Abdulah Alsolaiman</h4><div class="stars">★★★★★</div><span class="review-date">September 20, 2026</span></div><span class="google-logo-icon">G</span></div>
+                    <p class="review-text">This is legit one guys. I like it. I first...</p>
+                </article>
             </div>
         </div>
     </section>
 
-    <!-- Footer / Contact Section -->
     <footer id="contact">
         <div class="container footer-content">
             <div>
@@ -255,7 +207,7 @@
                 <p>Your trusted partner for computer sales, upgrades, and expert hardware repairs.</p>
             </div>
             <div>
-                <h4>Quick Links</h4>
+                <h4>Quick links</h4>
                 <ul>
                     <li><a href="#home">Home</a></li>
                     <li><a href="#products">Catalog</a></li>
@@ -264,32 +216,31 @@
                 </ul>
             </div>
             <div>
-                <h4>Contact Us</h4>
+                <h4>Contact us</h4>
                 <p><i class="fa-solid fa-phone"></i> +60 12-345 6789</p>
                 <p><i class="fa-solid fa-location-dot"></i> Seremban, Negeri Sembilan</p>
+                <a href="https://wa.me/60123456789" target="_blank" rel="noopener" class="whatsapp-nav-btn footer-wa"><i class="fa-brands fa-whatsapp"></i> Chat on WhatsApp</a>
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2026 iFix Solutions. All rights reserved.</p>
+            <p>&copy; 2026 iFix Solutions. All rights reserved. <a href="admin.html" target="_blank" class="admin-link">Admin</a></p>
         </div>
     </footer>
+
+    <a href="https://wa.me/60123456789" target="_blank" rel="noopener" class="wa-fab" aria-label="Chat on WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+    <div id="toast" class="toast" role="status"></div>
 
     <!-- Cart Modal -->
     <div id="cartModal" class="modal" style="display:none;">
         <div class="modal-content">
-            <span id="closeCartBtn" class="close-btn">&times;</span>
-            <h2>Your Shopping Cart</h2>
-            <div id="cartItemsList">
-                <p>Your cart is empty.</p>
-            </div>
-            <div class="cart-total">
-                <strong>Total: RM <span id="cartTotalPrice">0.00</span></strong>
-            </div>
-            <button class="whatsapp-nav-btn" style="width:100%; margin-top:15px; text-align:center;">Checkout via WhatsApp</button>
+            <span id="closeCartBtn" class="close-btn" role="button" aria-label="Close cart">&times;</span>
+            <h2>Your shopping cart</h2>
+            <div id="cartItemsList"><p class="empty-cart">Your cart is empty. Add something from the catalog.</p></div>
+            <div class="cart-total"><strong>Total: RM <span id="cartTotalPrice">0.00</span></strong></div>
+            <button class="whatsapp-nav-btn checkout-btn">Checkout via WhatsApp</button>
         </div>
     </div>
 
-    <!-- Main JS script file -->
     <script src="script.js"></script>
 </body>
 </html>
