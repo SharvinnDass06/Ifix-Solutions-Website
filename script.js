@@ -144,6 +144,10 @@ function setupEventListeners() {
 
   function filterAndRender(e) {
     if (e) e.preventDefault();
+
+    // Lock and save current scroll position so page doesn't jump
+    const currentScrollY = window.scrollY;
+
     currentPage = 1; // Reset to page 1 on filter/search change
     const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : "";
     const selectedCategory = categorySelect ? categorySelect.value.trim() : "all";
@@ -163,6 +167,9 @@ function setupEventListeners() {
     });
 
     renderProducts(filtered);
+
+    // Instantly restore scroll position
+    window.scrollTo({ top: currentScrollY, behavior: 'auto' });
   }
 
   if (searchInput) {
