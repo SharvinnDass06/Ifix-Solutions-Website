@@ -238,23 +238,27 @@ function setupRepairForm() {
     }
   });
 
-  // Hero quick-fix chips pre-select the service
-  $$('.chip').forEach(chip => chip.addEventListener('click', () => {
-    const sel = $('#repairServiceType');
-    sel.value = chip.dataset.service;
+  // Hero chips and problem cards pre-select the requested service
+  const sel = $('#repairServiceType');
+  const sync = () => $$('.problem').forEach(b => b.classList.toggle('selected', b.dataset.service === sel.value));
+  $$('.chip, .problem').forEach(el => el.addEventListener('click', () => {
+    sel.value = el.dataset.service; sync();
     sel.classList.remove('flash'); void sel.offsetWidth; sel.classList.add('flash');
-    $('#services').scrollIntoView({ behavior: 'smooth' });
+    if (el.classList.contains('chip')) $('#services').scrollIntoView({ behavior: 'smooth' });
+    else if (innerWidth <= 960) $('.repair-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
   }));
+  sel.addEventListener('change', sync);
+  form.addEventListener('reset', () => setTimeout(sync));
 }
 
 /* ---------- Page UI: header, menu, scrollspy, slider ---------- */
 function setupPageUI() {
   // Footer reuses the header logo, so there is only one copy of the image in the page
-  const hl = $('.logo img'), fl = $('.footer-logo');
-  if (hl && fl) fl.src = hl.src;
+  const hl = $('.logo img');
+  if (hl) $$('img[data-logo]').forEach(i => { i.src = hl.src; });
 
   const header = $('header');
-  const onScroll = () => header.classList.toggle('scrolled', scrollY > 8);
+  const onScroll = () => header.classList.toggle('scrolled', scrollY > (header.classList.contains('scrolled') ? 4 : 16));
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
 
   const toggle = $('#menuToggle'), nav = $('#mainNav');

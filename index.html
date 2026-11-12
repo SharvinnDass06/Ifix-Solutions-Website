@@ -46,8 +46,13 @@
     <section id="home" class="hero">
         <div class="container hero-grid">
             <div class="hero-copy">
-                <h1>Tested laptops and PCs. Repairs you can trust.</h1>
-                <p>Brand-new and second-hand hardware, every item tested and covered by warranty. Device not working? Book a repair and we will reply on WhatsApp.</p>
+                <h1>Looking for a Computer?<br>Need a Repair?<br><span class="accent">We're Here to Help!</span></h1>
+                <p>Need a laptop or desktop PC for work, business, study or everyday use? Visit I FIX SOLUTIONS for pre-owned quality and brand-new computers at affordable prices.</p>
+                <ul class="hero-points">
+                    <li><i class="fa-solid fa-check"></i>Pre-owned quality and brand-new computers</li>
+                    <li><i class="fa-solid fa-check"></i>Premium used laptops and desktops, tested for functionality</li>
+                    <li><i class="fa-solid fa-check"></i>Budget-friendly prices, with warranty included</li>
+                </ul>
                 <div class="hero-actions">
                     <a href="#products" class="btn btn-primary">Browse catalog</a>
                     <a href="#services" class="btn btn-ghost">Book a repair</a>
@@ -55,15 +60,19 @@
                 <div class="quick-fix">
                     <span>What needs fixing?</span>
                     <div class="chips">
-                        <button class="chip" data-service="Screen Replacement">Cracked screen</button>
-                        <button class="chip" data-service="Battery Replacement">Weak battery</button>
-                        <button class="chip" data-service="Format & OS Installation">Slow or won't boot</button>
-                        <button class="chip" data-service="Hardware Upgrade (RAM/SSD)">Needs more speed</button>
+                        <button class="chip" data-service="Laptop or PC won't turn on">Won't turn on</button>
+                        <button class="chip" data-service="Cracked or broken screen">Cracked screen</button>
+                        <button class="chip" data-service="Weak battery or charging problems">Weak battery</button>
+                        <button class="chip" data-service="Slow laptop or computer">Slow laptop</button>
                     </div>
                 </div>
             </div>
             <div class="hero-visual">
-                <img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=900" alt="Technician repairing a laptop">
+                <div class="collage">
+                    <figure class="tile tile-main"><img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=900" alt="Tested laptop" onerror="this.style.display='none'"></figure>
+                    <figure class="tile tile-pc"><img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600" alt="Desktop PC setup" onerror="this.style.display='none'"></figure>
+                    <div class="tile tile-logo"><img data-logo alt="I FIX SOLUTIONS"></div>
+                </div>
                 <div class="hero-badge"><i class="fa-brands fa-google"></i><div><strong>5.0 on Google</strong><span class="stars">★★★★★</span></div></div>
             </div>
         </div>
@@ -83,10 +92,10 @@
         <div class="container">
             <div class="section-header"><h2>Shop by category</h2><p>Jump straight to what you need.</p></div>
             <div class="category-banner-grid">
-                <a class="cat-card" href="#products" data-category="Accessories"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600" alt="Accessories" loading="lazy"><h3>Accessories</h3></a>
-                <a class="cat-card" href="#services"><img src="https://images.unsplash.com/photo-1588872657578-7efd1f1555ed?w=600" alt="Repair Services" loading="lazy"><h3>Repair services</h3></a>
-                <a class="cat-card" href="#products" data-category="all"><img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=600" alt="Clearance Sale" loading="lazy"><h3>Clearance sale</h3></a>
-                <a class="cat-card" href="#contact"><img src="https://images.unsplash.com/photo-1519389950473-47ba0277781c?w=600" alt="Our Shop" loading="lazy"><h3>Our shop</h3></a>
+                <a class="cat-card" href="#products" data-category="Laptop"><img src="https://images.unsplash.com/photo-1496181133206-80ce9b88a853?w=600" alt="Laptops" loading="lazy" onerror="this.style.display='none'"><h3>Laptops</h3></a>
+                <a class="cat-card" href="#products" data-category="Desktop PC"><img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600" alt="Desktop PCs" loading="lazy" onerror="this.style.display='none'"><h3>Desktop PCs</h3></a>
+                <a class="cat-card" href="#products" data-category="Accessories"><img src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600" alt="Accessories" loading="lazy" onerror="this.style.display='none'"><h3>Accessories</h3></a>
+                <a class="cat-card" href="#services"><img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=600" alt="Repair services" loading="lazy" onerror="this.style.display='none'"><h3>Repair services</h3></a>
             </div>
         </div>
     </section>
@@ -121,13 +130,16 @@
     <section id="services" class="repair-booking-section">
         <div class="container repair-grid">
             <div class="repair-intro">
-                <h2>Book a repair</h2>
-                <p>Tell us what is wrong and which device it is. A technician will contact you on WhatsApp with next steps.</p>
-                <ul class="repair-list">
-                    <li><i class="fa-solid fa-check"></i> Screen and battery replacement</li>
-                    <li><i class="fa-solid fa-check"></i> Format and OS installation</li>
-                    <li><i class="fa-solid fa-check"></i> RAM and SSD upgrades</li>
-                    <li><i class="fa-solid fa-check"></i> General diagnostics and repair</li>
+                <h2>Got a computer problem?</h2>
+                <p>Tap what is wrong and we will fill in the form for you. A technician will contact you on WhatsApp with next steps.</p>
+                <ul class="problem-grid">
+                    <li><button type="button" class="problem" data-service="Laptop or PC won't turn on"><i class="fa-solid fa-power-off"></i><span>Laptop or PC won't turn on</span></button></li>
+                    <li><button type="button" class="problem" data-service="Cracked or broken screen"><i class="fa-solid fa-display"></i><span>Cracked or broken screen</span></button></li>
+                    <li><button type="button" class="problem" data-service="Cracked or broken laptop hinge"><i class="fa-solid fa-laptop"></i><span>Cracked or broken laptop hinge</span></button></li>
+                    <li><button type="button" class="problem" data-service="Weak battery or charging problems"><i class="fa-solid fa-battery-quarter"></i><span>Weak battery or charging problems</span></button></li>
+                    <li><button type="button" class="problem" data-service="Slow laptop or computer"><i class="fa-solid fa-gauge-high"></i><span>Slow laptop or computer</span></button></li>
+                    <li><button type="button" class="problem" data-service="Keyboard and hardware issues"><i class="fa-solid fa-keyboard"></i><span>Keyboard and hardware issues</span></button></li>
+                    <li><button type="button" class="problem" data-service="Windows installation and software problems"><i class="fa-brands fa-windows"></i><span>Windows installation and software problems</span></button></li>
                 </ul>
             </div>
             <div class="repair-card">
@@ -139,12 +151,16 @@
                     <div class="form-row">
                         <div class="field"><label for="repairDevice">Device model</label><input type="text" id="repairDevice" required placeholder="e.g. MacBook Pro 2020 / ASUS ROG"></div>
                         <div class="field"><label for="repairServiceType">Requested service</label>
-                            <select id="repairServiceType">
-                                <option value="Screen Replacement">Screen Replacement</option>
-                                <option value="Battery Replacement">Battery Replacement</option>
-                                <option value="Format & OS Installation">Format & OS Installation</option>
-                                <option value="Hardware Upgrade (RAM/SSD)">Hardware Upgrade (RAM/SSD)</option>
-                                <option value="General Diagnostics & Repair">General Diagnostics & Repair</option>
+                            <select id="repairServiceType" required>
+                                <option value="" disabled selected>Select a problem</option>
+                                <option value="Laptop or PC won't turn on">Laptop or PC won't turn on</option>
+                                <option value="Cracked or broken screen">Cracked or broken screen</option>
+                                <option value="Cracked or broken laptop hinge">Cracked or broken laptop hinge</option>
+                                <option value="Weak battery or charging problems">Weak battery or charging problems</option>
+                                <option value="Slow laptop or computer">Slow laptop or computer</option>
+                                <option value="Keyboard and hardware issues">Keyboard and hardware issues</option>
+                                <option value="Windows installation and software problems">Windows installation and software problems</option>
+                                <option value="Other / General diagnostics">Other / General diagnostics</option>
                             </select>
                         </div>
                     </div>
@@ -204,7 +220,7 @@
     <footer id="contact">
         <div class="container footer-content">
             <div>
-                <img alt="I FIX SOLUTIONS" class="footer-logo">
+                <img data-logo alt="I FIX SOLUTIONS" class="footer-logo">
                 <p>Your trusted partner for computer sales, upgrades, and expert hardware repairs.</p>
             </div>
             <div>
