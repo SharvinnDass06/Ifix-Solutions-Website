@@ -18,7 +18,7 @@
     --ease: cubic-bezier(.22, .61, .36, 1);
     --shadow-sm: 0 1px 2px rgba(15,23,42,.06), 0 4px 12px rgba(15,23,42,.05);
     --shadow-lg: 0 12px 32px rgba(15,23,42,.14);
-    --header-h: 120px;
+    --header-h: 130px;
 }
 
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,9 +50,6 @@ h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; letter-spacing
 header { background: #fff; position: sticky; top: 0; z-index: 1000; box-shadow: 0 1px 0 var(--border-color); transition: box-shadow .3s; }
 header.scrolled { box-shadow: 0 6px 24px rgba(15,23,42,.1); }
 .top-header { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 14px 24px; }
-.logo { font-family: var(--font-display); font-size: 1.6rem; font-weight: 800; display: flex; align-items: center; gap: 10px; white-space: nowrap; }
-.logo i { color: var(--primary); font-size: 1.3rem; }
-.logo span { color: var(--primary); margin-right: -6px; }
 
 .search-container { flex: 1; max-width: 560px; position: relative; }
 .search-input { width: 100%; padding: 11px 46px 11px 18px; border: 1px solid var(--border-color); border-radius: 999px; background: #f1f5f9; font-size: .95rem; outline: none; transition: background .2s, border-color .2s, box-shadow .2s; }
@@ -232,7 +229,7 @@ footer { background: #0b0f19; color: #94a3b8; padding: 64px 0 24px; border-top: 
    9. RESPONSIVE & ACCESSIBILITY
    ========================================== */
 @media (max-width: 960px) {
-    :root { --header-h: 76px; }
+    :root { --header-h: 140px; }
     section { padding: 56px 0; }
     .hero-grid, .repair-grid { grid-template-columns: 1fr; gap: 40px; }
     .hero-badge { left: 16px; }
@@ -297,3 +294,16 @@ footer { background: #0b0f19; color: #94a3b8; padding: 64px 0 24px; border-top: 
 #repairMsg.ok { color: #15803d; }
 #repairMsg.err { color: var(--primary); }
 .btn.loading { opacity: .7; pointer-events: none; }
+
+/* ==========================================
+   11. LOGO
+   ========================================== */
+.logo { display: flex; align-items: center; background: #000; border-radius: 12px; padding: 4px 14px; flex-shrink: 0; }
+.logo img { height: 64px; width: auto; transition: height .3s var(--ease); }
+header.scrolled .logo img { height: 46px; }
+.footer-logo { height: 100px; width: auto; margin-bottom: 14px; }
+@media (max-width: 640px) {
+    .logo img { height: 48px; }
+    header.scrolled .logo img { height: 40px; }
+    .footer-logo { height: 84px; }
+}

@@ -197,7 +197,7 @@ function setupCart() {
     if (!cart.length) return say('Your cart is empty');
     const total = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
     const lines = cart.map(i => `- ${i.name} x${i.qty} (${money((parseFloat(i.price) || 0) * i.qty)})`);
-    const text = `Hi iFix Solutions, I would like to order:\n${lines.join('\n')}\nTotal: ${money(total)}`;
+    const text = `Hi I FIX SOLUTIONS, I would like to order:\n${lines.join('\n')}\nTotal: ${money(total)}`;
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
   });
 }
