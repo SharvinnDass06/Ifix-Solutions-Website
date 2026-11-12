@@ -249,6 +249,10 @@ function setupRepairForm() {
 
 /* ---------- Page UI: header, menu, scrollspy, slider ---------- */
 function setupPageUI() {
+  // Footer reuses the header logo, so there is only one copy of the image in the page
+  const hl = $('.logo img'), fl = $('.footer-logo');
+  if (hl && fl) fl.src = hl.src;
+
   const header = $('header');
   const onScroll = () => header.classList.toggle('scrolled', scrollY > 8);
   addEventListener('scroll', onScroll, { passive: true }); onScroll();
