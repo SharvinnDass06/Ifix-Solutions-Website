@@ -77,7 +77,7 @@
                     <figure class="tile tile-pc"><img src="https://images.unsplash.com/photo-1593640408182-31c70c8268f5?w=600" alt="Desktop PC setup" onerror="this.style.display='none'"></figure>
                     <div class="tile tile-logo"><img data-logo alt="I FIX SOLUTIONS"></div>
                 </div>
-                <div class="hero-badge"><i class="fa-brands fa-google"></i><div><strong>5.0 on Google</strong><span class="stars">★★★★★</span></div></div>
+                <div class="hero-badge" id="heroBadge" hidden><i class="fa-brands fa-google"></i><div><strong id="heroRating"></strong><span class="stars">★★★★★</span></div></div>
             </div>
         </div>
     </section>
@@ -195,28 +195,14 @@
     <!-- Reviews -->
     <section class="google-reviews-section" id="reviews">
         <div class="container">
-            <div class="section-header"><h2>What our customers say</h2><p><span class="stars">★★★★★</span> Rated 5.0 on Google</p></div>
-            <div class="reviews-grid">
-                <article class="review-card">
-                    <div class="review-header"><div class="avatar-letter" style="background-color:#8e44ad">a</div><div class="reviewer-info"><h4>ayeem trey</h4><div class="stars">★★★★★</div><span class="review-date">October 18, 2026</span></div><span class="google-logo-icon">G</span></div>
-                    <p class="review-text">Pengalaman membeli yang baik, kemas penyambungan wayar dan harga yang berpatutan.</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-header"><div class="avatar-letter" style="background-color:#2980b9">M</div><div class="reviewer-info"><h4>MUHAMMAD MUIZZUDDIN BIN KAMARUZAMAN</h4><div class="stars">★★★★★</div><span class="review-date">October 4, 2026</span></div><span class="google-logo-icon">G</span></div>
-                    <p class="review-text">Senang berurusan. Penghantaran selamat. Team Sawada sangat membantu dalam pemilihan...</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-header"><div class="avatar-letter" style="background-color:#27ae60">A</div><div class="reviewer-info"><h4>Arif Syn</h4><div class="stars">★★★★★</div><span class="review-date">September 28, 2026</span></div><span class="google-logo-icon">G</span></div>
-                    <p class="review-text">SELLER SANGAT RESPONSIVE LAYAN CUSTOMER , HARGA BERPATUTAN DENGAN BAJET!!</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-header"><div class="avatar-letter" style="background-color:#d35400">Q</div><div class="reviewer-info"><h4>Qamarul Anwar</h4><div class="stars">★★★★★</div><span class="review-date">September 22, 2026</span></div><span class="google-logo-icon">G</span></div>
-                    <p class="review-text">Service dari iFix terbaik, packing barang dijamin sampai dengan baik.</p>
-                </article>
-                <article class="review-card">
-                    <div class="review-header"><div class="avatar-letter" style="background-color:#16a085">A</div><div class="reviewer-info"><h4>Abdulah Alsolaiman</h4><div class="stars">★★★★★</div><span class="review-date">September 20, 2026</span></div><span class="google-logo-icon">G</span></div>
-                    <p class="review-text">This is legit one guys. I like it. I first...</p>
-                </article>
+            <div class="section-header reviews-head">
+                <h2>What our customers say</h2>
+                <p id="reviewSummary" hidden></p>
+            </div>
+            <div id="reviewsGrid" class="reviews-grid"></div>
+            <div class="reviews-actions">
+                <button id="loadMoreReviews" class="btn btn-dark" hidden>Load more</button>
+                <a id="googleReviewBtn" class="btn btn-outline" target="_blank" rel="noopener" hidden><i class="fa-brands fa-google"></i> Review us on Google</a>
             </div>
         </div>
     </section>

@@ -2,7 +2,15 @@ const API_BASE = "https://ifix-solutions-backend-1.onrender.com/api";
 const WHATSAPP_NUMBER = "60123456789";
 const ITEMS_PER_PAGE = 8;
 
+// Fill these in with the REAL figures from your Google Business Profile.
+// Leave them empty and the rating line and hero badge stay hidden (nothing is invented).
+const GOOGLE_REVIEWS_URL = '';      // link from "Get more reviews" on your Google listing
+const GOOGLE_RATING = null;         // e.g. 4.9
+const GOOGLE_REVIEW_COUNT = null;   // e.g. 87
+const REVIEWS_PER_PAGE = 6;
+
 let allProducts = [], filtered = [], currentPage = 1;
+let allReviews = [], reviewsShown = 0;
 let cart = [];
 try { cart = JSON.parse(localStorage.getItem('ifix_cart')) || []; } catch (e) { cart = []; }
 
@@ -14,6 +22,7 @@ const SKELETONS = '<div class="skeleton"></div>'.repeat(4);
 
 document.addEventListener('DOMContentLoaded', () => {
   loadProducts();
+  loadReviews();
   setupFilters();
   setupCart();
   setupRepairForm();
@@ -285,4 +294,69 @@ function setupPageUI() {
       if (f && e.target.src !== f) e.target.src = f;
     }, true);
   }
+}
+
+/* ---------- Customer reviews (added by staff in the admin panel) ---------- */
+const AVATAR_COLORS = ['#8e44ad', '#2980b9', '#27ae60', '#d35400', '#16a085', '#c0392b', '#2c3e50', '#e67e22'];
+const avatarColor = n => AVATAR_COLORS[[...String(n)].reduce((s, c) => s + c.charCodeAt(0), 0) % AVATAR_COLORS.length];
+
+function reviewCard(r) {
+  const name = String(r.reviewer_name).trim();
+  const n = Math.max(1, Math.min(5, Math.round(Number(r.rating)) || 5));
+  const d = r.review_date ? new Date(r.review_date) : null;
+  const date = d && !isNaN(d) ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+  return `<article class="review-card fade-in"><i class="fa-brands fa-google g" aria-hidden="true"></i>
+    <div class="avatar-letter" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}</div>
+    <h4>${esc(name)}</h4>
+    <div class="stars" aria-label="${n} out of 5 stars">${'★'.repeat(n)}${'☆'.repeat(5 - n)}</div>
+    ${date ? `<span class="review-date">${date}</span>` : ''}
+    <p class="review-text">${esc(r.review_text)}</p>
+    <button class="read-more" hidden>Read more</button></article>`;
+}
+
+function showMoreReviews() {
+  const grid = $('#reviewsGrid');
+  const next = allReviews.slice(reviewsShown, reviewsShown + REVIEWS_PER_PAGE);
+  grid.insertAdjacentHTML('beforeend', next.map(reviewCard).join(''));
+  reviewsShown += next.length;
+  // Only offer "Read more" on reviews that are actually cut off
+  $$('.review-card', grid).forEach(c => {
+    const t = $('.review-text', c);
+    if (t.scrollHeight > t.clientHeight + 1) $('.read-more', c).hidden = false;
+  });
+  $('#loadMoreReviews').hidden = reviewsShown >= allReviews.length;
+}
+
+async function loadReviews() {
+  const grid = $('#reviewsGrid'); if (!grid) return;
+  try {
+    const res = await fetch(`${API_BASE}/reviews`);
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json(); const list = json.data || json;
+    allReviews = (Array.isArray(list) ? list : [])
+      .filter(r => r.is_visible !== false && r.reviewer_name && r.review_text)
+      .sort((a, b) => new Date(b.review_date || 0) - new Date(a.review_date || 0));
+  } catch (err) { allReviews = []; }
+
+  // Real Google figures, only shown when you have filled them in at the top of this file
+  if (GOOGLE_RATING && GOOGLE_REVIEW_COUNT) {
+    $('#reviewSummary').innerHTML = `<span class="stars">★★★★★</span> Rated ${esc(GOOGLE_RATING)} on Google &middot; ${esc(GOOGLE_REVIEW_COUNT)} reviews`;
+    $('#reviewSummary').hidden = false;
+    $('#heroRating').textContent = `${GOOGLE_RATING} on Google`;
+    $('#heroBadge').hidden = false;
+  }
+  const gbtn = $('#googleReviewBtn');
+  if (GOOGLE_REVIEWS_URL) { gbtn.href = GOOGLE_REVIEWS_URL; gbtn.hidden = false; }
+
+  if (!allReviews.length) {
+    grid.innerHTML = `<div class="reviews-empty"><i class="fa-brands fa-google"></i><p>Our customer reviews will appear here soon.${GOOGLE_REVIEWS_URL ? ' Used our service? We would love to hear from you.' : ''}</p></div>`;
+    return;
+  }
+  showMoreReviews();
+  $('#loadMoreReviews').addEventListener('click', showMoreReviews);
+  grid.addEventListener('click', e => {
+    const b = e.target.closest('.read-more'); if (!b) return;
+    const open = b.closest('.review-card').classList.toggle('open');
+    b.textContent = open ? 'Show less' : 'Read more';
+  });
 }
