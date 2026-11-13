@@ -347,3 +347,14 @@ html { overflow-anchor: none; }
     .problem-grid { grid-template-columns: 1fr; }
     .hero-badge { padding: 8px 12px; }
 }
+
+/* ==========================================
+   13. HERO REPAIR SHORTCUTS (EVEN GRID) + FORM FIELD HEIGHTS
+   ========================================== */
+.chips { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.chip { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 7px; min-height: 76px; padding: 12px 8px; border-radius: 14px; font-size: .85rem; line-height: 1.25; text-align: center; }
+.chip i { color: #f87171; font-size: 1.1rem; transition: color .2s; }
+.chip:hover i { color: #fff; }
+.field input:not([type="checkbox"]), .field select { height: 48px; }
+.field textarea { min-height: 110px; }
+@media (max-width: 560px) { .chips { grid-template-columns: repeat(2, 1fr); } }

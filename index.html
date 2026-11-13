@@ -60,10 +60,14 @@
                 <div class="quick-fix">
                     <span>What needs fixing?</span>
                     <div class="chips">
-                        <button class="chip" data-service="Laptop or PC won't turn on">Won't turn on</button>
-                        <button class="chip" data-service="Cracked or broken screen">Cracked screen</button>
-                        <button class="chip" data-service="Weak battery or charging problems">Weak battery</button>
-                        <button class="chip" data-service="Slow laptop or computer">Slow laptop</button>
+                        <button class="chip" data-service="Laptop or PC won't turn on"><i class="fa-solid fa-power-off"></i><span>Won't turn on</span></button>
+                        <button class="chip" data-service="Cracked or broken screen"><i class="fa-solid fa-display"></i><span>Cracked screen</span></button>
+                        <button class="chip" data-service="Cracked or broken laptop hinge"><i class="fa-solid fa-laptop"></i><span>Broken hinge</span></button>
+                        <button class="chip" data-service="Weak battery or charging problems"><i class="fa-solid fa-battery-quarter"></i><span>Weak battery</span></button>
+                        <button class="chip" data-service="Slow laptop or computer"><i class="fa-solid fa-gauge-high"></i><span>Slow laptop</span></button>
+                        <button class="chip" data-service="Keyboard and hardware issues"><i class="fa-solid fa-keyboard"></i><span>Keyboard issues</span></button>
+                        <button class="chip" data-service="Windows installation and software problems"><i class="fa-brands fa-windows"></i><span>Windows & software</span></button>
+                        <button class="chip" data-service="Other / General diagnostics"><i class="fa-solid fa-circle-question"></i><span>Other issue</span></button>
                     </div>
                 </div>
             </div>
@@ -149,7 +153,7 @@
                         <div class="field"><label for="repairPhone">Phone (WhatsApp)</label><input type="tel" id="repairPhone" required placeholder="e.g. +60123456789" autocomplete="tel"></div>
                     </div>
                     <div class="form-row">
-                        <div class="field"><label for="repairDevice">Device model</label><input type="text" id="repairDevice" required placeholder="e.g. MacBook Pro 2020 / ASUS ROG"></div>
+                        <div class="field"><label for="repairDevice">Device model</label><input type="text" id="repairDevice" required placeholder="e.g. Dell Inspiron 15"></div>
                         <div class="field"><label for="repairServiceType">Requested service</label>
                             <select id="repairServiceType" required>
                                 <option value="" disabled selected>Select a problem</option>
