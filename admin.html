@@ -113,6 +113,7 @@ main{padding:28px 0 60px}
 .toast{position:fixed;left:50%;bottom:26px;z-index:100;transform:translate(-50%,24px);padding:12px 22px;border-radius:10px;background:var(--ink);color:#fff;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s var(--ease)}
 .toast.show{opacity:1;transform:translate(-50%,0)}.toast.err{background:var(--danger)}
 
+select.edit{width:132px;padding:8px 6px;text-align:left}
 @media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.repair-form{grid-template-columns:1fr}}
 @media(max-width:640px){.form-grid,.details{grid-template-columns:1fr}.bar-title{display:none}.bar-actions .btn span{display:none}.card{padding:18px}.row-edit{width:100%}.stat{padding:14px}.stat i{width:40px;height:40px}}
 @media(prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
@@ -168,9 +169,12 @@ main{padding:28px 0 60px}
                             <input type="text" id="category" list="categoryList" required placeholder="e.g. Laptop, RAM, Accessories" autocomplete="off">
                             <datalist id="categoryList"><option value="Laptop"><option value="Desktop PC"><option value="RAM"><option value="SSD / Storage"><option value="Accessories"></datalist>
                         </div>
+                        <div class="field"><label for="condition_type">Condition</label>
+                            <select id="condition_type"><option value="">Not specified</option><option value="Brand New">Brand New</option><option value="Refurbished">Refurbished</option></select>
+                        </div>
                         <div class="field"><label for="price">Price (RM)</label><input type="number" step="0.01" min="0" id="price" required placeholder="e.g. 1500.00"></div>
                         <div class="field"><label for="stock_quantity">Stock quantity</label><input type="number" min="0" id="stock_quantity" required placeholder="e.g. 10"></div>
-                        <div class="field"><label for="image_url">Image URL</label>
+                        <div class="field span-2"><label for="image_url">Image URL</label>
                             <div class="img-row"><input type="url" id="image_url" required placeholder="https://example.com/image.jpg"><div class="preview" id="preview"><i class="fa-regular fa-image"></i></div></div>
                         </div>
                     </div>
@@ -266,7 +270,8 @@ form.addEventListener('submit', async e => {
     btn.disabled = true; btn.textContent = 'Adding...'; msg.className = ''; msg.textContent = '';
     const body = {
         name: $('#name').value.trim(), category: $('#category').value.trim(), price: $('#price').value,
-        stock_quantity: $('#stock_quantity').value, image_url: $('#image_url').value.trim()
+        stock_quantity: $('#stock_quantity').value, image_url: $('#image_url').value.trim(),
+        condition_type: $('#condition_type').value
     };
     try {
         const r = await api('/api/products', { method: 'POST', body: JSON.stringify(body) });
@@ -299,14 +304,15 @@ function renderProducts() {
     const items = productsCache.filter(p => (!cat || p.category === cat) &&
         ((p.name || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q)));
     $('#admin-product-list').innerHTML = items.length ? items.map(p => {
-        const stock = Number(p.stock_quantity);
+        const stock = Number(p.stock_quantity), cond = p.condition_type || '';
         const tag = stock <= 0 ? '<span class="tag out">Out of stock</span>' : stock <= LOW_STOCK ? '<span class="tag">Low stock</span>' : '';
         return `<div class="row" data-id="${esc(p.id)}">
             ${p.image_url ? `<img src="${esc(p.image_url)}" class="thumb" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<div class="thumb"></div>'}
-            <div class="row-main"><strong>${esc(p.name)}</strong>${tag}<br><small>${esc(p.category || 'General')}</small></div>
+            <div class="row-main"><strong>${esc(p.name)}</strong>${tag}<br><small>${esc(p.category || 'General')}${cond ? ' &middot; ' + esc(cond) : ''}</small></div>
             <div class="row-edit">
                 <label>RM <input type="number" step="0.01" min="0" class="edit" data-f="price" value="${esc(p.price)}"></label>
                 <label>Stock <input type="number" min="0" class="edit" data-f="stock" value="${esc(p.stock_quantity)}"></label>
+                <label>Condition <select class="edit" data-f="condition"><option value=""${!cond ? ' selected' : ''}>Not set</option><option value="Brand New"${cond === 'Brand New' ? ' selected' : ''}>Brand New</option><option value="Refurbished"${cond === 'Refurbished' ? ' selected' : ''}>Refurbished</option></select></label>
                 <button class="btn btn-sm btn-success" data-act="save-product">Save</button>
                 <button class="btn btn-sm btn-danger" data-act="delete-product" aria-label="Delete product"><i class="fa-solid fa-trash"></i></button>
             </div></div>`;
@@ -322,7 +328,7 @@ async function saveProduct(row, btn) {
     btn.disabled = true;
     try {
         const r = await api(`/api/products/${p.id}`, { method: 'PUT', body: JSON.stringify({
-            name: p.name, category: p.category, price, stock_quantity: stock, image_url: p.image_url || '' }) });
+            name: p.name, category: p.category, price, stock_quantity: stock, image_url: p.image_url || '', condition_type: $('[data-f="condition"]', row).value }) });
         r.success ? (say('Product updated'), loadProducts()) : say('Failed to update product', true);
     } catch (err) { console.error(err); say('Server error while updating', true); }
     finally { btn.disabled = false; }

@@ -78,6 +78,12 @@ function applyFilters(resetPage = true) {
   renderProducts();
 }
 
+// Small "Brand New" / "Refurbished" tag on each product card
+const condTag = p => {
+  const c = String(p.condition_type || p.condition || '').trim();
+  return c ? ` <span class="cond ${/refurb|second|used/i.test(c) ? 'cond-refurb' : 'cond-new'}">${esc(c)}</span>` : '';
+};
+
 function productCard(p) {
   const stock = Number(p.stock_quantity);
   const known = !isNaN(stock) && p.stock_quantity !== null && p.stock_quantity !== '';
@@ -89,7 +95,7 @@ function productCard(p) {
   return `<div class="product-card">${img}
     <div class="product-info">
       <h3 class="product-title">${esc(p.name)}</h3>
-      <p class="product-specs">${esc(p.category)}</p>
+      <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
       <div class="product-bottom">
         <span class="product-price">${money(p.price)}</span>
         <button class="btn-add-cart" data-id="${esc(p.id)}" ${out ? 'disabled' : ''}>${out ? 'Out of stock' : 'Add to cart'}</button>
