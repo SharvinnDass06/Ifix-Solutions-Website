@@ -285,15 +285,6 @@ function setupPageUI() {
   }), { rootMargin: '-40% 0px -55% 0px' });
   links.forEach(l => { const t = $(l.getAttribute('href')); if (t) spy.observe(t); });
 
-  // Seamless customer photo loop: duplicate the set once
-  const track = $('.customer-track');
-  if (track) {
-    $$('.photo-card', track).forEach(c => { const k = c.cloneNode(true); k.setAttribute('aria-hidden', 'true'); track.appendChild(k); });
-    track.addEventListener('error', e => {
-      const f = e.target.dataset && e.target.dataset.fallback;
-      if (f && e.target.src !== f) e.target.src = f;
-    }, true);
-  }
 }
 
 /* ---------- Customer reviews (added by staff in the admin panel) ---------- */

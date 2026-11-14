@@ -371,3 +371,12 @@ html { overflow-anchor: none; }
 .field input:not([type="checkbox"]), .field select { height: 48px; }
 .field textarea { min-height: 110px; }
 @media (max-width: 560px) { .chips { grid-template-columns: repeat(2, 1fr); } }
+
+/* ==========================================
+   14. CUSTOMER PHOTO STRIP (wide photos, shown in full)
+   ========================================== */
+.customer-track .photo-card { width: 340px; }
+.customer-track .photo-card img { height: auto; aspect-ratio: 1280 / 1073; object-fit: cover; background: #f1f5f9; }
+@media (max-width: 640px) { .customer-track .photo-card { width: 250px; } }
+.customer-slider-container { min-height: 285px; }
+@media (max-width: 640px) { .customer-slider-container { min-height: 210px; } }
