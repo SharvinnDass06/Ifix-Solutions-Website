@@ -4,9 +4,9 @@ const ITEMS_PER_PAGE = 8;
 
 // Fill these in with the REAL figures from your Google Business Profile.
 // Leave them empty and the rating line and hero badge stay hidden (nothing is invented).
-const GOOGLE_REVIEWS_URL = '';      // link from "Get more reviews" on your Google listing
-const GOOGLE_RATING = null;         // e.g. 4.9
-const GOOGLE_REVIEW_COUNT = null;   // e.g. 87
+const GOOGLE_REVIEWS_URL = '';      // paste your Google "write a review" link here later; the button stays hidden while this is empty
+const GOOGLE_RATING = 4.4;          // from your Google listing on 16 Nov 2026 - update it now and then
+const GOOGLE_REVIEW_COUNT = 233;    // from your Google listing on 16 Nov 2026 - update it now and then
 const REVIEWS_PER_PAGE = 6;
 
 let allProducts = [], filtered = [], currentPage = 1;
@@ -50,9 +50,6 @@ async function loadProducts() {
     const json = await res.json();
     const list = json.data || json;
     allProducts = Array.isArray(list) ? list : [];
-    // Only show the Condition filter if your products actually carry that field
-    const cond = $('#conditionFilter');
-    if (cond) cond.hidden = !allProducts.some(p => p.condition || p.condition_type);
     applyFilters();
   } catch (err) {
     console.error('Error loading products:', err);
@@ -66,7 +63,7 @@ function applyFilters(resetPage = true) {
   const q = ($('#catalogSearch')?.value || '').toLowerCase().trim();
   const cat = ($('#categoryFilter')?.value || 'all').toLowerCase();
   const cond = ($('#conditionFilter')?.value || 'all').toLowerCase();
-  const condOn = cond !== 'all' && !$('#conditionFilter').hidden;
+  const condOn = cond !== 'all';
 
   filtered = allProducts.filter(p => {
     const name = (p.name || '').toLowerCase(), pc = (p.category || '').toLowerCase();
@@ -107,7 +104,9 @@ function productCard(p) {
 function renderProducts() {
   const grid = $('#productGrid'); if (!grid) return;
   if (!filtered.length) {
-    grid.innerHTML = `<p class="grid-message">${allProducts.length ? 'No products match your search. Try another keyword or clear the filters.' : 'No products available yet. Check back soon.'}</p>`;
+    const condChosen = ($('#conditionFilter')?.value || 'all') !== 'all';
+    const noCondYet = condChosen && !allProducts.some(p => p.condition_type || p.condition);
+    grid.innerHTML = `<p class="grid-message">${noCondYet ? 'Condition details are still being added to our products. Please check back soon, or choose All Conditions.' : allProducts.length ? 'No products match your search. Try another keyword or clear the filters.' : 'No products available yet. Check back soon.'}</p>`;
     renderPagination(0); return;
   }
   const pages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
@@ -297,11 +296,21 @@ function setupPageUI() {
 const AVATAR_COLORS = ['#8e44ad', '#2980b9', '#27ae60', '#d35400', '#16a085', '#c0392b', '#2c3e50', '#e67e22'];
 const avatarColor = n => AVATAR_COLORS[[...String(n)].reduce((s, c) => s + c.charCodeAt(0), 0) % AVATAR_COLORS.length];
 
+// "2 months ago" - same style as Google, and it stays correct as time passes
+function timeAgo(dateStr) {
+  const d = new Date(dateStr); if (isNaN(d)) return '';
+  const days = Math.floor((Date.now() - d) / 86400000);
+  if (days < 1) return 'Today';
+  if (days < 7) return days === 1 ? 'a day ago' : `${days} days ago`;
+  if (days < 30) { const w = Math.floor(days / 7); return w === 1 ? 'a week ago' : `${w} weeks ago`; }
+  if (days < 365) { const m = Math.floor(days / 30); return m === 1 ? 'a month ago' : `${m} months ago`; }
+  const y = Math.floor(days / 365); return y === 1 ? 'a year ago' : `${y} years ago`;
+}
+
 function reviewCard(r) {
   const name = String(r.reviewer_name).trim();
   const n = Math.max(1, Math.min(5, Math.round(Number(r.rating)) || 5));
-  const d = r.review_date ? new Date(r.review_date) : null;
-  const date = d && !isNaN(d) ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+  const date = timeAgo(r.review_date);
   return `<article class="review-card fade-in"><i class="fa-brands fa-google g" aria-hidden="true"></i>
     <div class="avatar-letter" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}</div>
     <h4>${esc(name)}</h4>
@@ -337,9 +346,11 @@ async function loadReviews() {
 
   // Real Google figures, only shown when you have filled them in at the top of this file
   if (GOOGLE_RATING && GOOGLE_REVIEW_COUNT) {
-    $('#reviewSummary').innerHTML = `<span class="stars">★★★★★</span> Rated ${esc(GOOGLE_RATING)} on Google &middot; ${esc(GOOGLE_REVIEW_COUNT)} reviews`;
+    const pct = Math.max(0, Math.min(100, Number(GOOGLE_RATING) / 5 * 100)) + '%';  // 4.4 stars fills 88% of the stars
+    $('#reviewSummary').innerHTML = `<span class="star-meter" style="--pct:${pct}" aria-hidden="true">★★★★★</span> <strong>${esc(GOOGLE_RATING)}</strong> on Google &middot; ${esc(GOOGLE_REVIEW_COUNT)} reviews`;
     $('#reviewSummary').hidden = false;
     $('#heroRating').textContent = `${GOOGLE_RATING} on Google`;
+    $('#heroStars').style.setProperty('--pct', pct);
     $('#heroBadge').hidden = false;
   }
   const gbtn = $('#googleReviewBtn');

@@ -121,6 +121,7 @@ main{padding:28px 0 60px}
 .rev-text{margin-top:4px;color:#475569;font-size:.92rem;overflow-wrap:anywhere}
 .tag.off{background:#e2e8f0;color:var(--muted)}
 #reviewMessage{font-weight:600;font-size:.92rem}#reviewMessage.ok{color:var(--success)}#reviewMessage.err{color:var(--danger)}
+.ago-row{display:flex;gap:10px}.ago-row input{width:90px;flex:none}.ago-row select{flex:1}
 select.edit{width:132px;padding:8px 6px;text-align:left}
 @media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.repair-form{grid-template-columns:1fr}}
 @media(max-width:640px){.form-grid,.details{grid-template-columns:1fr}.bar-title{display:none}.bar-actions .btn span{display:none}.card{padding:18px}.row-edit{width:100%}.stat{padding:14px}.stat i{width:40px;height:40px}}
@@ -217,13 +218,15 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
         <div id="tab-reviews" hidden>
             <section class="card">
                 <div class="card-head"><h2 id="reviewFormTitle">Add a customer review</h2></div>
-                <p class="hint">Copy the review exactly as it appears on your Google listing. Only add real reviews from real customers.</p>
+                <p class="hint">Copy the review exactly as it appears on your Google listing. Only add real reviews from real customers. Google shows "2 months ago" instead of a date, so enter the same here and the website shows it the same way.</p>
                 <form id="reviewForm">
                     <div class="form-grid">
                         <div class="field"><label for="review_name">Customer name (as shown on Google)</label><input type="text" id="review_name" required maxlength="100" placeholder="e.g. Ahmad Faiz"></div>
                         <div class="field"><label for="review_rating">Stars</label>
                             <select id="review_rating"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select></div>
-                        <div class="field"><label for="review_date">Review date</label><input type="date" id="review_date" required></div>
+                        <div class="field"><label for="review_ago_n">Posted (as Google shows it)</label>
+                            <div class="ago-row"><input type="number" id="review_ago_n" min="0" max="99" required placeholder="e.g. 2"><select id="review_ago_unit" aria-label="Unit"><option value="days">days ago</option><option value="weeks">weeks ago</option><option value="months" selected>months ago</option><option value="years">years ago</option></select></div>
+                        </div>
                         <div class="field"><label for="review_visible">Show on website</label>
                             <select id="review_visible"><option value="true">Yes, show it</option><option value="false">No, keep it hidden</option></select></div>
                         <div class="field span-2"><label for="review_text">Review text</label><textarea id="review_text" required maxlength="2000" placeholder="Paste the customer's review here"></textarea></div>
@@ -274,7 +277,6 @@ const asList = r => { const l = r.data || r; return Array.isArray(l) ? l : []; }
 function openApp() {
     $('#login').hidden = true; $('#app').hidden = false;
     const src = $('.login-logo').src; $$('img[data-logo]').forEach(i => { i.src = src; });
-    $('#review_date').value = new Date().toISOString().slice(0, 10);
     loadProducts(); loadRepairs(); loadReviews();
 }
 if (sessionStorage.getItem('ifix_admin') === '1') openApp();
@@ -457,6 +459,37 @@ const avatarColor = n => AVATAR_COLORS[[...String(n)].reduce((s, c) => s + c.cha
 const stars = n => '\u2605'.repeat(n) + '\u2606'.repeat(5 - n);
 const rmsg = $('#reviewMessage');
 
+/* "2 months ago" helpers: Google only shows how long ago a review was posted, so the form asks for the same thing */
+function timeAgo(dateStr) {
+    const d = new Date(dateStr); if (isNaN(d)) return '';
+    const days = Math.floor((Date.now() - d) / 86400000);
+    if (days < 1) return 'Today';
+    if (days < 7) return days === 1 ? 'a day ago' : `${days} days ago`;
+    if (days < 30) { const w = Math.floor(days / 7); return w === 1 ? 'a week ago' : `${w} weeks ago`; }
+    if (days < 365) { const m = Math.floor(days / 30); return m === 1 ? 'a month ago' : `${m} months ago`; }
+    const y = Math.floor(days / 365); return y === 1 ? 'a year ago' : `${y} years ago`;
+}
+function dateFromAgo(n, unit) {
+    const d = new Date(); d.setUTCHours(0, 0, 0, 0); n = Number(n) || 0;
+    if (unit === 'days') d.setUTCDate(d.getUTCDate() - n);
+    else if (unit === 'weeks') d.setUTCDate(d.getUTCDate() - 7 * n);
+    else if (unit === 'months') d.setUTCMonth(d.getUTCMonth() - n);
+    else d.setUTCFullYear(d.getUTCFullYear() - n);
+    return d.toISOString().slice(0, 10);
+}
+function agoFromDate(dateStr) {
+    const days = Math.max(0, Math.floor((Date.now() - new Date(dateStr)) / 86400000));
+    if (days < 14) return { n: days, unit: 'days' };
+    if (days < 60) return { n: Math.round(days / 7), unit: 'weeks' };
+    if (days < 365) return { n: Math.round(days / 30), unit: 'months' };
+    return { n: Math.round(days / 365), unit: 'years' };
+}
+let editingOriginal = null; // keeps the saved date if you edit a review without touching "Posted"
+function reviewDateFromForm() {
+    const n = $('#review_ago_n').value, u = $('#review_ago_unit').value;
+    if (editingOriginal && String(editingOriginal.n) === String(n) && editingOriginal.unit === u) return editingOriginal.date;
+    return dateFromAgo(n, u);
+}
 async function loadReviews() {
     try { reviewsCache = asList(await api('/api/admin/reviews')); renderReviews(); }
     catch (err) {
@@ -466,8 +499,7 @@ async function loadReviews() {
 }
 function renderReviews() {
     $('#admin-review-list').innerHTML = reviewsCache.length ? reviewsCache.map(r => {
-        const d = r.review_date ? new Date(r.review_date) : null;
-        const date = d && !isNaN(d) ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric', timeZone: 'UTC' }) : '';
+        const date = timeAgo(r.review_date);
         const name = String(r.reviewer_name || '');
         return `<div class="row" data-id="${esc(r.id)}">
             <div class="mini-avatar" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}</div>
@@ -482,7 +514,7 @@ function renderReviews() {
     }).join('') : '<div class="empty">No reviews yet. Add your first real customer review above.</div>';
 }
 function resetReviewForm() {
-    editingReviewId = null; $('#reviewForm').reset(); $('#review_date').value = new Date().toISOString().slice(0, 10);
+    editingReviewId = null; editingOriginal = null; $('#reviewForm').reset();
     $('#reviewFormTitle').textContent = 'Add a customer review';
     $('#reviewSaveBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add review'; $('#reviewCancelBtn').hidden = true;
 }
@@ -491,7 +523,7 @@ $('#reviewForm').addEventListener('submit', async e => {
     e.preventDefault();
     const btn = $('#reviewSaveBtn'), label = btn.innerHTML; btn.disabled = true; btn.textContent = 'Saving...'; rmsg.className = ''; rmsg.textContent = '';
     const body = {
-        reviewer_name: $('#review_name').value.trim(), rating: $('#review_rating').value, review_date: $('#review_date').value,
+        reviewer_name: $('#review_name').value.trim(), rating: $('#review_rating').value, review_date: reviewDateFromForm(),
         review_text: $('#review_text').value.trim(), is_visible: $('#review_visible').value === 'true'
     };
     try {
@@ -506,7 +538,7 @@ $('#reviewForm').addEventListener('submit', async e => {
 function editReview(id) {
     const r = reviewsCache.find(x => String(x.id) === String(id)); if (!r) return;
     editingReviewId = r.id;
-    $('#review_name').value = r.reviewer_name; $('#review_rating').value = String(r.rating); $('#review_date').value = r.review_date;
+    $('#review_name').value = r.reviewer_name; $('#review_rating').value = String(r.rating); { const a = agoFromDate(r.review_date); $('#review_ago_n').value = a.n; $('#review_ago_unit').value = a.unit; editingOriginal = { date: r.review_date, n: a.n, unit: a.unit }; }
     $('#review_text').value = r.review_text; $('#review_visible').value = r.is_visible === false ? 'false' : 'true';
     $('#reviewFormTitle').textContent = 'Edit review'; $('#reviewSaveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save changes'; $('#reviewCancelBtn').hidden = false;
     $('#reviewForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
