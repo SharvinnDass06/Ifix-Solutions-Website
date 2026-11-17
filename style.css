@@ -417,3 +417,9 @@ html { overflow-anchor: none; }
 .about-points { margin-top: 48px; background: #fff; border: 1px solid var(--border-color); border-radius: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
 @media (max-width: 960px) { .about-section { padding: 56px 0; } .about-top { grid-template-columns: 1fr; gap: 36px; } }
 @media (max-width: 640px) { .about-panel { padding: 24px; } .about-panel > img { height: 76px; } .why-card { padding: 18px; } }
+
+/* ==========================================
+   18. REVIEW PHOTOS (optional, with the customer's permission)
+   ========================================== */
+.avatar-letter { overflow: hidden; }
+.avatar-letter img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }

@@ -2,11 +2,7 @@ const API_BASE = "https://ifix-solutions-backend-1.onrender.com/api";
 const WHATSAPP_NUMBER = "60123456789";
 const ITEMS_PER_PAGE = 8;
 
-// Fill these in with the REAL figures from your Google Business Profile.
-// Leave them empty and the rating line and hero badge stay hidden (nothing is invented).
-const GOOGLE_REVIEWS_URL = '';      // paste your Google "write a review" link here later; the button stays hidden while this is empty
-const GOOGLE_RATING = 4.4;          // from your Google listing on 16 Nov 2026 - update it now and then
-const GOOGLE_REVIEW_COUNT = 233;    // from your Google listing on 16 Nov 2026 - update it now and then
+// The Google link, rating and number of reviews are set in the admin panel (Reviews tab > Google link and rating)
 const REVIEWS_PER_PAGE = 6;
 
 let allProducts = [], filtered = [], currentPage = 1;
@@ -307,12 +303,24 @@ function timeAgo(dateStr) {
   const y = Math.floor(days / 365); return y === 1 ? 'a year ago' : `${y} years ago`;
 }
 
+const isPhoto = v => typeof v === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(v);
+const GOOGLE_HOSTS = ['google.com', 'google.com.my', 'g.page', 'g.co', 'goo.gl', 'share.google'];
+// Only real Google links are ever used for the button
+const safeGoogleUrl = v => {
+  try { const u = new URL(v); const h = u.hostname.toLowerCase(); return u.protocol === 'https:' && GOOGLE_HOSTS.some(d => h === d || h.endsWith('.' + d)) ? u.href : ''; }
+  catch (e) { return ''; }
+};
+async function loadGoogleSettings() {
+  try { const res = await fetch(`${API_BASE}/settings`); if (!res.ok) return {}; const json = await res.json(); return json.data || {}; }
+  catch (err) { return {}; }
+}
+
 function reviewCard(r) {
   const name = String(r.reviewer_name).trim();
   const n = Math.max(1, Math.min(5, Math.round(Number(r.rating)) || 5));
   const date = timeAgo(r.review_date);
   return `<article class="review-card fade-in"><i class="fa-brands fa-google g" aria-hidden="true"></i>
-    <div class="avatar-letter" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}</div>
+    <div class="avatar-letter" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}${isPhoto(r.photo_url) ? `<img src="${esc(r.photo_url)}" alt="" onerror="this.remove()">` : ''}</div>
     <h4>${esc(name)}</h4>
     <div class="stars" aria-label="${n} out of 5 stars">${'★'.repeat(n)}${'☆'.repeat(5 - n)}</div>
     ${date ? `<span class="review-date">${date}</span>` : ''}
@@ -344,20 +352,20 @@ async function loadReviews() {
       .sort((a, b) => new Date(b.review_date || 0) - new Date(a.review_date || 0));
   } catch (err) { allReviews = []; }
 
-  // Real Google figures, only shown when you have filled them in at the top of this file
-  if (GOOGLE_RATING && GOOGLE_REVIEW_COUNT) {
-    const pct = Math.max(0, Math.min(100, Number(GOOGLE_RATING) / 5 * 100)) + '%';  // 4.4 stars fills 88% of the stars
-    $('#reviewSummary').innerHTML = `<span class="star-meter" style="--pct:${pct}" aria-hidden="true">★★★★★</span> <strong>${esc(GOOGLE_RATING)}</strong> on Google &middot; ${esc(GOOGLE_REVIEW_COUNT)} reviews`;
-    $('#reviewSummary').hidden = false;
-    $('#heroRating').textContent = `${GOOGLE_RATING} on Google`;
+  // Google link, rating and review count come from the admin panel (Reviews tab > Google link and rating)
+  const g = await loadGoogleSettings();
+  const rating = Number(g.google_rating), count = Number(g.google_review_count), reviewUrl = safeGoogleUrl(g.google_review_url);
+  if (rating > 0 && count > 0) {
+    const pct = Math.max(0, Math.min(100, rating / 5 * 100)) + '%';  // 4.4 stars fills 88% of the stars
+    $('#heroRating').textContent = `${rating} on Google`;
     $('#heroStars').style.setProperty('--pct', pct);
     $('#heroBadge').hidden = false;
   }
   const gbtn = $('#googleReviewBtn');
-  if (GOOGLE_REVIEWS_URL) { gbtn.href = GOOGLE_REVIEWS_URL; gbtn.hidden = false; }
+  if (reviewUrl) { gbtn.href = reviewUrl; gbtn.hidden = false; }
 
   if (!allReviews.length) {
-    grid.innerHTML = `<div class="reviews-empty"><i class="fa-brands fa-google"></i><p>Our customer reviews will appear here soon.${GOOGLE_REVIEWS_URL ? ' Used our service? We would love to hear from you.' : ''}</p></div>`;
+    grid.innerHTML = `<div class="reviews-empty"><i class="fa-brands fa-google"></i><p>Our customer reviews will appear here soon.${reviewUrl ? ' Used our service? We would love to hear from you.' : ''}</p></div>`;
     return;
   }
   showMoreReviews();

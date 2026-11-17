@@ -122,6 +122,14 @@ main{padding:28px 0 60px}
 .tag.off{background:#e2e8f0;color:var(--muted)}
 #reviewMessage{font-weight:600;font-size:.92rem}#reviewMessage.ok{color:var(--success)}#reviewMessage.err{color:var(--danger)}
 .ago-row{display:flex;gap:10px}.ago-row input{width:90px;flex:none}.ago-row select{flex:1}
+.photo-row{display:flex;gap:16px;align-items:center}
+.photo-preview{width:72px;height:72px;border-radius:50%;background:#f1f5f9;border:1px solid var(--line);display:grid;place-items:center;color:#cbd5e1;font-size:1.5rem;overflow:hidden;flex-shrink:0}
+.photo-preview img{width:100%;height:100%;object-fit:cover}
+.photo-controls{display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0}
+.field .photo-controls input[type=file]{width:auto;max-width:100%;padding:8px;font-size:.88rem}
+.photo-note{color:var(--muted);font-size:.85rem;margin:0}
+.mini-avatar{position:relative;overflow:hidden}.mini-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+#googleMessage{font-weight:600;font-size:.92rem}#googleMessage.ok{color:var(--success)}#googleMessage.err{color:var(--danger)}
 select.edit{width:132px;padding:8px 6px;text-align:left}
 @media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.repair-form{grid-template-columns:1fr}}
 @media(max-width:640px){.form-grid,.details{grid-template-columns:1fr}.bar-title{display:none}.bar-actions .btn span{display:none}.card{padding:18px}.row-edit{width:100%}.stat{padding:14px}.stat i{width:40px;height:40px}}
@@ -229,6 +237,10 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
                         </div>
                         <div class="field"><label for="review_visible">Show on website</label>
                             <select id="review_visible"><option value="true">Yes, show it</option><option value="false">No, keep it hidden</option></select></div>
+                        <div class="field span-2"><label>Customer photo (optional)</label>
+                            <div class="photo-row"><div class="photo-preview" id="reviewPhotoPreview"><i class="fa-regular fa-user"></i></div>
+                                <div class="photo-controls"><input type="file" id="review_photo" accept="image/*"><button type="button" class="btn btn-ghost btn-sm" id="reviewPhotoRemove" hidden>Remove photo</button>
+                                    <p class="photo-note">Only add a photo if the customer gave permission. It is resized and saved with the review. Without one, the website shows their first letter.</p></div></div></div>
                         <div class="field span-2"><label for="review_text">Review text</label><textarea id="review_text" required maxlength="2000" placeholder="Paste the customer's review here"></textarea></div>
                     </div>
                     <div class="form-foot">
@@ -241,6 +253,18 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
             <section class="card">
                 <div class="card-head"><h2>All reviews</h2><button class="btn btn-ghost btn-sm" data-act="refresh-reviews"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
                 <div id="admin-review-list"><div class="skeleton"></div><div class="skeleton"></div></div>
+            </section>
+            <section class="card">
+                <div class="card-head"><h2>Google link and rating</h2></div>
+                <p class="hint">These show on your website above the reviews. Copy them from your Google listing, and update the rating and number now and then.</p>
+                <form id="googleForm">
+                    <div class="form-grid">
+                        <div class="field span-2"><label for="g_url">Google "write a review" link (optional)</label><input type="url" id="g_url" placeholder="https://g.page/r/.../review"><p class="photo-note" style="margin-top:6px">In your Google Business Profile, find "Ask for reviews" and copy the link. When it is filled in, a "Review us on Google" button appears on your website.</p></div>
+                        <div class="field"><label for="g_rating">Google rating (for example 4.4)</label><input type="number" id="g_rating" step="0.1" min="0" max="5" placeholder="e.g. 4.4"></div>
+                        <div class="field"><label for="g_count">Number of Google reviews</label><input type="number" id="g_count" min="0" placeholder="e.g. 233"></div>
+                    </div>
+                    <div class="form-foot"><button type="submit" class="btn" id="googleSaveBtn">Save</button><div id="googleMessage" role="status"></div></div>
+                </form>
             </section>
         </div>
     </main>
@@ -277,7 +301,7 @@ const asList = r => { const l = r.data || r; return Array.isArray(l) ? l : []; }
 function openApp() {
     $('#login').hidden = true; $('#app').hidden = false;
     const src = $('.login-logo').src; $$('img[data-logo]').forEach(i => { i.src = src; });
-    loadProducts(); loadRepairs(); loadReviews();
+    loadProducts(); loadRepairs(); loadReviews(); loadGoogleSettings();
 }
 if (sessionStorage.getItem('ifix_admin') === '1') openApp();
 $('#loginForm').addEventListener('submit', e => {
@@ -502,7 +526,7 @@ function renderReviews() {
         const date = timeAgo(r.review_date);
         const name = String(r.reviewer_name || '');
         return `<div class="row" data-id="${esc(r.id)}">
-            <div class="mini-avatar" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}</div>
+            <div class="mini-avatar" style="background:${avatarColor(name)}">${esc(name.charAt(0).toUpperCase())}${isPhoto(r.photo_url) ? `<img src="${esc(r.photo_url)}" alt="" onerror="this.remove()">` : ''}</div>
             <div class="row-main"><strong>${esc(name)}</strong>${r.is_visible === false ? '<span class="tag off">Hidden</span>' : ''}<br>
                 <span class="rev-stars">${stars(Number(r.rating) || 5)}</span> <small>${esc(date)}</small>
                 <p class="rev-text">${esc(r.review_text)}</p></div>
@@ -513,8 +537,34 @@ function renderReviews() {
             </div></div>`;
     }).join('') : '<div class="empty">No reviews yet. Add your first real customer review above.</div>';
 }
+const isPhoto = v => typeof v === 'string' && /^data:image\/(jpeg|png|webp);base64,/.test(v);
+let reviewPhoto = null, reviewPhotoChanged = false;
+function showReviewPhoto() {
+    $('#reviewPhotoPreview').innerHTML = reviewPhoto ? `<img src="${esc(reviewPhoto)}" alt="Photo preview">` : '<i class="fa-regular fa-user"></i>';
+    $('#reviewPhotoRemove').hidden = !reviewPhoto;
+}
+// Crops the picture to a square and shrinks it so it stays small and fast
+function photoFromFile(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file), img = new Image();
+        img.onload = () => {
+            const size = 192, c = document.createElement('canvas'); c.width = c.height = size;
+            const s = Math.min(img.width, img.height), sx = (img.width - s) / 2, sy = (img.height - s) / 2;
+            c.getContext('2d').drawImage(img, sx, sy, s, s, 0, 0, size, size);
+            URL.revokeObjectURL(url); resolve(c.toDataURL('image/jpeg', 0.82));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Not an image')); };
+        img.src = url;
+    });
+}
+$('#review_photo').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try { reviewPhoto = await photoFromFile(file); reviewPhotoChanged = true; showReviewPhoto(); }
+    catch (err) { say('That file could not be used as a photo', true); e.target.value = ''; }
+});
+$('#reviewPhotoRemove').addEventListener('click', () => { reviewPhoto = null; reviewPhotoChanged = true; $('#review_photo').value = ''; showReviewPhoto(); });
 function resetReviewForm() {
-    editingReviewId = null; editingOriginal = null; $('#reviewForm').reset();
+    editingReviewId = null; editingOriginal = null; $('#reviewForm').reset(); reviewPhoto = null; reviewPhotoChanged = false; showReviewPhoto();
     $('#reviewFormTitle').textContent = 'Add a customer review';
     $('#reviewSaveBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add review'; $('#reviewCancelBtn').hidden = true;
 }
@@ -526,6 +576,7 @@ $('#reviewForm').addEventListener('submit', async e => {
         reviewer_name: $('#review_name').value.trim(), rating: $('#review_rating').value, review_date: reviewDateFromForm(),
         review_text: $('#review_text').value.trim(), is_visible: $('#review_visible').value === 'true'
     };
+    if (reviewPhotoChanged) body.photo_url = reviewPhoto || '';
     try {
         const r = editingReviewId
             ? await api(`/api/reviews/${editingReviewId}`, { method: 'PUT', body: JSON.stringify(body) })
@@ -540,6 +591,7 @@ function editReview(id) {
     editingReviewId = r.id;
     $('#review_name').value = r.reviewer_name; $('#review_rating').value = String(r.rating); { const a = agoFromDate(r.review_date); $('#review_ago_n').value = a.n; $('#review_ago_unit').value = a.unit; editingOriginal = { date: r.review_date, n: a.n, unit: a.unit }; }
     $('#review_text').value = r.review_text; $('#review_visible').value = r.is_visible === false ? 'false' : 'true';
+    reviewPhoto = isPhoto(r.photo_url) ? r.photo_url : null; reviewPhotoChanged = false; $('#review_photo').value = ''; showReviewPhoto();
     $('#reviewFormTitle').textContent = 'Edit review'; $('#reviewSaveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save changes'; $('#reviewCancelBtn').hidden = false;
     $('#reviewForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
@@ -554,6 +606,25 @@ async function deleteReview(id) {
     try { const r = await api(`/api/reviews/${id}`, { method: 'DELETE' }); r.success ? (say('Review deleted'), loadReviews()) : say('Failed to delete review', true); }
     catch (err) { console.error(err); say('Server error while deleting', true); }
 }
+
+/* ---------- Google link and rating ---------- */
+async function loadGoogleSettings() {
+    try {
+        const r = await api('/api/settings'); const s = r.data || {};
+        $('#g_url').value = s.google_review_url || ''; $('#g_rating').value = s.google_rating || ''; $('#g_count').value = s.google_review_count || '';
+    } catch (err) { console.error(err); }
+}
+$('#googleForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('#googleSaveBtn'), out = $('#googleMessage'), label = btn.textContent; btn.disabled = true; btn.textContent = 'Saving...'; out.className = ''; out.textContent = '';
+    try {
+        const r = await api('/api/settings', { method: 'PUT', body: JSON.stringify({
+            google_review_url: $('#g_url').value.trim(), google_rating: $('#g_rating').value.trim(), google_review_count: $('#g_count').value.trim() }) });
+        if (r.success) { out.className = 'ok'; out.textContent = 'Saved. Refresh your website to see the change.'; say('Google details saved'); }
+        else { out.className = 'err'; out.textContent = r.error || 'Could not save.'; }
+    } catch (err) { console.error(err); out.className = 'err'; out.textContent = 'Server connection error.'; }
+    finally { btn.disabled = false; btn.textContent = label; }
+});
 
 /* ---------- One click handler for every button ---------- */
 document.addEventListener('click', e => {
