@@ -423,3 +423,34 @@ html { overflow-anchor: none; }
    ========================================== */
 .avatar-letter { overflow: hidden; }
 .avatar-letter img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+
+/* ==========================================
+   19. FOOTER (assistance band, contact details, links, social)
+   ========================================== */
+.assist { max-width: 780px; margin: 0 auto; padding-bottom: 52px; text-align: center; }
+.assist h2 { margin-bottom: 14px; color: #fff; font-size: clamp(1.9rem, 3.6vw, 2.7rem); font-weight: 800; }
+.assist > p { max-width: 58ch; margin: 0 auto 28px; color: #94a3b8; font-size: 1.04rem; }
+.hours { display: inline-grid; gap: 6px; margin-bottom: 30px; color: #cbd5e1; }
+.hours h3 { margin-bottom: 6px; color: #fff; font-size: 1.1rem; }
+.hours strong { color: #fff; }
+.assist-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 12px; }
+.footer-main { display: grid; grid-template-columns: 1.6fr 1fr 1fr 1fr; gap: 40px; padding: 52px 0 44px; border-top: 1px solid #1e293b; }
+.footer-brand .footer-logo { height: 92px; margin-bottom: 20px; }
+.footer-main h4 { margin-bottom: 16px; color: #fff; font-family: var(--font-display); font-size: 1.1rem; }
+.footer-brand address { font-style: normal; line-height: 1.75; }
+.footer-phone { margin-top: 12px; }
+.footer-phone i { width: 20px; color: var(--primary); }
+.footer-phone a, .footer-col a { transition: color .2s; }
+.footer-phone a:hover, .footer-col a:hover { color: #fff; }
+.footer-col ul { display: grid; gap: 10px; list-style: none; }
+.footer-col a:hover { padding-left: 0; }
+.social-list { gap: 12px; }
+.social-list a { display: inline-flex; align-items: center; gap: 12px; }
+.social-list i { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 10px; background: #111827; color: #fff; transition: background .2s, transform .2s var(--ease); }
+.social-list a:hover i { background: var(--primary); transform: translateY(-2px); }
+.footer-bottom { padding-top: 24px; }
+@media (max-width: 960px) { .footer-main { grid-template-columns: 1fr 1fr; gap: 36px; } .footer-brand { grid-column: 1 / -1; } }
+@media (max-width: 560px) {
+    .footer-main { grid-template-columns: 1fr; padding: 40px 0 32px; }
+    .assist-actions .btn { width: 100%; }
+}
