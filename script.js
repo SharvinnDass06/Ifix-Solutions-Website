@@ -1,5 +1,5 @@
 const API_BASE = "https://ifix-solutions-backend-1.onrender.com/api";
-const WHATSAPP_NUMBER = "60123456789";
+const WHATSAPP_NUMBER = "601110093835";
 const ITEMS_PER_PAGE = 8;
 
 // The Google link, rating and number of reviews are set in the admin panel (Reviews tab > Google link and rating)
@@ -7,7 +7,7 @@ const REVIEWS_PER_PAGE = 6;
 
 // Your social media pages. Paste each full link between the quotes (for example 'https://www.instagram.com/yourname').
 // An item only shows in the footer once it has a link.
-const SOCIAL_LINKS = { tiktok: '', instagram: '', facebook: '' };
+const SOCIAL_LINKS = { tiktok: 'https://www.tiktok.com/@ifixsolutionsn9', instagram: 'https://www.instagram.com/ifixsolutions_/', facebook: '' };
 const SOCIAL_HOSTS = { tiktok: ['tiktok.com'], instagram: ['instagram.com', 'instagr.am'], facebook: ['facebook.com', 'fb.com', 'fb.me'] };
 const safeSocialUrl = (kind, v) => {
   try { const u = new URL(v); const h = u.hostname.toLowerCase(); return u.protocol === 'https:' && SOCIAL_HOSTS[kind].some(d => h === d || h.endsWith('.' + d)) ? u.href : ''; }
