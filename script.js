@@ -7,7 +7,7 @@ const REVIEWS_PER_PAGE = 6;
 
 // Your social media pages. Paste each full link between the quotes (for example 'https://www.instagram.com/yourname').
 // An item only shows in the footer once it has a link.
-const SOCIAL_LINKS = { tiktok: 'https://www.tiktok.com/@ifixsolutionsn9', instagram: 'https://www.instagram.com/ifixsolutions_/', facebook: '' };
+const SOCIAL_LINKS = { tiktok: 'https://www.tiktok.com/@ifixsolutionsn9', instagram: 'https://www.instagram.com/ifixsolutions_/', facebook: 'https://www.facebook.com/ifixsolutionsrasahjaya/' };
 const SOCIAL_HOSTS = { tiktok: ['tiktok.com'], instagram: ['instagram.com', 'instagr.am'], facebook: ['facebook.com', 'fb.com', 'fb.me'] };
 const safeSocialUrl = (kind, v) => {
   try { const u = new URL(v); const h = u.hostname.toLowerCase(); return u.protocol === 'https:' && SOCIAL_HOSTS[kind].some(d => h === d || h.endsWith('.' + d)) ? u.href : ''; }
