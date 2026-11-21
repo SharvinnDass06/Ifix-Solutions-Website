@@ -298,10 +298,29 @@
     <div id="cartModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span id="closeCartBtn" class="close-btn" role="button" aria-label="Close cart">&times;</span>
-            <h2>Your shopping cart</h2>
-            <div id="cartItemsList"><p class="empty-cart">Your cart is empty. Add something from the catalog.</p></div>
-            <div class="cart-total"><strong>Total: RM <span id="cartTotalPrice">0.00</span></strong></div>
-            <button class="whatsapp-nav-btn checkout-btn">Checkout via WhatsApp</button>
+            <div id="cartView">
+                <h2>Your shopping cart</h2>
+                <div id="cartItemsList"><p class="empty-cart">Your cart is empty. Add something from the catalog.</p></div>
+                <div class="cart-total"><strong>Total: RM <span id="cartTotalPrice">0.00</span></strong></div>
+                <form id="orderForm" class="order-form" novalidate hidden>
+                    <h3>Your details</h3>
+                    <div class="form-row">
+                        <div class="field"><label for="orderName">Your name</label><input type="text" id="orderName" maxlength="100" autocomplete="name" placeholder="e.g. Alex Wong"></div>
+                        <div class="field"><label for="orderPhone">Phone (WhatsApp)</label><input type="tel" id="orderPhone" maxlength="30" autocomplete="tel" placeholder="e.g. 012-345 6789"></div>
+                    </div>
+                    <div class="field"><label for="orderNote">Note (optional)</label><input type="text" id="orderNote" maxlength="300" placeholder="e.g. I will pick it up on Saturday"></div>
+                    <p class="privacy-note">We use your name and phone number only to contact you about this order.</p>
+                    <button type="submit" class="btn btn-primary btn-block" id="orderBtn">Place order</button>
+                    <div id="orderMsg" role="alert"></div>
+                </form>
+            </div>
+            <div id="orderDone" hidden>
+                <div class="done-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></div>
+                <h2>Order received</h2>
+                <p>Your order number is <strong id="orderNumber"></strong>. Tap the button below to send the details to us on WhatsApp, so we can confirm your order.</p>
+                <a id="orderWaBtn" class="btn btn-primary btn-block" target="_blank" rel="noopener"><i class="fa-brands fa-whatsapp"></i> Send on WhatsApp</a>
+                <button type="button" class="btn btn-outline btn-block" id="orderCloseBtn">Close</button>
+            </div>
         </div>
     </div>
 

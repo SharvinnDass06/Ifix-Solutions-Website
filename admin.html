@@ -130,6 +130,12 @@ main{padding:28px 0 60px}
 .photo-note{color:var(--muted);font-size:.85rem;margin:0}
 .mini-avatar{position:relative;overflow:hidden}.mini-avatar img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 #googleMessage{font-weight:600;font-size:.92rem}#googleMessage.ok{color:var(--success)}#googleMessage.err{color:var(--danger)}
+.status-New{background:#fef3c7;color:var(--warning)}.status-Contacted{background:#e0f2fe;color:var(--info)}
+.order-items{list-style:none;display:grid;gap:4px;margin-top:4px}
+.order-items li{display:flex;justify-content:space-between;gap:16px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.order-items li:last-child{border-bottom:0}
+.order-when{color:var(--muted);font-size:.85rem;margin-left:8px}
+.more-row{display:flex;justify-content:center;margin-top:18px}
 select.edit{width:132px;padding:8px 6px;text-align:left}
 @media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.repair-form{grid-template-columns:1fr}}
 @media(max-width:640px){.form-grid,.details{grid-template-columns:1fr}.bar-title{display:none}.bar-actions .btn span{display:none}.card{padding:18px}.row-edit{width:100%}.stat{padding:14px}.stat i{width:40px;height:40px}}
@@ -174,6 +180,7 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
         <nav class="tabs" role="tablist">
             <button class="tab active" data-tab="products" role="tab">Products</button>
             <button class="tab" data-tab="repairs" role="tab">Repairs <span id="repairBadge" class="badge" data-n="0"></span></button>
+            <button class="tab" data-tab="orders" role="tab">Orders <span id="orderBadge" class="badge" data-n="0"></span></button>
             <button class="tab" data-tab="reviews" role="tab">Reviews</button>
         </nav>
 
@@ -223,6 +230,21 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
                 <div id="repairPaginationContainer" class="pager"></div>
             </section>
         </div>
+        <div id="tab-orders" hidden>
+            <section class="card">
+                <div class="card-head"><h2>Customer orders</h2><button class="btn btn-ghost btn-sm" data-act="refresh-orders"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
+                <p class="hint">Orders customers place from the website cart. Contact each customer on WhatsApp to confirm the order and the payment. Stock is not reduced automatically, so update it in the Products tab when an order is final.</p>
+                <div class="toolbar">
+                    <input type="text" id="orderSearch" placeholder="Search by name, phone or order number..." aria-label="Search orders">
+                    <select id="orderStatusFilter" aria-label="Filter by status">
+                        <option value="">All statuses</option><option value="New">New</option><option value="Contacted">Contacted</option><option value="Completed">Completed</option><option value="Cancelled">Cancelled</option>
+                    </select>
+                </div>
+                <div id="admin-order-list"><div class="skeleton"></div><div class="skeleton"></div></div>
+                <div class="more-row"><button class="btn btn-ghost" id="ordersMoreBtn" hidden>Show more orders</button></div>
+            </section>
+        </div>
+
         <div id="tab-reviews" hidden>
             <section class="card">
                 <div class="card-head"><h2 id="reviewFormTitle">Add a customer review</h2></div>
@@ -308,7 +330,7 @@ function showLogin(msg) {
 function openApp() {
     $('#login').hidden = true; $('#app').hidden = false;
     const src = $('.login-logo').src; $$('img[data-logo]').forEach(i => { i.src = src; });
-    loadProducts(); loadRepairs(); loadReviews(); loadGoogleSettings();
+    loadProducts(); loadRepairs(); loadOrders(); loadReviews(); loadGoogleSettings();
 }
 if (getToken()) openApp();
 $('#loginForm').addEventListener('submit', async e => {
@@ -330,7 +352,7 @@ $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem(TOKE
 $$('.tab').forEach(t => t.addEventListener('click', () => {
     $$('.tab').forEach(x => x.classList.toggle('active', x === t));
     $('#tab-products').hidden = t.dataset.tab !== 'products';
-    ['products', 'repairs', 'reviews'].forEach(name => { $('#tab-' + name).hidden = name !== t.dataset.tab; });
+    ['products', 'repairs', 'orders', 'reviews'].forEach(name => { $('#tab-' + name).hidden = name !== t.dataset.tab; });
 }));
 
 /* ---------- Products ---------- */
@@ -639,6 +661,74 @@ $('#googleForm').addEventListener('submit', async e => {
     finally { btn.disabled = false; btn.textContent = label; }
 });
 
+/* ---------- Orders ---------- */
+let ordersCache = [], ordersShown = 10;
+const rm = n => 'RM ' + (parseFloat(n) || 0).toFixed(2);
+
+async function loadOrders() {
+    try {
+        ordersCache = asList(await api('/api/orders'));
+        const fresh = ordersCache.filter(o => o.status === 'New').length;
+        const b = $('#orderBadge'); b.textContent = fresh || ''; b.dataset.n = fresh;
+        renderOrders();
+    } catch (err) {
+        console.error(err);
+        $('#admin-order-list').innerHTML = '<div class="empty">Could not load orders. The server may be waking up.<br><button class="btn btn-sm" data-act="refresh-orders">Try again</button></div>';
+    }
+}
+function filteredOrders() {
+    const q = $('#orderSearch').value.toLowerCase().trim().replace(/^#/, ''), s = $('#orderStatusFilter').value;
+    return ordersCache.filter(o => (!s || o.status === s) &&
+        ((o.customer_name || '').toLowerCase().includes(q) || (o.phone || '').toLowerCase().includes(q) || String(o.id) === q));
+}
+function orderWaLink(o) {
+    let n = (o.phone || '').replace(/\D/g, ''); if (n.startsWith('0')) n = '6' + n;
+    return `https://wa.me/${n}?text=${encodeURIComponent(`Hi ${o.customer_name}, this is I FIX SOLUTIONS about your order #${o.id} (${rm(o.total)}). `)}`;
+}
+function renderOrders() {
+    const box = $('#admin-order-list'), more = $('#ordersMoreBtn'), list = filteredOrders();
+    if (!list.length) { box.innerHTML = `<div class="empty">${ordersCache.length ? 'No orders match your search.' : 'No orders yet. They appear here when a customer places one from the website cart.'}</div>`; more.hidden = true; return; }
+    box.innerHTML = list.slice(0, ordersShown).map(o => {
+        let items = o.items; if (typeof items === 'string') { try { items = JSON.parse(items); } catch (e) { items = []; } }
+        const d = new Date(o.created_at);
+        const when = isNaN(d) ? '' : d.toLocaleString('en-MY', { day: 'numeric', month: 'short', year: 'numeric', hour: 'numeric', minute: '2-digit' });
+        const s = o.status || 'New';
+        return `<article class="repair" data-id="${esc(o.id)}">
+            <div class="repair-top">
+                <div><strong>Order #${esc(o.id)}</strong> <span class="status status-${esc(s)}">${esc(s)}</span><span class="order-when">${esc(when)}</span></div>
+                <div class="actions">
+                    <a href="${orderWaLink(o)}" target="_blank" rel="noopener" class="btn btn-sm btn-wa"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
+                    <button class="btn btn-sm btn-info" data-act="order-status" data-s="Contacted">Contacted</button>
+                    <button class="btn btn-sm btn-success" data-act="order-status" data-s="Completed">Completed</button>
+                    <button class="btn btn-sm btn-ghost" data-act="order-status" data-s="Cancelled">Cancel</button>
+                    <button class="btn btn-sm btn-danger" data-act="delete-order" aria-label="Delete order"><i class="fa-solid fa-trash"></i></button>
+                </div>
+            </div>
+            <div class="details">
+                <div><b>Customer</b>${esc(o.customer_name)} &middot; ${esc(o.phone)}</div>
+                <div><b>Total</b>${esc(rm(o.total))}</div>
+                <div class="wide"><b>Items</b><ul class="order-items">${(Array.isArray(items) ? items : []).map(i =>
+                    `<li><span>${esc(i.qty)} &times; ${esc(i.name)}</span><span>${esc(rm(i.price * i.qty))}</span></li>`).join('')}</ul></div>
+                ${o.note ? `<div class="wide"><b>Customer note</b>${esc(o.note)}</div>` : ''}
+            </div></article>`;
+    }).join('');
+    more.hidden = list.length <= ordersShown;
+}
+$('#orderSearch').addEventListener('input', () => { ordersShown = 10; renderOrders(); });
+$('#orderStatusFilter').addEventListener('change', () => { ordersShown = 10; renderOrders(); });
+$('#ordersMoreBtn').addEventListener('click', () => { ordersShown += 10; renderOrders(); });
+
+async function setOrderStatus(id, status) {
+    try { const r = await api(`/api/orders/${id}`, { method: 'PATCH', body: JSON.stringify({ status }) });
+        r.success ? (say(`Order marked as ${status}`), loadOrders()) : say('Could not update the order', true); }
+    catch (err) { console.error(err); say('Server error while saving', true); }
+}
+async function deleteOrder(id) {
+    if (!confirm('Delete this order? This cannot be undone.')) return;
+    try { const r = await api(`/api/orders/${id}`, { method: 'DELETE' }); r.success ? (say('Order deleted'), loadOrders()) : say('Failed to delete order', true); }
+    catch (err) { console.error(err); say('Server error while deleting', true); }
+}
+
 /* ---------- One click handler for every button ---------- */
 document.addEventListener('click', e => {
     const pg = e.target.closest('.pager button');
@@ -657,6 +747,9 @@ document.addEventListener('click', e => {
         case 'edit-review': editReview(id); break;
         case 'toggle-review': toggleReview(id); break;
         case 'delete-review': deleteReview(id); break;
+        case 'refresh-orders': loadOrders(); break;
+        case 'order-status': setOrderStatus(id, b.dataset.s); break;
+        case 'delete-order': deleteOrder(id); break;
     }
 });
 </script>

@@ -454,3 +454,19 @@ html { overflow-anchor: none; }
     .footer-main { grid-template-columns: 1fr; padding: 40px 0 32px; }
     .assist-actions .btn { width: 100%; }
 }
+
+/* ==========================================
+   20. ORDER FORM INSIDE THE CART
+   ========================================== */
+.order-form { margin-top: 22px; padding-top: 20px; border-top: 1px solid var(--border-color); }
+.order-form h3 { margin-bottom: 14px; font-size: 1.1rem; }
+.order-form .field { margin-bottom: 14px; }
+.privacy-note { margin: 4px 0 16px; color: var(--text-muted); font-size: .85rem; }
+#orderMsg { margin-top: 12px; text-align: center; font-weight: 600; }
+#orderMsg:empty { display: none; }
+#orderMsg.err { color: var(--primary); }
+#orderDone { padding: 8px 0 0; text-align: center; }
+#orderDone .done-icon { margin-bottom: 8px; color: #16a34a; font-size: 3rem; }
+#orderDone h2 { padding-right: 0; }
+#orderDone p { margin: 12px 0 22px; color: #475569; }
+#orderDone .btn + .btn { margin-top: 10px; }

@@ -30,6 +30,7 @@ document.addEventListener('DOMContentLoaded', () => {
   loadReviews();
   setupFilters();
   setupCart();
+  setupOrderForm();
   setupRepairForm();
   setupPageUI();
   setupFooter();
@@ -198,11 +199,15 @@ function updateCart() {
       </div></div>`;
   }).join('') : '<p class="empty-cart">Your cart is empty. Add something from the catalog.</p>';
   totalEl.textContent = total.toFixed(2);
+  const orderForm = $('#orderForm'); if (orderForm) orderForm.hidden = cart.length === 0;
 }
 
 function setupCart() {
   const modal = $('#cartModal');
-  const setOpen = open => { modal.style.display = open ? 'flex' : 'none'; document.body.style.overflow = open ? 'hidden' : ''; };
+  const setOpen = open => {
+    if (open) { $('#cartView').hidden = false; $('#orderDone').hidden = true; }
+    modal.style.display = open ? 'flex' : 'none'; document.body.style.overflow = open ? 'hidden' : '';
+  };
   $('#openCartBtn').addEventListener('click', () => setOpen(true));
   $('#closeCartBtn').addEventListener('click', () => setOpen(false));
   modal.addEventListener('click', e => { if (e.target === modal) setOpen(false); });
@@ -212,14 +217,44 @@ function setupCart() {
     const b = e.target.closest('button[data-act]'); if (!b) return;
     changeQty(b.dataset.id, b.dataset.act === 'inc' ? 1 : -1);
   });
+}
 
-  $('.checkout-btn').addEventListener('click', () => {
+/* ---------- Placing an order (saved for the staff, then continues on WhatsApp) ---------- */
+function setupOrderForm() {
+  const form = $('#orderForm'); if (!form) return;
+  const msg = $('#orderMsg'), btn = $('#orderBtn');
+  // Remember the customer's name and phone on their own device, so they do not type them again
+  const fillSaved = () => { try { const s = JSON.parse(localStorage.getItem('ifix_customer')); if (s) { $('#orderName').value = s.name || ''; $('#orderPhone').value = s.phone || ''; } } catch (e) { /* ignore */ } };
+  fillSaved();
+
+  form.addEventListener('submit', async e => {
+    e.preventDefault();
     if (!cart.length) return say('Your cart is empty');
-    const total = cart.reduce((s, i) => s + (parseFloat(i.price) || 0) * i.qty, 0);
-    const lines = cart.map(i => `- ${i.name} x${i.qty} (${money((parseFloat(i.price) || 0) * i.qty)})`);
-    const text = `Hi I FIX SOLUTIONS, I would like to order:\n${lines.join('\n')}\nTotal: ${money(total)}`;
-    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`, '_blank', 'noopener');
+    const name = $('#orderName').value.trim(), phone = $('#orderPhone').value.trim(), note = $('#orderNote').value.trim();
+    msg.className = ''; msg.textContent = '';
+    if (!name || !phone) { msg.className = 'err'; msg.textContent = 'Please enter your name and phone number.'; return; }
+    const label = btn.textContent; btn.disabled = true; btn.textContent = 'Placing your order...';
+    try {
+      // Only product ids and quantities are sent. The server works out the names, prices and total itself.
+      const res = await fetch(`${API_BASE}/orders`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, phone, note, items: cart.map(i => ({ id: i.id, qty: i.qty })) })
+      });
+      const result = await res.json().catch(() => ({}));
+      if (!result.success) { msg.className = 'err'; msg.textContent = result.error || 'We could not place your order. Please try again, or message us on WhatsApp.'; return; }
+      const o = result.data;
+      try { localStorage.setItem('ifix_customer', JSON.stringify({ name, phone })); } catch (err) { /* ignore */ }
+      const lines = o.items.map(i => `- ${i.name} x${i.qty} (${money(i.price * i.qty)})`);
+      const text = `Hi I FIX SOLUTIONS, I just placed order #${o.id} on your website.\nName: ${name}\n${lines.join('\n')}\nTotal: ${money(o.total)}${note ? `\nNote: ${note}` : ''}`;
+      $('#orderNumber').textContent = '#' + o.id;
+      $('#orderWaBtn').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(text)}`;
+      cart = []; saveCart(); updateCart(); form.reset(); fillSaved();
+      $('#cartView').hidden = true; $('#orderDone').hidden = false;
+    } catch (err) {
+      console.error(err); msg.className = 'err'; msg.textContent = 'Could not reach the server. It may be waking up, please try again in a moment.';
+    } finally { btn.disabled = false; btn.textContent = label; }
   });
+  $('#orderCloseBtn').addEventListener('click', () => { $('#cartModal').style.display = 'none'; document.body.style.overflow = ''; });
 }
 
 /* ---------- Repair booking ---------- */
