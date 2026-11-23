@@ -154,7 +154,14 @@
                     <option value="Brand New">Brand New</option>
                     <option value="Refurbished">Refurbished</option>
                 </select>
+                <select class="filter-select" id="sortSelect" aria-label="Sort products">
+                    <option value="default">Sort: Featured</option>
+                    <option value="price-asc">Price: low to high</option>
+                    <option value="price-desc">Price: high to low</option>
+                    <option value="name">Name: A to Z</option>
+                </select>
             </div>
+            <p id="resultCount" class="result-count" aria-live="polite"></p>
             <div id="productGrid" class="product-grid" aria-live="polite">
                 <div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div><div class="skeleton"></div>
             </div>
@@ -295,6 +302,13 @@
     <div id="toast" class="toast" role="status"></div>
 
     <!-- Cart Modal -->
+    <div id="productModal" class="modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="pdTitle">
+        <div class="modal-content product-modal">
+            <span id="closeProductBtn" class="close-btn" role="button" aria-label="Close">&times;</span>
+            <div id="productDetail"></div>
+        </div>
+    </div>
+
     <div id="cartModal" class="modal" style="display:none;">
         <div class="modal-content">
             <span id="closeCartBtn" class="close-btn" role="button" aria-label="Close cart">&times;</span>

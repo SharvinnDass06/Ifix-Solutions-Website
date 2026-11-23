@@ -470,3 +470,37 @@ html { overflow-anchor: none; }
 #orderDone h2 { padding-right: 0; }
 #orderDone p { margin: 12px 0 22px; color: #475569; }
 #orderDone .btn + .btn { margin-top: 10px; }
+
+/* ==========================================
+   21. PRODUCT CARDS, SPECS POPUP, SORT
+   ========================================== */
+.result-count { margin: -12px 0 20px; color: var(--text-muted); font-size: .9rem; }
+.result-count:empty { display: none; }
+.product-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+.product-summary { margin: -6px 0 14px; color: #475569; font-size: .86rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.product-actions { display: grid; gap: 10px; }
+.product-actions.two { grid-template-columns: 1fr 1fr; }
+.btn-specs { padding: 11px 8px; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; color: var(--text-dark); font-weight: 700; cursor: pointer; transition: border-color .2s, color .2s, background .2s, transform .15s; }
+.btn-specs:hover { border-color: var(--primary); color: var(--primary); background: var(--red-tint); }
+.btn-specs:active { transform: scale(.96); }
+[data-open] { cursor: pointer; }
+.product-title[data-open]:hover { color: var(--primary); }
+
+.product-modal { max-width: 880px; padding: 0; overflow: hidden; }
+.pd { display: grid; grid-template-columns: 1fr 1.1fr; }
+.pd-img { display: grid; place-items: center; min-height: 320px; background: #f1f5f9; color: #cbd5e1; font-size: 4rem; }
+.pd-img img { width: 100%; height: 100%; object-fit: cover; }
+.pd-body { padding: 36px 32px 32px; }
+.pd-body h2 { margin-bottom: 6px; padding-right: 30px; font-size: 1.6rem; }
+.pd-price { margin: 12px 0 4px; color: var(--primary); font-size: 1.6rem; font-weight: 800; }
+.spec-table { width: 100%; margin: 14px 0 18px; border-collapse: collapse; font-size: .94rem; }
+.spec-table th, .spec-table td { padding: 10px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--border-color); }
+.spec-table th { width: 38%; padding-right: 14px; color: var(--text-muted); font-weight: 600; }
+.spec-table td { overflow-wrap: anywhere; }
+.pd-add { margin-top: 16px; font-size: 1rem; }
+.product-modal .close-btn { z-index: 2; background: rgba(255,255,255,.9); }
+@media (max-width: 720px) {
+    .pd { grid-template-columns: 1fr; }
+    .pd-img { min-height: 0; aspect-ratio: 4 / 3; }
+    .pd-body { padding: 24px 22px 24px; }
+}

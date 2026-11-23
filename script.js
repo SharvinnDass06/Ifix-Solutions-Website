@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
   setupFilters();
   setupCart();
   setupOrderForm();
+  setupProductModal();
   setupRepairForm();
   setupPageUI();
   setupFooter();
@@ -79,6 +80,10 @@ function applyFilters(resetPage = true) {
       && (cat === 'all' || pc === cat)
       && (!condOn || pcond.includes(cond.split(/[ /-]/)[0]));
   });
+  const sort = $('#sortSelect')?.value || 'default';
+  if (sort === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
+  else if (sort === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+  else if (sort === 'name') filtered.sort((a, b) => String(a.name).localeCompare(String(b.name)));
   renderProducts();
 }
 
@@ -88,28 +93,69 @@ const condTag = p => {
   return c ? ` <span class="cond ${/refurb|second|used/i.test(c) ? 'cond-refurb' : 'cond-new'}">${esc(c)}</span>` : '';
 };
 
-function productCard(p) {
+// Specs saved in the admin panel (processor, RAM, storage and so on)
+const SPEC_LABELS = [['processor', 'Processor'], ['ram', 'Memory (RAM)'], ['storage', 'Storage'], ['screen', 'Screen'], ['graphics', 'Graphics'], ['os', 'Operating system'], ['included', 'Included'], ['other', 'More details']];
+const getSpecs = p => { let s = p.specs; if (typeof s === 'string') { try { s = JSON.parse(s); } catch (e) { s = null; } } return s && typeof s === 'object' && !Array.isArray(s) ? s : {}; };
+const hasSpecs = p => SPEC_LABELS.some(([k]) => String(getSpecs(p)[k] ?? '').trim());
+const specSummary = p => ['processor', 'ram', 'storage'].map(k => String(getSpecs(p)[k] ?? '').trim()).filter(Boolean).join(' \u00b7 ');
+
+function stockInfo(p) {
   const stock = Number(p.stock_quantity);
   const known = !isNaN(stock) && p.stock_quantity !== null && p.stock_quantity !== '';
-  const out = known && stock <= 0;
-  const stockText = !known ? '' : out ? 'Currently unavailable' : stock <= 3 ? `Only ${stock} left` : `${stock} in stock`;
+  const out = known && stock <= 0, lowClass = known && stock <= 3;
+  return { out, lowClass, text: !known ? '' : out ? 'Currently unavailable' : stock <= 3 ? `Only ${stock} left` : `${stock} in stock` };
+}
+
+function productCard(p) {
+  const st = stockInfo(p), has = hasSpecs(p), summary = specSummary(p);
+  const open = has ? ` data-open="${esc(p.id)}"` : '';
   const img = p.image_url
-    ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-img" loading="lazy">`
-    : '<div class="product-img ph"><i class="fa-solid fa-laptop"></i></div>';
+    ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-img"${open} loading="lazy">`
+    : `<div class="product-img ph"${open}><i class="fa-solid fa-laptop"></i></div>`;
   return `<div class="product-card">${img}
     <div class="product-info">
-      <h3 class="product-title">${esc(p.name)}</h3>
+      <h3 class="product-title"${open}>${esc(p.name)}</h3>
       <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
+      ${summary ? `<p class="product-summary">${esc(summary)}</p>` : ''}
       <div class="product-bottom">
         <span class="product-price">${money(p.price)}</span>
-        <button class="btn-add-cart" data-id="${esc(p.id)}" ${out ? 'disabled' : ''}>${out ? 'Out of stock' : 'Add to cart'}</button>
+        <div class="product-actions${has ? ' two' : ''}">
+          ${has ? `<button class="btn-specs" data-open="${esc(p.id)}">View specs</button>` : ''}
+          <button class="btn-add-cart" data-id="${esc(p.id)}" ${st.out ? 'disabled' : ''}>${st.out ? 'Out of stock' : 'Add to cart'}</button>
+        </div>
       </div>
-      ${stockText ? `<div class="stock ${known && stock <= 3 ? 'low' : ''}">${stockText}</div>` : ''}
+      ${st.text ? `<div class="stock ${st.lowClass ? 'low' : ''}">${st.text}</div>` : ''}
     </div></div>`;
+}
+
+// The product popup: photo, price, every spec and Add to cart
+function openProduct(id) {
+  const p = allProducts.find(x => String(x.id) === String(id)), box = $('#productDetail'); if (!p || !box) return;
+  const s = getSpecs(p), st = stockInfo(p);
+  const rows = SPEC_LABELS.filter(([k]) => String(s[k] ?? '').trim()).map(([k, label]) => `<tr><th scope="row">${label}</th><td>${esc(s[k])}</td></tr>`).join('');
+  box.innerHTML = `<div class="pd">
+    <div class="pd-img">${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}">` : '<i class="fa-solid fa-laptop" aria-hidden="true"></i>'}</div>
+    <div class="pd-body">
+      <h2 id="pdTitle">${esc(p.name)}</h2>
+      <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
+      <div class="pd-price">${money(p.price)}</div>
+      ${rows ? `<table class="spec-table"><tbody>${rows}</tbody></table>` : ''}
+      ${st.text ? `<div class="stock ${st.lowClass ? 'low' : ''}">${st.text}</div>` : ''}
+      <button class="btn-add-cart pd-add" data-id="${esc(p.id)}" ${st.out ? 'disabled' : ''}>${st.out ? 'Out of stock' : 'Add to cart'}</button>
+    </div></div>`;
+  $('#productModal').style.display = 'flex'; document.body.style.overflow = 'hidden';
+}
+function setupProductModal() {
+  const modal = $('#productModal'); if (!modal) return;
+  const close = () => { modal.style.display = 'none'; const cart = $('#cartModal'); if (!cart || cart.style.display === 'none') document.body.style.overflow = ''; };
+  $('#closeProductBtn').addEventListener('click', close);
+  modal.addEventListener('click', e => { if (e.target === modal) close(); });
+  addEventListener('keydown', e => { if (e.key === 'Escape') close(); });
 }
 
 function renderProducts() {
   const grid = $('#productGrid'); if (!grid) return;
+  const rc = $('#resultCount'); if (rc) rc.textContent = '';
   if (!filtered.length) {
     const condChosen = ($('#conditionFilter')?.value || 'all') !== 'all';
     const noCondYet = condChosen && !allProducts.some(p => p.condition_type || p.condition);
@@ -119,7 +165,9 @@ function renderProducts() {
   const pages = Math.ceil(filtered.length / ITEMS_PER_PAGE);
   if (currentPage > pages) currentPage = 1;
   const start = (currentPage - 1) * ITEMS_PER_PAGE;
-  grid.innerHTML = filtered.slice(start, start + ITEMS_PER_PAGE).map(productCard).join('');
+  const shown = filtered.slice(start, start + ITEMS_PER_PAGE);
+  grid.innerHTML = shown.map(productCard).join('');
+  if (rc) rc.textContent = filtered.length <= ITEMS_PER_PAGE ? `${filtered.length} product${filtered.length === 1 ? '' : 's'}` : `Showing ${start + 1}\u2013${start + shown.length} of ${filtered.length} product${filtered.length === 1 ? '' : 's'}`;
   renderPagination(pages);
 }
 
@@ -142,7 +190,7 @@ function setupFilters() {
   catalog.addEventListener('input', () => { header.value = catalog.value; applyFilters(); });
   header.addEventListener('keydown', e => { if (e.key === 'Enter') goToCatalog(); });
   $('.search-btn').addEventListener('click', goToCatalog);
-  ['#categoryFilter', '#conditionFilter'].forEach(s => $(s).addEventListener('change', () => applyFilters()));
+  ['#categoryFilter', '#conditionFilter', '#sortSelect'].forEach(s => $(s).addEventListener('change', () => applyFilters()));
 
   // Category cards on the home page pre-select the filter
   $$('[data-category]').forEach(c => c.addEventListener('click', () => {
@@ -153,7 +201,9 @@ function setupFilters() {
     const pg = e.target.closest('#paginationContainer button');
     if (pg && !pg.disabled) { currentPage = Number(pg.dataset.page); renderProducts(); goToCatalog(); }
     const add = e.target.closest('.btn-add-cart');
-    if (add) addToCart(add.dataset.id);
+    if (add) return addToCart(add.dataset.id);
+    const open = e.target.closest('[data-open]');
+    if (open) openProduct(open.dataset.open);
   });
 }
 
