@@ -139,6 +139,17 @@ main{padding:28px 0 60px}
 .spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}.spec-grid .field{margin:0}.spec-grid .span-2{grid-column:1/-1}
 .specs-panel{flex-basis:100%;margin-top:4px;padding:16px;background:#f8fafc;border:1px solid var(--line);border-radius:12px}
 .specs-actions{margin-top:14px}
+.form-grid.three{grid-template-columns:repeat(3,1fr)}
+.tag.sale{background:#fee2e2;color:var(--primary)}
+.sale-panel{flex-basis:100%;margin-top:4px;padding:16px;background:#fff7f7;border:1px solid #fecaca;border-radius:12px}
+.poster-pick{display:flex;gap:18px;align-items:center}
+.poster-preview{width:260px;aspect-ratio:16/5;border-radius:10px;background:#f1f5f9;border:1px solid var(--line);display:grid;place-items:center;color:#cbd5e1;font-size:1.6rem;overflow:hidden;flex-shrink:0}
+.poster-preview img{width:100%;height:100%;object-fit:cover}
+.thumb-wide{width:220px;aspect-ratio:16/5;object-fit:cover;border-radius:8px;border:1px solid var(--line);background:#f1f5f9;flex-shrink:0}
+.status-Live{background:#dcfce7;color:var(--success)}.status-Scheduled{background:#e0f2fe;color:var(--info)}.status-Ended{background:#e2e8f0;color:var(--muted)}.status-Hidden{background:#fef3c7;color:var(--warning)}
+#bulkSaleMsg,#posterMessage{font-weight:600;font-size:.92rem}#bulkSaleMsg.ok,#posterMessage.ok{color:var(--success)}#bulkSaleMsg.err,#posterMessage.err{color:var(--danger)}
+@media(max-width:860px){.form-grid.three{grid-template-columns:1fr 1fr}}
+@media(max-width:640px){.form-grid.three{grid-template-columns:1fr}.poster-pick{flex-direction:column;align-items:flex-start}.poster-preview{width:100%}.thumb-wide{width:100%}}
 select.edit{width:132px;padding:8px 6px;text-align:left}
 @media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.repair-form{grid-template-columns:1fr}}
 @media(max-width:640px){.spec-grid{grid-template-columns:1fr}.form-grid,.details{grid-template-columns:1fr}.bar-title{display:none}.bar-actions .btn span{display:none}.card{padding:18px}.row-edit{width:100%}.stat{padding:14px}.stat i{width:40px;height:40px}}
@@ -185,6 +196,7 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
             <button class="tab" data-tab="repairs" role="tab">Repairs <span id="repairBadge" class="badge" data-n="0"></span></button>
             <button class="tab" data-tab="orders" role="tab">Orders <span id="orderBadge" class="badge" data-n="0"></span></button>
             <button class="tab" data-tab="reviews" role="tab">Reviews</button>
+            <button class="tab" data-tab="posters" role="tab">Posters</button>
         </nav>
 
         <div id="tab-products">
@@ -202,6 +214,8 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
                         </div>
                         <div class="field"><label for="price">Price (RM)</label><input type="number" step="0.01" min="0" id="price" required placeholder="e.g. 1500.00"></div>
                         <div class="field"><label for="stock_quantity">Stock quantity</label><input type="number" min="0" id="stock_quantity" required placeholder="e.g. 10"></div>
+                        <div class="field"><label for="discount_percent">Discount % (optional)</label><input type="number" id="discount_percent" min="0" max="90" step="1" placeholder="e.g. 10"></div>
+                        <div class="field"><label for="sale_ends">Sale ends on (optional)</label><input type="date" id="sale_ends"></div>
                         <div class="field span-2"><label for="image_url">Image URL</label>
                             <div class="img-row"><input type="url" id="image_url" required placeholder="https://example.com/image.jpg"><div class="preview" id="preview"><i class="fa-regular fa-image"></i></div></div>
                         </div>
@@ -209,6 +223,20 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
                     </div>
                     <div class="form-foot"><button type="submit" class="btn" id="addBtn"><i class="fa-solid fa-plus"></i> Add product</button><div id="message" role="status"></div></div>
                 </form>
+            </section>
+
+            <section class="card" id="quickSale">
+                <div class="card-head"><h2>Quick sale</h2></div>
+                <p class="hint">Put many products on sale in one go, for Christmas, a year-end sale or any event. Customers see a red badge, the new price and the old price crossed out. The sale ends by itself after the last day you choose. For a single product, use the <b>Sale</b> button on its row below.</p>
+                <form id="bulkSaleForm">
+                    <div class="form-grid three">
+                        <div class="field"><label for="bulk_percent">Discount %</label><input type="number" id="bulk_percent" min="1" max="90" step="1" required placeholder="e.g. 10"></div>
+                        <div class="field"><label for="bulk_category">Apply to</label><select id="bulk_category"><option value="">All products</option></select></div>
+                        <div class="field"><label for="bulk_ends">Sale ends on (optional)</label><input type="date" id="bulk_ends"></div>
+                    </div>
+                    <div class="form-foot"><button type="submit" class="btn" id="bulkSaleBtn"><i class="fa-solid fa-tags"></i> Start sale</button><button type="button" class="btn btn-ghost" id="bulkEndBtn">End all sales</button><div id="bulkSaleMsg" role="status"></div></div>
+                </form>
+                <p class="photo-note" id="saleStatus" style="margin-top:14px"></p>
             </section>
 
             <section class="card">
@@ -246,6 +274,34 @@ select.edit{width:132px;padding:8px 6px;text-align:left}
                 </div>
                 <div id="admin-order-list"><div class="skeleton"></div><div class="skeleton"></div></div>
                 <div class="more-row"><button class="btn btn-ghost" id="ordersMoreBtn" hidden>Show more orders</button></div>
+            </section>
+        </div>
+
+        <div id="tab-posters" hidden>
+            <section class="card">
+                <div class="card-head"><h2 id="posterFormTitle">Add a poster</h2></div>
+                <p class="hint">A wide banner shown near the top of your website, for Christmas, a sale or any event. Best size: wide, about 1600 &times; 500 pixels, and the same size for every poster. If you add more than one, they take turns. A poster hides itself after its last day.</p>
+                <form id="posterForm">
+                    <div class="form-grid">
+                        <div class="field span-2"><label>Poster picture</label>
+                            <div class="poster-pick"><div class="poster-preview" id="posterPreview"><i class="fa-regular fa-image"></i></div>
+                                <div class="photo-controls"><input type="file" id="poster_file" accept="image/*"><p class="photo-note">JPG, PNG or WebP. It is resized automatically. When editing, leave it empty to keep the current picture.</p></div></div></div>
+                        <div class="field"><label for="poster_title">Name (only for you)</label><input type="text" id="poster_title" maxlength="120" placeholder="e.g. Christmas Sale 2026"></div>
+                        <div class="field"><label for="poster_link">Opens when clicked (optional)</label><input type="text" id="poster_link" list="posterLinks" maxlength="500" placeholder="e.g. #products or https://..."><datalist id="posterLinks"><option value="#products">The catalog</option><option value="#services">Repair booking</option><option value="#about">About us</option><option value="#reviews">Reviews</option><option value="#contact">Contact and map</option></datalist></div>
+                        <div class="field"><label for="poster_starts">Show from (optional)</label><input type="date" id="poster_starts"></div>
+                        <div class="field"><label for="poster_ends">Show until (optional)</label><input type="date" id="poster_ends"></div>
+                        <div class="field span-2"><label for="poster_active">Visibility</label><select id="poster_active"><option value="true">Show on the website (during its dates)</option><option value="false">Hidden</option></select></div>
+                    </div>
+                    <div class="form-foot">
+                        <button type="submit" class="btn" id="posterSaveBtn"><i class="fa-solid fa-plus"></i> Add poster</button>
+                        <button type="button" class="btn btn-ghost" id="posterCancelBtn" hidden>Cancel edit</button>
+                        <div id="posterMessage" role="status"></div>
+                    </div>
+                </form>
+            </section>
+            <section class="card">
+                <div class="card-head"><h2>Your posters</h2><button class="btn btn-ghost btn-sm" data-act="refresh-posters"><i class="fa-solid fa-rotate"></i> Refresh</button></div>
+                <div id="admin-poster-list"><div class="skeleton"></div><div class="skeleton"></div></div>
             </section>
         </div>
 
@@ -334,7 +390,7 @@ function showLogin(msg) {
 function openApp() {
     $('#login').hidden = true; $('#app').hidden = false;
     const src = $('.login-logo').src; $$('img[data-logo]').forEach(i => { i.src = src; });
-    loadProducts(); loadRepairs(); loadOrders(); loadReviews(); loadGoogleSettings();
+    loadProducts(); loadRepairs(); loadOrders(); loadReviews(); loadPosters(); loadGoogleSettings();
 }
 if (getToken()) openApp();
 $('#loginForm').addEventListener('submit', async e => {
@@ -356,7 +412,7 @@ $('#logoutBtn').addEventListener('click', () => { sessionStorage.removeItem(TOKE
 $$('.tab').forEach(t => t.addEventListener('click', () => {
     $$('.tab').forEach(x => x.classList.toggle('active', x === t));
     $('#tab-products').hidden = t.dataset.tab !== 'products';
-    ['products', 'repairs', 'orders', 'reviews'].forEach(name => { $('#tab-' + name).hidden = name !== t.dataset.tab; });
+    ['products', 'repairs', 'orders', 'reviews', 'posters'].forEach(name => { $('#tab-' + name).hidden = name !== t.dataset.tab; });
 }));
 
 /* ---------- Products ---------- */
@@ -381,7 +437,8 @@ form.addEventListener('submit', async e => {
     const body = {
         name: $('#name').value.trim(), category: $('#category').value.trim(), price: $('#price').value,
         stock_quantity: $('#stock_quantity').value, image_url: $('#image_url').value.trim(),
-        condition_type: $('#condition_type').value, specs: readSpecInputs($('#addSpecs'))
+        condition_type: $('#condition_type').value, specs: readSpecInputs($('#addSpecs')),
+        discount_percent: $('#discount_percent').value, sale_ends: $('#sale_ends').value
     };
     try {
         const r = await api('/api/products', { method: 'POST', body: JSON.stringify(body) });
@@ -401,6 +458,11 @@ async function loadProducts() {
         const sel = $('#productCategoryFilter'), cur = sel.value;
         sel.innerHTML = '<option value="">All categories</option>' + cats.map(c => `<option>${esc(c)}</option>`).join('');
         sel.value = cats.includes(cur) ? cur : '';
+        const bc = $('#bulk_category'), bcur = bc.value;
+        bc.innerHTML = '<option value="">All products</option>' + cats.map(c => `<option value="${esc(c)}">${esc(c)} only</option>`).join('');
+        bc.value = cats.includes(bcur) ? bcur : '';
+        const live = productsCache.filter(p => p.sale_price !== null && p.sale_price !== undefined).length;
+        $('#saleStatus').textContent = live ? `${live} product${live === 1 ? ' is' : 's are'} on sale right now.` : 'No sale is running right now.';
         $('#statTotalProducts').textContent = productsCache.length;
         $('#statLowStock').textContent = productsCache.filter(p => Number(p.stock_quantity) <= LOW_STOCK).length;
         renderProducts();
@@ -415,17 +477,28 @@ function renderProducts() {
         ((p.name || '').toLowerCase().includes(q) || (p.category || '').toLowerCase().includes(q)));
     $('#admin-product-list').innerHTML = items.length ? items.map(p => {
         const stock = Number(p.stock_quantity), cond = p.condition_type || '', specs = parseSpecs(p), nSpecs = Object.keys(specs).length;
+        const sale = Number(p.discount_percent) || 0, saleLive = p.sale_price !== null && p.sale_price !== undefined;
+        const saleTag = saleLive ? `<span class="tag sale">-${sale}% &middot; RM ${esc(p.sale_price)}</span>` : sale > 0 ? '<span class="tag off">Sale ended</span>' : '';
         const tag = stock <= 0 ? '<span class="tag out">Out of stock</span>' : stock <= LOW_STOCK ? '<span class="tag">Low stock</span>' : '';
         return `<div class="row" data-id="${esc(p.id)}">
             ${p.image_url ? `<img src="${esc(p.image_url)}" class="thumb" alt="" loading="lazy" onerror="this.style.visibility='hidden'">` : '<div class="thumb"></div>'}
-            <div class="row-main"><strong>${esc(p.name)}</strong>${tag}<br><small>${esc(p.category || 'General')}${cond ? ' &middot; ' + esc(cond) : ''}</small></div>
+            <div class="row-main"><strong>${esc(p.name)}</strong>${tag}${saleTag}<br><small>${esc(p.category || 'General')}${cond ? ' &middot; ' + esc(cond) : ''}</small></div>
             <div class="row-edit">
                 <label>RM <input type="number" step="0.01" min="0" class="edit" data-f="price" value="${esc(p.price)}"></label>
                 <label>Stock <input type="number" min="0" class="edit" data-f="stock" value="${esc(p.stock_quantity)}"></label>
                 <label>Condition <select class="edit" data-f="condition"><option value=""${!cond ? ' selected' : ''}>Not set</option><option value="Brand New"${cond === 'Brand New' ? ' selected' : ''}>Brand New</option><option value="Refurbished"${cond === 'Refurbished' ? ' selected' : ''}>Refurbished</option></select></label>
+                <button class="btn btn-sm btn-ghost" data-act="toggle-sale">Sale${sale ? ' (-' + sale + '%)' : ''}</button>
                 <button class="btn btn-sm btn-ghost" data-act="toggle-specs">Specs${nSpecs ? ' (' + nSpecs + ')' : ''}</button>
                 <button class="btn btn-sm btn-success" data-act="save-product">Save</button>
                 <button class="btn btn-sm btn-danger" data-act="delete-product" aria-label="Delete product"><i class="fa-solid fa-trash"></i></button>
+            </div>
+            <div class="sale-panel" hidden>
+                <div class="spec-grid">
+                    <div class="field"><label>Discount % (0 = no sale)</label><input type="number" min="0" max="90" step="1" data-sale="percent" value="${sale || ''}" placeholder="e.g. 10"></div>
+                    <div class="field"><label>Sale ends on (optional)</label><input type="date" data-sale="ends" value="${esc(p.sale_ends || '')}"></div>
+                </div>
+                <p class="photo-note sale-preview" data-price="${esc(p.price)}"></p>
+                <div class="specs-actions"><button class="btn btn-sm btn-success" data-act="save-sale">Save sale</button> <button class="btn btn-sm btn-ghost" data-act="remove-sale">Remove sale</button></div>
             </div>
             <div class="specs-panel" hidden><div class="spec-grid">${specInputs(specs)}</div><div class="specs-actions"><button class="btn btn-sm btn-success" data-act="save-specs">Save specs</button></div></div></div>`;
     }).join('') : `<div class="empty">${productsCache.length ? 'No products match your search.' : 'No products yet. Add your first one above.'}</div>`;
@@ -451,6 +524,22 @@ async function saveSpecs(row, btn) {
     try {
         const r = await api(`/api/products/${p.id}`, { method: 'PATCH', body: JSON.stringify({ specs: readSpecInputs($('.specs-panel', row)) }) });
         r.success ? (say('Specs saved'), loadProducts()) : say(r.error || 'Failed to save specs', true);
+    } catch (err) { console.error(err); say('Server error while saving', true); }
+    finally { btn.disabled = false; }
+}
+function salePreview(panel) {
+    const note = $('.sale-preview', panel), pct = Number($('[data-sale="percent"]', panel).value), price = Number(note.dataset.price);
+    note.textContent = pct > 0 && pct <= 90 && price > 0 ? `New price: RM ${(Math.round(price * (100 - pct)) / 100).toFixed(2)} (normal price RM ${price.toFixed(2)})` : '';
+}
+document.addEventListener('input', e => { const i = e.target.closest('[data-sale="percent"]'); if (i) salePreview(i.closest('.sale-panel')); });
+async function saveSale(row, btn, remove) {
+    const p = productsCache.find(x => String(x.id) === row.dataset.id); if (!p) return;
+    const panel = $('.sale-panel', row), raw = remove ? '0' : $('[data-sale="percent"]', panel).value.trim(), pct = raw === '' ? 0 : Number(raw);
+    if (!Number.isInteger(pct) || pct < 0 || pct > 90) return say('Enter a whole number from 0 to 90', true);
+    btn.disabled = true;
+    try {
+        const r = await api(`/api/products/${p.id}`, { method: 'PATCH', body: JSON.stringify({ discount_percent: pct, sale_ends: pct ? $('[data-sale="ends"]', panel).value : '' }) });
+        r.success ? (say(pct ? `Sale saved: ${pct}% off` : 'Sale removed'), loadProducts()) : say(r.error || 'Failed to save the sale', true);
     } catch (err) { console.error(err); say('Server error while saving', true); }
     finally { btn.disabled = false; }
 }
@@ -753,6 +842,125 @@ async function deleteOrder(id) {
     catch (err) { console.error(err); say('Server error while deleting', true); }
 }
 
+/* ---------- Quick sale ---------- */
+async function runBulkSale(percent, category, ends, btn) {
+    btn.disabled = true; const out = $('#bulkSaleMsg'); out.className = ''; out.textContent = '';
+    try {
+        const r = await api('/api/products/bulk-sale', { method: 'POST', body: JSON.stringify({ percent, category, ends }) });
+        if (r.success) { const n = r.updated || 0; out.className = 'ok'; out.textContent = percent ? `Sale started on ${n} product${n === 1 ? '' : 's'}.` : `All sales ended (${n} product${n === 1 ? '' : 's'} updated).`; say(percent ? 'Sale started' : 'All sales ended'); loadProducts(); }
+        else { out.className = 'err'; out.textContent = r.error || 'Could not start the sale.'; }
+    } catch (err) { console.error(err); out.className = 'err'; out.textContent = 'Server connection error.'; }
+    finally { btn.disabled = false; }
+}
+$('#bulkSaleForm').addEventListener('submit', e => {
+    e.preventDefault();
+    const pct = Number($('#bulk_percent').value), cat = $('#bulk_category').value, ends = $('#bulk_ends').value;
+    if (!Number.isInteger(pct) || pct < 1 || pct > 90) return say('Enter a whole number from 1 to 90', true);
+    if (!confirm(`Start a ${pct}% sale on ${cat ? `all "${cat}" products` : 'ALL products'}${ends ? ', until ' + ends : ''}?\n\nThis replaces any sale already set on those products.`)) return;
+    runBulkSale(pct, cat, ends, $('#bulkSaleBtn'));
+});
+$('#bulkEndBtn').addEventListener('click', () => {
+    if (!confirm('End every sale now, on all products?')) return;
+    runBulkSale(0, '', '', $('#bulkEndBtn'));
+});
+
+/* ---------- Posters ---------- */
+let postersCache = [], posterEditingId = null, posterImage = null;
+const todayMY = () => new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kuala_Lumpur' });
+const niceDate = d => { const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || ''); return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) : ''; };
+function posterState(p) {
+    if (!p.is_active) return 'Hidden';
+    if (p.live_now) return 'Live';
+    return p.starts_on && p.starts_on > todayMY() ? 'Scheduled' : 'Ended';
+}
+const posterSrc = p => `${BACKEND_URL}/api/posters/${encodeURIComponent(p.id)}/image?v=${encodeURIComponent(p.v)}`;
+
+// Shrinks the picture to a sensible web size (max 1600 wide) so it loads fast
+function posterFromFile(file) {
+    return new Promise((resolve, reject) => {
+        const url = URL.createObjectURL(file), img = new Image();
+        img.onload = () => {
+            URL.revokeObjectURL(url);
+            let w = Math.min(img.width, 1600), q = 0.85, out = '';
+            for (let i = 0; i < 8; i++) {
+                const h = Math.round(img.height * w / img.width), c = document.createElement('canvas'); c.width = w; c.height = h;
+                const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, w, h); ctx.drawImage(img, 0, 0, w, h);
+                out = c.toDataURL('image/jpeg', q);
+                if (out.length * 0.75 <= 700000) return resolve(out);
+                if (q > 0.55) q -= 0.1; else w = Math.round(w * 0.85);
+            }
+            reject(new Error('Too large'));
+        };
+        img.onerror = () => { URL.revokeObjectURL(url); reject(new Error('Not an image')); };
+        img.src = url;
+    });
+}
+function showPosterPreview(src) { $('#posterPreview').innerHTML = src ? `<img src="${esc(src)}" alt="Poster preview">` : '<i class="fa-regular fa-image"></i>'; }
+$('#poster_file').addEventListener('change', async e => {
+    const file = e.target.files[0]; if (!file) return;
+    try { posterImage = await posterFromFile(file); showPosterPreview(posterImage); }
+    catch (err) { say('That file could not be used as a poster', true); e.target.value = ''; }
+});
+function resetPosterForm() {
+    posterEditingId = null; posterImage = null; $('#posterForm').reset(); showPosterPreview('');
+    $('#posterFormTitle').textContent = 'Add a poster'; $('#posterSaveBtn').innerHTML = '<i class="fa-solid fa-plus"></i> Add poster'; $('#posterCancelBtn').hidden = true;
+}
+$('#posterCancelBtn').addEventListener('click', () => { resetPosterForm(); $('#posterMessage').textContent = ''; });
+$('#posterForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = $('#posterSaveBtn'), label = btn.innerHTML, out = $('#posterMessage'); out.className = ''; out.textContent = '';
+    if (!posterEditingId && !posterImage) { out.className = 'err'; out.textContent = 'Please choose a poster picture first.'; return; }
+    const starts = $('#poster_starts').value, ends = $('#poster_ends').value;
+    if (starts && ends && starts > ends) { out.className = 'err'; out.textContent = 'The last day must be after the first day.'; return; }
+    btn.disabled = true; btn.textContent = 'Saving...';
+    const body = { title: $('#poster_title').value.trim(), link_url: $('#poster_link').value.trim(), starts_on: starts, ends_on: ends, is_active: $('#poster_active').value === 'true' };
+    if (posterImage) body.image = posterImage;
+    try {
+        const r = posterEditingId
+            ? await api(`/api/posters/${posterEditingId}`, { method: 'PATCH', body: JSON.stringify(body) })
+            : await api('/api/posters', { method: 'POST', body: JSON.stringify(body) });
+        if (r.success) { say(posterEditingId ? 'Poster updated' : 'Poster added'); resetPosterForm(); loadPosters(); }
+        else { out.className = 'err'; out.textContent = r.error || 'Could not save the poster.'; }
+    } catch (err) { console.error(err); out.className = 'err'; out.textContent = 'Server connection error.'; }
+    finally { btn.disabled = false; btn.innerHTML = posterEditingId ? '<i class="fa-solid fa-floppy-disk"></i> Save changes' : label; }
+});
+async function loadPosters() {
+    try { postersCache = asList(await api('/api/admin/posters')); renderPosters(); }
+    catch (err) { console.error(err); $('#admin-poster-list').innerHTML = '<div class="empty">Could not load posters. The server may be waking up.<br><button class="btn btn-sm" data-act="refresh-posters">Try again</button></div>'; }
+}
+function renderPosters() {
+    $('#admin-poster-list').innerHTML = postersCache.length ? postersCache.map(p => {
+        const st = posterState(p), dates = p.starts_on || p.ends_on ? `${p.starts_on ? 'From ' + niceDate(p.starts_on) : ''}${p.starts_on && p.ends_on ? ' ' : ''}${p.ends_on ? 'until ' + niceDate(p.ends_on) : ''}` : 'No dates: always shown';
+        return `<div class="row" data-id="${esc(p.id)}">
+            <img src="${esc(posterSrc(p))}" class="thumb-wide" alt="" loading="lazy">
+            <div class="row-main"><strong>${esc(p.title || 'Untitled poster')}</strong> <span class="status status-${st}">${st === 'Live' ? 'Showing now' : st}</span><br><small>${esc(dates)}${p.link_url ? ' &middot; opens ' + esc(p.link_url) : ''}</small></div>
+            <div class="row-edit">
+                <button class="btn btn-sm btn-ghost" data-act="toggle-poster">${p.is_active ? 'Hide' : 'Show'}</button>
+                <button class="btn btn-sm btn-info" data-act="edit-poster">Edit</button>
+                <button class="btn btn-sm btn-danger" data-act="delete-poster" aria-label="Delete poster"><i class="fa-solid fa-trash"></i></button>
+            </div></div>`;
+    }).join('') : '<div class="empty">No posters yet. Add one above, for example for Christmas or a sale.</div>';
+}
+function editPoster(id) {
+    const p = postersCache.find(x => String(x.id) === String(id)); if (!p) return;
+    posterEditingId = p.id; posterImage = null; $('#poster_file').value = '';
+    $('#poster_title').value = p.title || ''; $('#poster_link').value = p.link_url || ''; $('#poster_starts').value = p.starts_on || ''; $('#poster_ends').value = p.ends_on || '';
+    $('#poster_active').value = p.is_active ? 'true' : 'false'; showPosterPreview(posterSrc(p));
+    $('#posterFormTitle').textContent = 'Edit poster'; $('#posterSaveBtn').innerHTML = '<i class="fa-solid fa-floppy-disk"></i> Save changes'; $('#posterCancelBtn').hidden = false;
+    $('#posterForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+async function togglePoster(id) {
+    const p = postersCache.find(x => String(x.id) === String(id)); if (!p) return;
+    try { const r = await api(`/api/posters/${id}`, { method: 'PATCH', body: JSON.stringify({ is_active: !p.is_active }) });
+        r.success ? (say(p.is_active ? 'Poster hidden' : 'Poster is visible again'), loadPosters()) : say('Could not update the poster', true); }
+    catch (err) { console.error(err); say('Server error', true); }
+}
+async function deletePoster(id) {
+    if (!confirm('Delete this poster? This cannot be undone.')) return;
+    try { const r = await api(`/api/posters/${id}`, { method: 'DELETE' }); r.success ? (say('Poster deleted'), loadPosters()) : say('Failed to delete poster', true); }
+    catch (err) { console.error(err); say('Server error while deleting', true); }
+}
+
 /* ---------- One click handler for every button ---------- */
 document.addEventListener('click', e => {
     const pg = e.target.closest('.pager button');
@@ -766,6 +974,9 @@ document.addEventListener('click', e => {
         case 'delete-product': deleteProduct(id); break;
         case 'toggle-specs': { const panel = $('.specs-panel', row); panel.hidden = !panel.hidden; break; }
         case 'save-specs': saveSpecs(row, b); break;
+        case 'toggle-sale': { const panel = $('.sale-panel', row); panel.hidden = !panel.hidden; if (!panel.hidden) salePreview(panel); break; }
+        case 'save-sale': saveSale(row, b, false); break;
+        case 'remove-sale': saveSale(row, b, true); break;
         case 'status': patchRepair(id, { status: b.dataset.s }, `Marked as ${b.dataset.s}`); break;
         case 'save-repair': patchRepair(id, { notes: $('[data-f="notes"]', row).value, cost: $('[data-f="cost"]', row).value }, 'Repair details saved'); break;
         case 'delete-repair': deleteRepair(id); break;
@@ -776,6 +987,10 @@ document.addEventListener('click', e => {
         case 'refresh-orders': loadOrders(); break;
         case 'order-status': setOrderStatus(id, b.dataset.s); break;
         case 'delete-order': deleteOrder(id); break;
+        case 'refresh-posters': loadPosters(); break;
+        case 'edit-poster': editPoster(id); break;
+        case 'toggle-poster': togglePoster(id); break;
+        case 'delete-poster': deletePoster(id); break;
     }
 });
 </script>

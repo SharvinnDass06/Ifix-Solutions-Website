@@ -23,10 +23,23 @@ const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const money = n => 'RM ' + (parseFloat(n) || 0).toFixed(2);
+
+// The price a customer pays: the sale price while a sale is on (the server works it out), otherwise the normal price
+const unitPrice = p => (p.sale_price !== null && p.sale_price !== undefined && p.sale_price !== '' && Number(p.sale_price) < Number(p.price)) ? Number(p.sale_price) : Number(p.price);
+const onSale = p => unitPrice(p) < Number(p.price);
+const saleEnds = p => {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(p.sale_ends || ''); if (!m) return '';
+  return new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', timeZone: 'UTC' });
+};
+const priceHtml = (p, cls = 'product-price') => onSale(p)
+  ? `<div class="price-block"><div class="price-row"><span class="${cls}">${money(unitPrice(p))}</span><s class="was-price">${money(p.price)}</s></div>${saleEnds(p) ? `<div class="sale-note">Sale ends ${saleEnds(p)}</div>` : ''}</div>`
+  : `<span class="${cls}">${money(p.price)}</span>`;
+const saleBadge = p => onSale(p) ? `<span class="sale-badge">-${esc(p.discount_percent)}%</span>` : '';
 const SKELETONS = '<div class="skeleton"></div>'.repeat(4);
 
 document.addEventListener('DOMContentLoaded', () => {
   loadProducts();
+  loadPosters();
   loadReviews();
   setupFilters();
   setupCart();
@@ -58,6 +71,7 @@ async function loadProducts() {
     const json = await res.json();
     const list = json.data || json;
     allProducts = Array.isArray(list) ? list : [];
+    if (allProducts.length) syncCartWithProducts();
     applyFilters();
   } catch (err) {
     console.error('Error loading products:', err);
@@ -81,8 +95,8 @@ function applyFilters(resetPage = true) {
       && (!condOn || pcond.includes(cond.split(/[ /-]/)[0]));
   });
   const sort = $('#sortSelect')?.value || 'default';
-  if (sort === 'price-asc') filtered.sort((a, b) => Number(a.price) - Number(b.price));
-  else if (sort === 'price-desc') filtered.sort((a, b) => Number(b.price) - Number(a.price));
+  if (sort === 'price-asc') filtered.sort((a, b) => unitPrice(a) - unitPrice(b));
+  else if (sort === 'price-desc') filtered.sort((a, b) => unitPrice(b) - unitPrice(a));
   else if (sort === 'name') filtered.sort((a, b) => String(a.name).localeCompare(String(b.name)));
   renderProducts();
 }
@@ -112,13 +126,13 @@ function productCard(p) {
   const img = p.image_url
     ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-img"${open} loading="lazy">`
     : `<div class="product-img ph"${open}><i class="fa-solid fa-laptop"></i></div>`;
-  return `<div class="product-card">${img}
+  return `<div class="product-card">${saleBadge(p)}${img}
     <div class="product-info">
       <h3 class="product-title"${open}>${esc(p.name)}</h3>
       <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
       ${summary ? `<p class="product-summary">${esc(summary)}</p>` : ''}
       <div class="product-bottom">
-        <span class="product-price">${money(p.price)}</span>
+        ${priceHtml(p)}
         <div class="product-actions${has ? ' two' : ''}">
           ${has ? `<button class="btn-specs" data-open="${esc(p.id)}">View specs</button>` : ''}
           <button class="btn-add-cart" data-id="${esc(p.id)}" ${st.out ? 'disabled' : ''}>${st.out ? 'Out of stock' : 'Add to cart'}</button>
@@ -134,11 +148,11 @@ function openProduct(id) {
   const s = getSpecs(p), st = stockInfo(p);
   const rows = SPEC_LABELS.filter(([k]) => String(s[k] ?? '').trim()).map(([k, label]) => `<tr><th scope="row">${label}</th><td>${esc(s[k])}</td></tr>`).join('');
   box.innerHTML = `<div class="pd">
-    <div class="pd-img">${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}">` : '<i class="fa-solid fa-laptop" aria-hidden="true"></i>'}</div>
+    <div class="pd-img">${saleBadge(p)}${p.image_url ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}">` : '<i class="fa-solid fa-laptop" aria-hidden="true"></i>'}</div>
     <div class="pd-body">
       <h2 id="pdTitle">${esc(p.name)}</h2>
       <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
-      <div class="pd-price">${money(p.price)}</div>
+      ${priceHtml(p, 'pd-price')}
       ${rows ? `<table class="spec-table"><tbody>${rows}</tbody></table>` : ''}
       ${st.text ? `<div class="stock ${st.lowClass ? 'low' : ''}">${st.text}</div>` : ''}
       <button class="btn-add-cart pd-add" data-id="${esc(p.id)}" ${st.out ? 'disabled' : ''}>${st.out ? 'Out of stock' : 'Add to cart'}</button>
@@ -219,6 +233,23 @@ function addToCart(id) {
   saveCart(); updateCart(); say(`${p.name} added to cart`);
 }
 
+// The cart is kept on the customer's device, so refresh its prices, names and stock from the latest product list.
+// That way a sale that has started or ended is always reflected, and removed products leave the cart.
+function syncCartWithProducts() {
+  let gone = 0;
+  cart = cart.filter(i => {
+    const p = allProducts.find(x => String(x.id) === String(i.id));
+    if (!p) { gone++; return false; }
+    Object.assign(i, { name: p.name, price: p.price, sale_price: p.sale_price, discount_percent: p.discount_percent, sale_ends: p.sale_ends, stock_quantity: p.stock_quantity });
+    const st = Number(p.stock_quantity);
+    if (p.stock_quantity !== null && p.stock_quantity !== '' && !isNaN(st) && i.qty > st) i.qty = Math.max(st, 0);
+    if (i.qty <= 0) { gone++; return false; }
+    return true;
+  });
+  saveCart(); updateCart();
+  if (gone) say('Some items in your cart are no longer available');
+}
+
 function changeQty(id, delta) {
   const item = cart.find(i => String(i.id) === String(id)); if (!item) return;
   const max = Number(item.stock_quantity);
@@ -239,9 +270,9 @@ function updateCart() {
   if (!list || !totalEl) return;
   let total = 0;
   list.innerHTML = cart.length ? cart.map(i => {
-    const price = parseFloat(i.price) || 0; total += price * i.qty;
+    const price = unitPrice(i) || 0; total += price * i.qty;
     return `<div class="cart-item">
-      <div><strong>${esc(i.name)}</strong><br><small>${money(price)} each &middot; <b>${money(price * i.qty)}</b></small></div>
+      <div><strong>${esc(i.name)}</strong><br><small>${money(price)} each${onSale(i) ? ` <s>${money(i.price)}</s>` : ''} &middot; <b>${money(price * i.qty)}</b></small></div>
       <div class="qty">
         <button data-act="dec" data-id="${esc(i.id)}" aria-label="${i.qty === 1 ? 'Remove' : 'Decrease quantity'}">&minus;</button>
         <span>${i.qty}</span>
@@ -267,6 +298,31 @@ function setupCart() {
     const b = e.target.closest('button[data-act]'); if (!b) return;
     changeQty(b.dataset.id, b.dataset.act === 'inc' ? 1 : -1);
   });
+}
+
+/* ---------- Posters: wide promotion banners (managed in the admin panel > Posters) ---------- */
+async function loadPosters() {
+  const section = $('#promo'), box = $('#promoSlider'); if (!section || !box) return;
+  let list = [];
+  try { const res = await fetch(`${API_BASE}/posters`); if (res.ok) { const json = await res.json(); list = Array.isArray(json.data) ? json.data : []; } }
+  catch (err) { return; }
+  if (!list.length) return;
+  box.innerHTML = list.map((p, i) => {
+    const link = String(p.link_url || ''), anchor = /^#[A-Za-z][\w-]*$/.test(link), web = /^https:\/\/\S+$/.test(link);
+    const img = `<img src="${API_BASE}/posters/${esc(p.id)}/image?v=${esc(p.v)}" alt="${esc(p.title || 'Promotion')}"${i ? ' loading="lazy"' : ''} decoding="async">`;
+    return `<div class="promo-slide${i ? '' : ' active'}" role="group" aria-roledescription="slide" aria-label="${i + 1} of ${list.length}">${anchor || web ? `<a href="${esc(link)}"${web ? ' target="_blank" rel="noopener"' : ''}>${img}</a>` : img}</div>`;
+  }).join('') + (list.length > 1
+    ? `<button class="promo-nav prev" aria-label="Previous poster">&#10094;</button><button class="promo-nav next" aria-label="Next poster">&#10095;</button><div class="promo-dots">${list.map((_, i) => `<button class="${i ? '' : 'active'}" data-dot="${i}" aria-label="Poster ${i + 1}"></button>`).join('')}</div>`
+    : '');
+  section.hidden = false;
+  if (list.length < 2) return;
+  const slides = $$('.promo-slide', box), dots = $$('[data-dot]', box); let cur = 0, timer = null;
+  const show = n => { cur = (n + slides.length) % slides.length; slides.forEach((s, i) => s.classList.toggle('active', i === cur)); dots.forEach((d, i) => d.classList.toggle('active', i === cur)); };
+  const stop = () => clearInterval(timer);
+  const play = () => { stop(); if (!matchMedia('(prefers-reduced-motion: reduce)').matches) timer = setInterval(() => show(cur + 1), 6000); };
+  box.addEventListener('click', e => { const n = e.target.closest('.promo-nav'), d = e.target.closest('[data-dot]'); if (n) show(cur + (n.classList.contains('next') ? 1 : -1)); else if (d) show(Number(d.dataset.dot)); });
+  box.addEventListener('mouseenter', stop); box.addEventListener('mouseleave', play); box.addEventListener('focusin', stop); box.addEventListener('focusout', play);
+  play();
 }
 
 /* ---------- Placing an order (saved for the staff, then continues on WhatsApp) ---------- */
