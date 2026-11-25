@@ -384,9 +384,8 @@ html { overflow-anchor: none; }
 /* ==========================================
    15. CONDITION TAGS (Brand New / Refurbished)
    ========================================== */
-.cond { display: inline-block; margin-left: 8px; padding: 2px 10px; border-radius: 999px; font-size: .72rem; font-weight: 700; vertical-align: middle; }
-.cond-new { background: #dcfce7; color: #15803d; }
-.cond-refurb { background: #fef3c7; color: #b45309; }
+.cond { display: inline-block; margin-left: 8px; padding: 1px 10px; border-radius: 999px; font-size: .74rem; font-weight: 600; vertical-align: middle; }
+.cond-new, .cond-refurb { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
 /* ==========================================
    16. PARTLY FILLED STARS (4.4 out of 5)
@@ -477,7 +476,6 @@ html { overflow-anchor: none; }
 .result-count { margin: -12px 0 20px; color: var(--text-muted); font-size: .9rem; }
 .result-count:empty { display: none; }
 .product-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
-.product-summary { margin: -6px 0 14px; color: #475569; font-size: .86rem; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .product-actions { display: grid; gap: 10px; }
 .product-actions.two { grid-template-columns: 1fr 1fr; }
 .btn-specs { padding: 11px 8px; border: 1px solid var(--border-color); border-radius: 10px; background: #fff; color: var(--text-dark); font-weight: 700; cursor: pointer; transition: border-color .2s, color .2s, background .2s, transform .15s; }
@@ -488,8 +486,8 @@ html { overflow-anchor: none; }
 
 .product-modal { max-width: 880px; padding: 0; overflow: hidden; }
 .pd { display: grid; grid-template-columns: 1fr 1.1fr; }
-.pd-img { display: grid; place-items: center; min-height: 320px; background: #f1f5f9; color: #cbd5e1; font-size: 4rem; }
-.pd-img img { width: 100%; height: 100%; object-fit: cover; }
+.pd-img { display: grid; place-items: center; min-height: 320px; padding: 32px; background: #f1f5f9; color: #cbd5e1; font-size: 4rem; }
+.pd-img img { display: block; width: 100%; height: auto; max-height: 460px; object-fit: contain; border-radius: 12px; }
 .pd-body { padding: 36px 32px 32px; }
 .pd-body h2 { margin-bottom: 6px; padding-right: 30px; font-size: 1.6rem; }
 .pd-price { margin: 12px 0 4px; color: var(--primary); font-size: 1.6rem; font-weight: 800; }
@@ -501,7 +499,8 @@ html { overflow-anchor: none; }
 .product-modal .close-btn { z-index: 2; background: rgba(255,255,255,.9); }
 @media (max-width: 720px) {
     .pd { grid-template-columns: 1fr; }
-    .pd-img { min-height: 0; aspect-ratio: 4 / 3; }
+    .pd-img { min-height: 0; padding: 20px; }
+    .pd-img img { max-height: 280px; }
     .pd-body { padding: 24px 22px 24px; }
 }
 

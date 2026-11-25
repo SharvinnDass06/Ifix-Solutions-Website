@@ -111,7 +111,6 @@ const condTag = p => {
 const SPEC_LABELS = [['processor', 'Processor'], ['ram', 'Memory (RAM)'], ['storage', 'Storage'], ['screen', 'Screen'], ['graphics', 'Graphics'], ['os', 'Operating system'], ['included', 'Included'], ['other', 'More details']];
 const getSpecs = p => { let s = p.specs; if (typeof s === 'string') { try { s = JSON.parse(s); } catch (e) { s = null; } } return s && typeof s === 'object' && !Array.isArray(s) ? s : {}; };
 const hasSpecs = p => SPEC_LABELS.some(([k]) => String(getSpecs(p)[k] ?? '').trim());
-const specSummary = p => ['processor', 'ram', 'storage'].map(k => String(getSpecs(p)[k] ?? '').trim()).filter(Boolean).join(' \u00b7 ');
 
 function stockInfo(p) {
   const stock = Number(p.stock_quantity);
@@ -121,7 +120,7 @@ function stockInfo(p) {
 }
 
 function productCard(p) {
-  const st = stockInfo(p), has = hasSpecs(p), summary = specSummary(p);
+  const st = stockInfo(p), has = hasSpecs(p);
   const open = has ? ` data-open="${esc(p.id)}"` : '';
   const img = p.image_url
     ? `<img src="${esc(p.image_url)}" alt="${esc(p.name)}" class="product-img"${open} loading="lazy">`
@@ -130,7 +129,6 @@ function productCard(p) {
     <div class="product-info">
       <h3 class="product-title"${open}>${esc(p.name)}</h3>
       <p class="product-specs">${esc(p.category)}${condTag(p)}</p>
-      ${summary ? `<p class="product-summary">${esc(summary)}</p>` : ''}
       <div class="product-bottom">
         ${priceHtml(p)}
         <div class="product-actions${has ? ' two' : ''}">
