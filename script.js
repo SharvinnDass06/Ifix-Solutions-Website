@@ -40,6 +40,7 @@ const SKELETONS = '<div class="skeleton"></div>'.repeat(4);
 document.addEventListener('DOMContentLoaded', () => {
   loadProducts();
   loadPosters();
+  loadGallery();
   loadReviews();
   setupFilters();
   setupCart();
@@ -321,6 +322,21 @@ async function loadPosters() {
   box.addEventListener('click', e => { const n = e.target.closest('.promo-nav'), d = e.target.closest('[data-dot]'); if (n) show(cur + (n.classList.contains('next') ? 1 : -1)); else if (d) show(Number(d.dataset.dot)); });
   box.addEventListener('mouseenter', stop); box.addEventListener('mouseleave', play); box.addEventListener('focusin', stop); box.addEventListener('focusout', play);
   play();
+}
+
+/* ---------- Customer photo strip (the photos are added in the admin panel > Gallery) ---------- */
+async function loadGallery() {
+  const section = $('#customer-showcase'), track = $('.customer-track'); if (!section || !track) return;
+  let list = [];
+  try { const res = await fetch(`${API_BASE}/gallery`); if (res.ok) { const json = await res.json(); list = Array.isArray(json.data) ? json.data : []; } }
+  catch (err) { return; }
+  if (!list.length) return;
+  const card = p => `<div class="photo-card"><img src="${API_BASE}/gallery/${esc(p.id)}/image" alt="${esc(p.caption || 'Happy I FIX SOLUTIONS customer')}" loading="lazy" decoding="async">${p.caption ? `<span class="photo-caption">${esc(p.caption)}</span>` : ''}</div>`;
+  // Repeat the photos enough times to fill a wide screen, then double the lot so the loop never jumps
+  const once = Array.from({ length: Math.max(1, Math.ceil(2600 / (list.length * 270))) }, () => list.map(card).join('')).join('');
+  track.innerHTML = once + once.replaceAll('<div class="photo-card">', '<div class="photo-card" aria-hidden="true">');
+  section.hidden = false;
+  track.style.animationDuration = Math.max(30, (track.scrollWidth / 2) / 60) + 's';
 }
 
 /* ---------- Placing an order (saved for the staff, then continues on WhatsApp) ---------- */

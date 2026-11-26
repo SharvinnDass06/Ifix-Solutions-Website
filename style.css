@@ -1,4 +1,4 @@
-/* ==========================================
+/* ===/* ==========================================
    1. TOKENS & BASE (RED / BLACK / WHITE)
    ========================================== */
 :root {
@@ -376,10 +376,8 @@ html { overflow-anchor: none; }
    14. CUSTOMER PHOTO STRIP (wide photos, shown in full)
    ========================================== */
 .customer-track .photo-card { width: 340px; }
-.customer-track .photo-card img { height: auto; aspect-ratio: 1280 / 1073; object-fit: cover; background: #f1f5f9; }
+.customer-track .photo-card img { height: auto; aspect-ratio: 4 / 3; object-fit: cover; background: #f1f5f9; }
 @media (max-width: 640px) { .customer-track .photo-card { width: 250px; } }
-.customer-slider-container { min-height: 285px; }
-@media (max-width: 640px) { .customer-slider-container { min-height: 210px; } }
 
 /* ==========================================
    15. CONDITION TAGS (Brand New / Refurbished)
@@ -532,3 +530,9 @@ html { overflow-anchor: none; }
 .promo-dots button { width: 10px; height: 10px; padding: 0; border: 0; border-radius: 999px; background: rgba(255,255,255,.55); cursor: pointer; transition: width .3s var(--ease), background .2s; }
 .promo-dots button.active { width: 26px; background: #fff; }
 @media (max-width: 640px) { .promo-section { padding-top: 20px; } .promo-slider { border-radius: 14px; } .promo-nav { width: 36px; height: 36px; } }
+
+/* ==========================================
+   23. CUSTOMER PHOTO CAPTIONS
+   ========================================== */
+.customer-track .photo-card { position: relative; }
+.photo-caption { position: absolute; left: 2px; right: 2px; bottom: 2px; padding: 26px 14px 12px; border-radius: 0 0 12px 12px; background: linear-gradient(to top, rgba(15,23,42,.8), rgba(15,23,42,0)); color: #fff; font-size: .9rem; font-weight: 600; pointer-events: none; }
